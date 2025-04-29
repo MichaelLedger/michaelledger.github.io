@@ -12,7 +12,7 @@
         <description>
             Markdown 是一种简单的、轻量级的标记语法。用户可以使用诸如 * # 等简单的标记符号以最小的输入代价生成极富表现力的文档。
         </description>
-        <cover>images/markdown.jpg</cover>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/bbc/news/markdown.jpg</cover>
     </blog>
     <blog location="music/index.html">
         <id>2</id>
@@ -21,7 +21,7 @@
         <description>
             Music - 告白气球（周杰伦）
         </description>
-        <cover>images/balloon.jpg</cover>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/bbc/news/balloon.jpg</cover>
     </blog>
     <blog location="developer-single.html">
         <id>3</id>

@@ -1,0 +1,1256 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Blog Title</title><!-- &mdash; -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Blog Description" />
+	<meta name="keywords" content="English, Authentic" />
+	<meta name="author" content="MichaelLedger" />
+
+  	<!-- Facebook and Twitter integration -->
+	<meta property="og:title" content=""/>
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content=""/>
+	<meta property="og:site_name" content=""/>
+	<meta property="og:description" content=""/>
+	<meta name="twitter:title" content="" />
+	<meta name="twitter:image" content="" />
+	<meta name="twitter:url" content="" />
+	<meta name="twitter:card" content="" />
+
+	<link href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,700,800" rel="stylesheet">
+	
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="css/animate.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="css/icomoon.css">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="css/bootstrap.css">
+	
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="css/style.css">
+
+	<!-- Theme Toggle style -->
+	<link rel="stylesheet" href="css/theme-toggle.css">
+
+    <link rel="stylesheet" href="../plugins/pure_css_close_icon/css/style.css" media="screen" type="text/css" />
+
+	<!-- Modernizr JS -->
+	<script src="js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+
+	<!-- Markdown JS -->
+	<!-- https://github.com/showdownjs/showdown -->
+	<!-- <script src="../public/showdown/dist/showdown.min.js"></script> -->
+
+	<!-- Gitalk is a modern comment component based on Github Issue and Preact. https://gitalk.github.io -->
+	<link rel="stylesheet" href="../gitalk/gitalk.css">
+	<script src="../gitalk/gitalk.min.js"></script>
+	<!-- Gitalk md5加密 clientID & ClientSecret -->
+	<script src="../gitalk/md5.min.js "></script>
+
+	<link type="text/css" href="css/canvas-particle.css" rel="stylesheet" />
+    <base target="_blank">
+	</head>
+	<body class="single">
+
+	<div class="container"></div>
+		
+	<div class="fh5co-loader"></div>
+	
+	<div id="page">
+		<div id="fh5co-aside" style="background-image: url()"><!-- data-stellar-background-ratio="0.5" -->
+			<div class="overlay"></div>
+			<nav role="navigation">
+				<ul>
+					<li><a href="index.html"><i class="icon-home"></i></a></li>
+				</ul>
+			</nav>
+			<div class="page-title">
+				<!-- <img src="images/person_4.jpg" alt="portrait"> -->
+				<span id="post-date">Date</span>
+				<h2 id="post-title">Title</h2>
+			</div>
+		</div>
+		<div id="fh5co-main-content">
+			<div class="fh5co-post"> 
+				<div class="fh5co-entry padding">
+					<div id="english-content" class="post-content">
+                        <div id="audio-content"></div>
+                        <div id="text-content"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- <div id="gitalk-container"></div> -->
+
+	<div class="fh5co-navigation">
+		<div class="fh5co-cover prev fh5co-cover-sm" id="previous-post-cover" style="background-image: url()">
+			<div class="overlay"></div>
+
+			<a class="copy" href="#" id="pervious-post-location" target="_self">
+				<div class="display-t">
+					<div class="display-tc">
+						<div>
+							<span>Previous Post</span>
+							<h2 id="pervious-post-title">Previous Post Title</h2>
+						</div>
+					</div>
+				</div>
+			</a>
+
+		</div>
+		<div class="fh5co-cover next fh5co-cover-sm" id="next-post-cover" style="background-image: url()">
+			<div class="overlay"></div>
+			<a class="copy" href="#" id="next-post-location" target="_self">
+				<div class="display-t">
+					<div class="display-tc">
+						<div>
+							<span>Next Post</span>
+							<h2 id="next-post-title">Next Post Title</h2>
+						</div>
+					</div>
+				</div>
+			</a>
+
+		</div>
+	</div>
+
+	<footer>
+		<div>
+			Copyright &copy; 2018-2025 MTX Software Technology Co.,Ltd. All rights reserved. Designed by <a href="index.html" target="_blank">MichaelLedger</a>.
+			<br/>
+			For personal study only, please do not reprint, not for any commercial use.</p>
+		</div>
+	</footer>
+
+	<div class="gototop js-top">
+		<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
+	</div>
+
+    <div id="live2d-widget-close" style="position: fixed; bottom: 330px; left:10px; z-index: 999;">
+        <span class="close fat thick" style="width: 20px" onclick="closeLive2D()"></span>
+    </div>
+    <script>
+        function closeLive2D() {
+            document.getElementById("live2d-widget").style.display="none";
+            document.getElementById("live2d-widget-close").style.display="none";
+            Window.showLive2d = 0
+        }
+    </script>
+	
+	<!-- jQuery -->
+	<script src="js/jquery.min.js"></script>
+	<!-- jQuery Easing -->
+	<script src="js/jquery.easing.1.3.js"></script>
+	<!-- Bootstrap -->
+	<script src="js/bootstrap.min.js"></script>
+	<!-- Waypoints -->
+	<script src="js/jquery.waypoints.min.js"></script>
+	<!-- Stellar Parallax -->
+	<script src="js/jquery.stellar.min.js"></script>
+	<!-- Main -->
+	<script src="js/main.js"></script>
+	
+	<!-- Theme Toggle -->
+	<script src="js/theme-toggle.js"></script>
+
+	<!-- bejson : Markdown convert Html -->
+	<script src="../public/static/bejson/convert/markdown.min.js"></script>
+	<script src="../public/static/bejson/convert/to-markdown.js"></script>
+    <!-- https://github.com/pandao/editor.md.git -->
+    <!-- <link rel="stylesheet" type="text/css" href="../public/markdown-editor/css/editormd.preview.css" />
+    <script src="../public/markdown-editor/editormd.js"></script>
+    <script src="../public/markdown-editor/lib/marked.min.js"></script>
+    <script src="../public/markdown-editor/lib/prettify.min.js"></script> -->
+
+	<script type="text/javascript">
+		var dataList = new Array();
+		$(document).ready(function() {
+			$.ajax({
+				async: true, //是否异步
+                type:"get",
+                url:"english.xml",//这里通过设置url属性来获取xml
+                dataType:"xml",
+                timeout:300000,      //设定超时
+                cache:true,       //是否设置缓存
+                success:function(xml){//这里是解析xml
+                    $(xml).find("blog").each(function(i){
+                    	var location = $(this).attr("location");     // 跳转页面地址
+                        if (location == null || location.length == 0) {//fallback
+                            location = "english.html"
+                        }
+                        var id_value = $(this).children("id").text();   // 唯一标识
+                        var date = $(this).children("date").text();  // 日期
+                        var title = $(this).children("title").text();  // 标题
+                        var description = $(this).children("description").text();  // 描述
+                        var cover = $(this).children("cover").text();  // 封面图片
+                        var audio = $(this).children("audio").text();  // 音频地址
+                        var markdownContent = $(this).children("markdown-content").text();  // markdown文本
+
+                        var blog = {};
+                        if (location.indexOf("english.html") != -1) {
+                        	// Gitalk 回调地址会自动去除'?'，故改用'#'
+                        	blog["location"] = location + "#id=" + id_value;
+                        } else {
+                        	blog["location"] = location;
+                        }
+                        
+                        blog["id"] = id_value;
+                        blog["date"] = date;
+                        blog["title"] = title;
+                        blog["description"] = description;
+                        blog["cover"] = cover;
+                        blog["audio"] = audio;
+                        blog["content"] = markdownContent;
+                        dataList.push(blog);                        
+                    });
+                    // Gitalk 回调地址会自动去除'?'，故改用'#'
+                    var englishId = getHashString("id");
+					fetchDetailData("english-content", englishId);
+                }
+            });
+		})
+	</script>
+
+<!-- 	<script type="text/javascript">
+		$(document).ready(function() {
+			const gitalk = new Gitalk({
+				  clientID: '3423b73b29f74a75e453',
+				  clientSecret: 'dfb9324cec7487fc0518094153b119a0644b2d69',
+				  repo: 'MichaelLedger.github.io',
+				  owner: 'MichaelLedger',
+				  admin: ['MichaelLedger'],
+				  id: location.pathname,      // Ensure uniqueness and length less than 50
+				  distractionFreeMode: false,  // Facebook-like distraction free mode
+				  language: 'en' // [en, zh-CN, zh-TW, es-ES, fr, ru]
+			})
+
+			gitalk.render('gitalk-container')
+		})
+	</script> -->
+
+	<!-- Gitalk 回调地址会自动去除'?'，故改用'#' 而修改hash不会刷新页面，需要监听锚部分的修改事件-->
+	<script type="text/javascript">
+		document.getElementsByTagName("BODY")[0].onhashchange = function() { hashChangedFunction()};
+		function hashChangedFunction() {
+		    // alert("锚部分已修改！");
+		    
+		    // Gitalk 回调地址会自动去除'?'，故改用'#'
+            var englishId = getHashString("id");
+			fetchDetailData("english-content", englishId);
+
+			// 手动滚动到顶部
+		    // document.body.scrollTop = 0;
+
+		    //保证刷新后能滚动到准确的顶部位置
+		    $('html,body').animate({scrollTop: 0}, 0);
+
+		    autoScrollCover();
+
+		    autoPlayMusic();
+
+		 // var $objTr = $("#page-title"); //找到要定位的地方 tr 
+		 // // $objTr.css("background-color","lightgray"); //设置要定位地方的css 
+		 // var objTr = $objTr[0]; //转化为dom对象 
+		 // $("#page").animate({scrollTop:objTr.offsetTop},"slow"); //定位tr 
+		}
+	</script>
+
+	<script type="text/javascript">
+			function fetchDetailData(divIdentifier, englishId) {
+				if (!divIdentifier) return;
+                // resset markdown contents from .md files
+                let readme_file_name = 'english_' + englishId + '.md'
+                let readmd_file_path = '../markdowns/english/' + readme_file_name
+                // console.log("readmd_file_path:", readmd_file_path)
+                $.ajax({
+                    async: true, //是否异步
+                    type:"get",
+                    url:readmd_file_path,//这里通过设置url属性来获取markdown
+                    dataType:"text",
+                    timeout:300000,      //设定超时
+                    cache:true,       //是否设置缓存
+                    success:function(markdown){//这里是解析markdown
+                        //console.log('markdown fetched:', markdown)
+                        resetHTMLContent(divIdentifier, englishId, markdown);
+                        autoPlayMusic();
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("[warning] markdowns content is empty：", xhr.status, error);
+                        resetHTMLContent(divIdentifier, englishId, null);
+                        autoPlayMusic();
+                    }
+                });
+			}
+
+            function resetHTMLContent(divIdentifier, englishId, markdown) {
+                if (!divIdentifier) return;
+				for (var i = 0; i < dataList.length; i++) {
+					var data = dataList[i];
+					if (data.id === englishId) {
+						currentIndex = i;
+						var audioHtmlStr;
+						if (data.audio && data.audio.length > 0) {
+							audioHtmlStr = "<audio class=\"fixed-audio\" preload=\"auto\" autoplay controls id=\"audiojs\"><source src=\""+ data.audio + "\"></audio>";
+						} else {
+							audioHtmlStr = "";
+						}
+                        
+                        if (audioHtmlStr.length > 0) {
+                            var audio = document.getElementById('audiojs');
+                            if (audio == null) {
+                                $("#" + "audio-content").html(audioHtmlStr);
+                            } else {
+                                audio.src = data.audio
+                            }
+                        } else {
+                            $("#" + "audio-content").html(audioHtmlStr);
+                        }
+                        if (markdown && markdown.length > 0) {
+                            data.content = markdown;
+                        } else {
+                            let readme_file_name = 'english_' + englishId + '.txt'
+                            let readmd_file_path = '../markdowns/english/' + readme_file_name
+                            // quick download
+                            // exportMarkdownContent(data.content, readme_file_name);
+                        }
+						// var constrols = "<button id=\"down\">↓</button><button id=\"up\">↑</button>";
+						var textHtmlStr = convertMarkdownToHtml(data.content);
+                        // var textHtmlStr = "<div id=\"markdown-view\"></div>"
+						// document.all[divIdentifier].innerHTML = content;
+						// document.getElementById(divIdentifier).innerHTML = content;
+						$("#" + "text-content").html(textHtmlStr);// 使用jQuery
+                        // var replaced = data.content.replace(/\\n/g, '\r');//escaped shell caused issue
+                        // editormd.markdownToHTML("markdown-view", {
+                        //     markdown: replaced
+                        // });
+						$("#" + "fh5co-aside").css({"background-image" : "url("+ data.cover + ")"});
+						$("#" + "post-date").html(data.date);
+						$("#" + "post-title").html(data.title);
+
+						// $(document).attr("title",data.title);
+						$("title").html(data.title);
+
+						// $(document).attr("description",data.description);
+						$("description").html(data.description);
+
+						var hasPrevious = i > 0;
+						var hasNext = i < dataList.length - 1;
+
+						if (hasPrevious) {
+							var previous = dataList[i-1];
+							$("#" + "previous-post-cover").css({"background-image" : "url("+ previous.cover + ")"});
+							$("#" + "pervious-post-location").attr("href", previous.location);
+							$("#" + "pervious-post-title").html(previous.title);
+						} else {
+							$("#" + "previous-post-cover").css({"background-image" : "url("+ data.cover + ")"});
+							$("#" + "pervious-post-location").attr("href", data.location);
+							$("#" + "pervious-post-title").html(data.title);
+						}
+
+						if (hasNext) {
+							var next = dataList[i+1];
+							$("#" + "next-post-cover").css({"background-image" : "url("+ next.cover + ")"});
+							$("#" + "next-post-location").attr("href", next.location);
+							$("#" + "next-post-title").html(next.title);
+						} else {
+							$("#" + "next-post-cover").css({"background-image" : "url("+ data.cover + ")"});
+							$("#" + "next-post-location").attr("href", data.location);
+							$("#" + "next-post-title").html(data.title);
+						}						
+						break;
+					}
+				}
+            }
+
+            function exportMarkdownContent(data, name) {
+                // dada 表示要转换的字符串数据，type 表示要转换的数据格式
+                const blob = new Blob([data], {
+                    type: "text/plain;charset=utf-8"
+                });
+
+                if (typeof navigator.msSaveBlob === 'function') {
+                    // alert("支持自动保存文件到本地")
+                    // 支持Microsoft Edge和Internet Explorer浏览器
+                    navigator.msSaveBlob(blob, name)
+                } else if (typeof URL == 'function' && typeof HTMLCanvasElement.prototype.toBlob === 'function') {
+                    // alert("支持自动保存文件到本地")
+                    // 支持Chrome、Firefox和Safari浏览器
+
+                    // var urlObj = window.URL || window.webkitURL || window;
+                    // var save_link = document.createElementNS("http://http://www.w3.org/1999/xhtml", "a")
+                    // save_link.href = urlObj.createObjectURL(blob);
+                    // save_link.download = name;
+                    // save_link.click();
+                    // const ev = document.createEvent('MouseEvents');
+                    // ev.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                    // save_link,dispatchEvent(ev);
+
+                    // 根据 blob生成 url链接
+                    const objectURL = URL.createObjectURL(blob)
+                    // 创建一个 a 标签Tag
+                    const aTag = document.createElement('a')
+                    // 设置文件的下载地址
+                    aTag.href = objectURL
+                    // 设置保存后的文件名称
+                    aTag.download = name
+                    // 隐藏标签
+                    aTag.style.display = 'none';
+                    // 给 a 标签添加点击事件,浏览器会弹窗是否下载改文件
+                    aTag.click()
+                    // 释放一个之前已经存在的、通过调用 URL.createObjectURL() 创建的 URL 对象。
+                    // 当你结束使用某个 URL 对象之后，应该通过调用这个方法来让浏览器知道不用在内存中继续保留对这个文件的引用了。
+                    URL.revokeObjectURL(objectURL)
+                } else {
+                    // alert("不支持自动保存文件到本地")
+                }
+            }
+
+			function autoPlayMusic() {
+				// auto play music
+				var audio = document.getElementById('audiojs');
+				// Safari support remote resource auto play need manual setting: Safari -> Preferences -> Websites -> Autoplay
+				audio.play();
+				// reset audio volume, i think this volume is fittest mainly for 'Friends' ^_^
+                audio.volume = 0.6;
+				
+				document.addEventListener('DOMContentLoaded', function () {
+					function audioAutoPlay() {
+						var audio = document.getElementById('audiojs');
+						audio.play();
+						document.addEventListener("WeixinJSBridgeReady", function () {
+							audio.play();
+						}, false);
+					}
+					audioAutoPlay();
+				});
+ 
+ 				if (/i(Phone|P(o|a)d)/.test(navigator.userAgent)) {
+ 					$(document).one('touchstart', function(e) {
+ 						$('#audiojs').get(0).touchstart = true;
+ 						$('#audiojs').get(0).play();
+ 						return false;
+ 					});
+ 				}
+                // audio.loop = false;
+                // audio.playbackRate = 1.25;
+
+                //auto redirect to the next blog
+                audio.addEventListener('ended', function () {
+                    // alert('audio over');
+                    document.getElementById('next-post-location').click();
+                }, false);
+                
+                
+			}
+			function getQueryString(name) {
+			  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+			  var r = window.location.search.substr(1).match(reg);
+			  if (r != null) {
+			    return unescape(r[2]);
+			  }
+			  return null;
+			}
+			function getHashString(name) {
+			  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+			  var r = window.location.hash.substr(1).match(reg);
+			  if (r != null) {
+			    return unescape(r[2]);
+			  }
+			  return null;
+			}
+			function convertMarkdownToHtml(markdownStr){
+				// showdown
+			    // var converter = new showdown.Converter();
+			    // var html = converter.makeHtml(markdown);
+
+			    // console.log('before:\n'+ markdownStr);
+
+			    // 将XML中的/n解析为<br/>
+			    markdownStr = markdownStr.replace(/\\n/g, '<br/>');
+
+			    // bejson
+			    var html = markdown.toHTML(markdownStr);
+			    html = html.replace(/&lt;br\/&gt;/g, '<br/>');// html转码，换行符正确解析
+			    // html = html.replace(/<br\/>/g, '<br\/><br\/>');// 添加一个换行，美化排版
+			    html = html.replace(/&amp;rsquo;/g, '\'');// &rsquo;正常解析为'
+
+			    // console.log('after:\n' + html);
+			    
+			    return html;
+			}
+	</script>
+
+	<!-- <script>
+		$(function(){
+		    let vol = $('#audiojs')[0].volume;
+		    $('#audiojs').on('canplay',function(){
+		        this.play()
+		    });
+		    $('#down').click(function(){
+		        console.log( vol)
+		        vol =vol>0?(vol*10 -1)/10:0;
+		        $('#audiojs')[0].volume = vol;
+		    })
+		      $('#up').click(function(){
+		      console.log( vol)
+		        vol =vol<1?(vol*10 +1)/10:1;
+		        $('#audiojs')[0].volume = vol;
+		    })
+		})
+    </script> -->
+
+	<!-- <script type="text/javascript">
+        /*7Core-CN - 网页鼠标点击特效（爱心）*/
+        !function (e, t, a) {function r() {for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");requestAnimationFrame(r)}function n() {var t = "function" == typeof e.onclick && e.onclick;e.onclick = function (e) {t && t(), o(e)}}function o(e) {var a = t.createElement("div");a.className = "heart", s.push({el: a,x: e.clientX - 5,y: e.clientY - 5,scale: 1,alpha: 1,color: c()}), t.body.appendChild(a)}function i(e) {var a = t.createElement("style");a.type = "text/css";try {a.appendChild(t.createTextNode(e))} catch (t) {a.styleSheet.cssText = e}t.getElementsByTagName("head")[0].appendChild(a)}function c() {return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"}var s = [];e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {setTimeout(e, 1e3 / 60)}, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()}(window, document);
+	</script> -->
+
+	<script type="text/javascript" src="js/jparticle.min.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		$(".container").jParticle({
+			background: "rgba(0,0,0,0)",//背景颜色
+			color: "rgba(252,81,133,0.5)",//粒子和连线的颜色 (#fc5185)
+			particlesNumber:document.body.clientWidth > 768 ? 60 : 30,//粒子数量
+			disableLinks:true,//禁止粒子间连线
+			disableMouse:true,//禁止粒子间连线(鼠标)
+			particle: {
+				minSize: 1,//最小粒子
+				maxSize: 3,//最大粒子
+				speed: 30,//粒子的动画速度
+			 }
+		});
+	});
+	</script>
+
+    <div id="page_end_html">
+        <!-- 底部加了小鱼<・)))><<~ -->
+        <div id="jsi-flying-fish-container"></div>
+        <script src='js/fish.js'></script>
+        <style>
+            @media only screen and (max-width: 767px){
+                #sidebar_search_box input[type=text]{width:calc(100% - 24px)}
+            }
+        </style>
+        
+        <!--音乐-->
+<!--        <link rel="stylesheet" href="css/APlayer.min.css">-->
+<!--        <div id="player" class="aplayer aplayer-withlist aplayer-fixed" data-id="3025663508" data-server="netease" data-type="playlist" data-order="random" data-fixed="true" data-listfolded="true" data-theme="#2D8CF0"></div>-->
+<!--        <script src="js/APlayer.min.js"></script>-->
+<!--        <script src="js/Meting.min.js"></script>-->
+        
+        <!--看板娘 - 猫-->
+        <!-- https://github.com/raoenhui/raoenhui.github.io -->
+        <!-- <script src="https://l2dwidget.js.org/lib/L2Dwidget.min.js"></script> -->
+        <!-- https://michaelledger.github.io/plugins/live2d/packages/live2d-widget-model-chitose/assets/exp/f01.exp.json -->
+<!--        <script src='https://michaelledger.github.io/plugins/live2d/src/L2Dwidget.min.js'></script>-->
+        <!-- model list:
+        https://michaelledger.github.io/plugins/live2d/packages/live2d-widget-model-chitose/assets/chitose.model.json
+        https://michaelledger.github.io/plugins/live2d/packages/live2d-widget-model-epsilon2_1/assets/Epsilon2.1.model.json
+        https://michaelledger.github.io/plugins/live2d/packages/live2d-widget-model-gf/assets/Gantzert_Felixander.model.json
+        
+        https://michaelledger.github.io/plugins/live2d/packages/live2d-widget-model-hijiki/assets/hijiki.model.json
+        https://michaelledger.github.io/plugins/live2d/packages/live2d-widget-model-izumi/assets/izumi.model.json
+        https://michaelledger.github.io/plugins/live2d/packages/live2d-widget-model-koharu/assets/koharu.model.json
+        
+        https://michaelledger.github.io/plugins/live2d/packages/live2d-widget-model-z16/assets/z16.model.json
+        -->
+<!--        <script>-->
+<!--            L2Dwidget.init({-->
+<!--                "model": {-->
+<!--                    jsonPath: 'https://michaelledger.github.io/plugins/live2d/packages/live2d-widget-model-z16/assets/z16.model.json',<!--这里改模型-->
+<!--                    "scale": 1-->
+<!--                },-->
+<!--                "display": {-->
+<!--                    "position": "left",<!--设置看板娘的上下左右位置-->
+<!--                    "width": 100,-->
+<!--                    "height": 200,-->
+<!--                    "hOffset": 70,-->
+<!--                    "vOffset": 0-->
+<!--                },-->
+<!--                "mobile": {-->
+<!--                    "show": true,-->
+<!--                    "scale": 0.5-->
+<!--                },-->
+<!--                "react": {-->
+<!--                    "opacityDefault": 0.7,<!--设置透明度-->
+<!--                    "opacityOnHover": 0.2-->
+<!--                }-->
+<!--            });-->
+<!--        window.onload = function(){-->
+<!--            $("#live2dcanvas").attr("style","position: fixed; opacity: 0.7; left: 70px; bottom: 0px; z-index: 1; pointer-events: none;")-->
+<!--        }-->
+<!--        </script>-->
+        <!--点击冒点-->
+        <canvas width="1777" height="841" style="position: fixed; left: 0px; top: 0px; z-index: 2147483647; pointer-events: none;"></canvas>
+        <script src="js/mouse-click.js"></script>
+    </div>
+    
+<!--    <script src='https://michaelledger.github.io/plugins/live2d/src/L2Dwidget.min.js'></script>-->
+    <script src='../plugins/live2d/src/L2Dwidget.min.js'></script>
+<!--    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="190" height="180" class="star">-->
+<!--        <polygon points="100,0 160,180 10,60 190,60 40,180" style="fill:yellow;stroke:yellow;stroke-width:1;"></polygon>-->
+<!--    </svg>-->
+    <script type="text/javascript">
+        var selectAry = [
+            ["chitose"],
+            ["Epsilon2.1", "Epsilon2_1"],
+            ["Gantzert_Felixander", "gf"],
+            ["haru01"],
+            ["haru02"],
+            ["haruto"],
+            ["hibiki"],
+            ["hijiki"],
+            ["izumi"],
+            ["koharu"],
+            ["miku"],
+            ["nico"],
+            ["ni-j"],
+            ["nipsilon"],
+            ["nito"],
+            ["shizuku"],
+            ["tororo"],
+            ["tsumiki"],
+            ["Unitychan"],
+            ["wanko"],
+            ["z16"]
+        ];
+        // let selectId = selectAry[Math.floor(Math.random() * selectAry.length)][0];
+        let selectId = "shizuku"; //"Epsilon2.1";
+        let modalName = selectAry.find((item) => { return item[0].toLowerCase() == selectId.toLowerCase() });
+        modalName = (modalName && modalName[1] ? modalName[1] : selectId).toLowerCase();
+        console.log('[L2Dwidget] modalName:', modalName, 'selectId:', selectId);
+
+        L2Dwidget
+        .on('*', (name) => {
+            /*console.log('%c EVENT ' + '%c -> ' + name, 'background: #222; color: yellow', 'background: #fff; color: #000')*/
+        })
+        .init({
+            display: {
+                "position": "left",
+                "hOffset": 30
+            },
+            dialog: {
+                // 开启对话框
+                enable: true,
+                script: {
+                    // 每空闲 10 秒钟，显示一条一言
+                    'every idle 10s': '$hitokoto$',
+                    // 当触摸到星星图案
+                    'hover .star': '星星在天上而你在我心里 (*/ω＼*)',
+                    // 当触摸到角色身体
+                    'tap body': '哎呀！别碰我！',
+                    // 当触摸到角色头部
+                    'tap face': '人家已经不是小孩子了！'
+                }
+            },
+            "model": { "jsonPath": "https://michaelledger.github.io/plugins/live2d/packages/live2d-widget-model-" + modalName + "/assets/" + selectId + ".model.json" },
+            "mobile": { "show": false, scale: 0.5 }
+        });
+    </script>
+    <div id="live2d-widget" class="live2d-widget-container">
+        <div class="live2d-widget-dialog-container" style="transform: scale(0.8);">
+            <div class="live2d-widget-dialog" style="opacity: 0;">我，将某个人，唯一的某个人，试图锁定。我，</div>
+        </div>
+        <canvas id="live2dcanvas" width="400" height="800" style="position: absolute; left: 0px; top: 0px; width: 200px; height: 400px;"></canvas>
+    </div>
+    
+    <script type="text/javascript">
+        /*
+        document.addEventListener('DOMContentLoaded',function(){
+            //...
+        });
+         */
+    
+        var imgLoad = function (url, callback) {
+            var img = new Image();
+            img.src = url;
+            if (img.complete) {
+                callback(img.width, img.height);
+            } else {
+                img.onload = function () {
+                    callback(img.width, img.height);
+                    img.onload = null;
+                };
+            };
+        };
+
+        var imgReady = (function () {
+            var list = [], intervalId = null,
+            // 用来执行队列
+            tick = function () {
+                var i = 0;
+                for (; i < list.length; i++) {
+                    list[i].end ? list.splice(i--, 1) : list[i]();
+                };
+                !list.length && stop();
+            },
+            // 停止所有定时器队列
+            stop = function () {
+                clearInterval(intervalId);
+                intervalId = null;
+            };
+            return function (url, ready, load, error) {
+                var onready, width, height, newWidth, newHeight,
+                img = new Image();
+                img.src = url;
+                // 如果图片被缓存，则直接返回缓存数据
+                if (img.complete) {
+                    ready.call(img);
+                    load && load.call(img);
+                    return;
+                };
+                width = img.width;
+                height = img.height;
+                // 加载错误后的事件
+                img.onerror = function () {
+                    error && error.call(img);
+                    onready.end = true;
+                    img = img.onload = img.onerror = null;
+                };
+                // 图片尺寸就绪
+                onready = function () {
+                    newWidth = img.width;
+                    newHeight = img.height;
+                    if (newWidth !== width || newHeight !== height ||newWidth * newHeight > 1024) {
+                        // 如果图片已经在其他地方加载可使用面积检测
+                        ready.call(img);
+                        onready.end = true;
+                    };
+                };
+                onready();
+                // 完全加载完毕的事件
+                img.onload = function () {
+                    // onload在定时器时间差范围内可能比onready快
+                    // 这里进行检查并保证onready优先执行
+                    !onready.end && onready();
+                    load && load.call(img);
+                    // IE gif动画会循环执行onload，置空onload即可
+                    img = img.onload = img.onerror = null;
+                };
+                // 加入队列中定期执行
+                if (!onready.end) {
+                    list.push(onready);
+                    // 无论何时只允许出现一个定时器，减少浏览器性能损耗
+                    if (intervalId === null) intervalId = setInterval(tick, 40);
+                };
+            };
+        })();
+
+        /*移除动画*/
+		function autoScrollDeleted(){
+		    $("#fh5co-aside").css("-webkit-animation", "none 0 ease 0 1 normal");
+            $("#fh5co-aside").css("animation", "none 0 ease 0 1 normal");
+		}
+
+        /*暂停动画*/
+		function autoScrollPaused(){
+		 	/*animation必须是infinite，animation-play-state才有效*/
+		    document.getElementById("fh5co-aside").style.animationPlayState = "paused";
+		    document.getElementById("fh5co-aside").style.WebkitAnimationPlayState = "paused"; // 针对 Chrome 和 Safari 的代码
+		}
+
+		/*继续动画*/
+		function autoScrollResume(){
+		 	/*animation必须是infinite，animation-play-state才有效*/
+		    document.getElementById("fh5co-aside").style.animationPlayState = "running";
+		    document.getElementById("fh5co-aside").style.WebkitAnimationPlayState = "running"; // 针对 Chrome 和 Safari 的代码
+		}
+
+        function autoScrollCover() {
+        	// console.log('autoScrollCover');
+        	// 获取的是包含url（"xxx.jpg"）形式的值
+            var cover = document.getElementById('fh5co-aside').style.backgroundImage;
+            //在iphoneX上的background-image的值是不包含双引号的：url(image.png)；而在其他手机上background-image的值是包含双引号的：url("image.png"),
+            cover = cover.split('(')[1].split(')')[0];
+            if(cover.indexOf('"') > -1){
+                cover = cover.split('"')[1].split('"')[0];
+            }
+            // console.log('cover:' + cover);
+            //https://cdn.cnbj1.fds.api.mi-img.com/middle.community.vip.bkt/9c614771b4a2905d3b788141926fa15f
+            //https://michaelledger.github.io/image/english/friends/season2/friends_season2_cover.jpg
+            imgReady(cover, function () {
+              // console.log('size ready: width=' + this.width + '; height=' + this.height);
+              
+              //获取组件高度
+              var cover = document.getElementById("fh5co-aside");
+              var coverHeight = cover.offsetHeight;  //高度px
+              var coverWidth = cover.offsetWidth;
+              // console.log('coverHeight:' + coverHeight);
+              // console.log('coverWidth:' + coverWidth);
+              
+              //换算成图片显示的高度
+              var coverFullDisplayHeight = coverWidth / this.width * this.height;
+              // console.log('coverFullDisplayHeight:' + coverFullDisplayHeight);
+              //动画偏移量=图片显示高度-封面组件高度
+              var param = coverFullDisplayHeight - coverHeight;
+              // var param = coverFullDisplayHeight;
+              // console.log('param:' + param);
+              var style = document.styleSheets[0];
+
+              if (window.addCount > 0) {
+	              //Avoid redundant insert rules
+			      if(typeof style.deleteRule != 'undefined') {//W3C
+	              	// console.log('deleteRule');
+			        style.deleteRule(0);
+			      }else if(typeof style.removeRule != 'undefined') {//IE
+			      	// console.log('removeRule');
+			        style.removeRule(0);
+			      }
+              }
+
+              window.addCount = window.addCount + 1;
+              // console.log(window.addCount);
+
+              // define diff name to reset animation
+              var animationName;
+              if (window.addCount % 2 == 0) {
+              	animationName = "scrollToTop";
+              } else {
+              	animationName = "scrollToTop2";
+              }
+              // console.log('animationName:' + animationName);
+
+		      if(typeof style.insertRule != 'undefined') {//W3C
+              	// console.log('insertRule');
+              	style.insertRule("@keyframes "+animationName+"{0%{ background-position: 0 0; }50%{ background-position: 0 -"+param+"px;}100%{ background-position: 0 0; }}",0);//写入样式
+		      }else if(typeof style.addRule != 'undefined') {//IE
+		      	// console.log('addRule');
+		      	style.addRule("@keyframes "+animationName+"{0%{ background-position: 0 0; }50%{ background-position: 0 -"+param+"px;}100%{ background-position: 0 0; }}",0);//写入样式
+		      }
+
+              // setTimeout(function() {
+              // 	console.log(style);
+              // }, 100);
+              
+              //时间根据图片的高度区分
+              var time;
+              if (document.body.clientWidth > 768) {
+              	time = coverFullDisplayHeight / 50.0;
+              } else {
+              	time = coverFullDisplayHeight / 25.0;
+              }
+              // console.log('time:' + time);
+              var infinite = "";
+              if (coverFullDisplayHeight / coverHeight > 2)
+              {
+                  infinite = "infinite";
+              }
+              // console.log('infinite_value:' + infinite);
+
+              $("#fh5co-aside").css("-webkit-animation", ""+animationName+" "+time+"s "+infinite+" ease-in-out");
+              $("#fh5co-aside").css("animation", ""+animationName+" "+time+"s "+infinite+" ease-in-out");
+
+              $("#fh5co-aside").each(function() {
+			     // 目前只设置兼容谷歌浏览器
+			     $(this)[0].addEventListener("webkitAnimationEnd",function(){
+			     	// console.log('webkitAnimationEnd');
+			     	 // 动画结束就直接去除这个动画,否则非循环的动画无法再次启用
+			         $(this).css("animation","");
+			     });
+			  });
+            });
+        }
+    
+        window.onload = function () {
+            Window.showLive2d = 1
+            if (document.body.clientWidth <= 768) {
+                //$("#live2d-widget").attr("style", "display:none");
+                $("#live2d-widget").css("display", "none");
+                $("#live2d-widget-close").css("display", "none");
+            } else {
+                //$("#live2d-widget").attr("style", "display:block");
+                $("#live2d-widget").css("display", "block");
+                $("#live2d-widget-close").css("display", "block");
+            }
+
+            window.addCount = 0;
+            // console.log(window.addCount);
+            
+            autoScrollCover();
+        };
+    
+        $(window).resize( function  () {           //当浏览器大小变化时
+            /*
+             alert($(window).height());           //浏览器时下窗口可视区域高度
+             alert($(document).height());         //浏览器时下窗口文档的高度
+             alert($(document.body).height());    //浏览器时下窗口文档body的高度
+             alert($(document.body).outerHeight( true ));  //浏览器时下窗口文档body的总高度 包括border padding margin
+             */
+            //console.log('width:' + document.body.clientWidth);
+
+            setTimeout(function() {
+            	autoScrollCover();
+            }, 100);
+            if (document.body.clientWidth <= 768) {
+                /*JS修改元素的样式*/
+                /*
+                 //1.原生Js法
+                 var a= document.getElementById("a");
+                 a.style.display="block";
+                 //2.用JQuery的css方法
+                 var a =$("#a");
+                 a.css("display","block");
+                 //3.用JQuery的attr方法
+                 var a =$("#a");
+                 a.attr("style","display:block");
+                 */
+                $("#live2d-widget").css("display", "none");
+                $("#live2d-widget-close").css("display", "none");
+            } else {
+                if (Window.showLive2d == 1) {
+                    $("#live2d-widget").css("display", "block");
+                    $("#live2d-widget-close").css("display", "block");
+                }
+            }
+        });
+    
+        let cycleInterval;
+        let isAnimating = false;
+
+        function startShowHideCycle() {
+        const closeElement = document.getElementById('live2d-widget-close');
+        
+        if (!closeElement) return;
+        
+        if (!isAnimating) {
+            isAnimating = true;
+            
+            function cycle() {
+            // Show for 2 seconds
+            closeElement.style.display = 'block';
+            
+            // After 2 seconds, hide for 10 seconds
+            setTimeout(() => {
+                closeElement.style.display = 'none';
+                
+                // After 10 seconds, start the cycle again
+                setTimeout(() => {
+                if (isAnimating) {
+                    cycle();
+                }
+                }, 5000);
+            }, 5000);
+            }
+            
+            // Start the first cycle
+            cycle();
+        }
+        }
+
+        function stopShowHideCycle() {
+        isAnimating = false;
+        }
+
+        // Start the cycle
+        startShowHideCycle();
+
+        // To stop the cycle later:
+        // stopShowHideCycle();
+    </script>
+
+    <script src="../gitalk/getmd5.js"></script>
+    <script type="text/javascript">
+        console.log('showLive2d:', showLive2d)
+        if (showLive2d) {
+            // 验证方法  
+            function check(){  
+                // console.log('check',self.document.URL.indexOf("baidu")>=0); 
+                return self.document.URL.indexOf("localhost")>=0 || self.document.URL.indexOf("127.0.0.1")>=0 || self.document.URL.indexOf("MichaelLedger.github.io")>=0; 
+            }
+
+            //仅本地或者 MichaelLedger.github.io 可以访问!
+            if(check()){
+                $.getScript("../live2d/autoload.js");
+                // var s = document.createElement("script");
+                // s.setAttribute("type", "text/javascript");
+                // s.setAttribute("src", "../live2d/autoload.js");
+                // document.body.appendChild(s);
+                // console.log("appendChild autoload.js script.")
+            }
+        }
+    </script>
+
+    <!-- Image Preview Functionality -->
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create overlay elements
+            const overlay = document.createElement('div');
+            overlay.className = 'image-preview-overlay';
+            overlay.style.display = 'none'; // Ensure it's hidden initially
+            overlay.style.opacity = '0'; // Set initial opacity to 0
+            overlay.style.visibility = 'hidden'; // Use visibility hidden as extra measure
+            
+            const container = document.createElement('div');
+            container.className = 'image-preview-container';
+            
+            const img = document.createElement('img');
+            img.className = 'image-preview-image';
+            
+            const closeBtn = document.createElement('div');
+            closeBtn.className = 'image-preview-close';
+            
+            // Build structure
+            container.appendChild(img);
+            container.appendChild(closeBtn);
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+            
+            // Close function
+            function closePreview() {
+                overlay.classList.remove('active');
+                overlay.style.opacity = '0';
+                // Wait for transition to complete before hiding
+                setTimeout(function() {
+                    overlay.style.display = 'none';
+                    overlay.style.visibility = 'hidden';
+                    // Re-enable page scrolling
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+            
+            // Close on click outside or close button
+            closeBtn.addEventListener('click', closePreview);
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    closePreview();
+                }
+            });
+            
+            // Close on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && overlay.style.display === 'flex') {
+                    closePreview();
+                }
+            });
+            
+            // Function to initialize click events on images
+            function initializeImageClickEvents() {
+                // Find all images in markdown-view that aren't emojis
+                const markdownView = document.getElementById('markdown-view') || document.getElementById('english-content') || document.getElementById('text-content');
+                if (!markdownView) return;
+                
+                const images = markdownView.querySelectorAll('img:not(.emoji):not([alt^="emoji-"]):not([alt*=" emoji-"]):not([data-preview-initialized])');
+                
+                // Add click event to each image
+                images.forEach(function(image) {
+                    image.setAttribute('data-preview-initialized', 'true');
+                    image.addEventListener('click', function(e) {
+                        e.preventDefault(); // Prevent default click behavior
+                        
+                        // Get the source before showing the overlay
+                        const imgSrc = this.src;
+                        
+                        // Make sure image is set to loading state
+                        img.src = ''; // Clear previous image
+                        
+                        // Show loading state
+                        overlay.style.display = 'flex';
+                        overlay.style.visibility = 'visible';
+                        
+                        // Load the image
+                        img.onload = function() {
+                            // After image has loaded, make it visible with animation
+                            requestAnimationFrame(function() {
+                                overlay.classList.add('active');
+                                overlay.style.opacity = '1';
+                            });
+                            
+                            // Disable page scrolling
+                            document.body.style.overflow = 'hidden';
+                        };
+                        
+                        // Set the source after setting up the onload handler
+                        setTimeout(() => {
+                            img.src = imgSrc;
+                            
+                            // If image is already cached and loads instantly
+                            if (img.complete) {
+                                requestAnimationFrame(function() {
+                                    overlay.classList.add('active');
+                                    overlay.style.opacity = '1';
+                                });
+                                document.body.style.overflow = 'hidden';
+                            }
+                        }, 50); // Small delay to ensure overlay is visible first
+                    });
+                });
+            }
+            
+            // Initialize for existing images
+            // Wait a short time to ensure markup is fully loaded
+            setTimeout(initializeImageClickEvents, 500);
+            
+            // Add observer for dynamically added images
+            const observer = new MutationObserver(function(mutations) {
+                initializeImageClickEvents();
+            });
+            
+            const markdownView = document.getElementById('markdown-view') || document.getElementById('english-content') || document.getElementById('text-content');
+            if (markdownView) {
+                observer.observe(markdownView, { childList: true, subtree: true });
+            }
+        });
+    </script>
+	</body>
+    
+    <style type="text/css">
+    #yddContainer {
+        display: block;
+        font-family: Microsoft YaHei;
+        position: relative;
+        width: 100%;
+        height: 100%;
+        top: -4px;
+        left: -4px;
+        font-size: 12px;
+        border: 1px solid
+    }
+
+    #yddTop {
+        display: block;
+        height: 22px
+    }
+
+    #yddTopBorderlr {
+        display: block;
+        position: static;
+        height: 17px;
+        padding: 2px 28px;
+        line-height: 17px;
+        font-size: 12px;
+        color: #5079bb;
+        font-weight: bold;
+        border-style: none solid;
+        border-width: 1px
+    }
+
+    #yddTopBorderlr .ydd-sp {
+        position: absolute;
+        top: 2px;
+        height: 0;
+        overflow: hidden
+    }
+
+    .ydd-icon {
+        left: 5px;
+        width: 17px;
+        padding: 0px 0px 0px 0px;
+        padding-top: 17px;
+        background-position: -16px -44px
+    }
+
+    .ydd-close {
+        right: 5px;
+        width: 16px;
+        padding-top: 16px;
+        background-position: left -44px
+    }
+
+    #yddKeyTitle {
+        float: left;
+        text-decoration: none
+    }
+
+    #yddMiddle {
+        display: block;
+        margin-bottom: 10px
+    }
+
+    .ydd-tabs {
+        display: block;
+        margin: 5px 0;
+        padding: 0 5px;
+        height: 18px;
+        border-bottom: 1px solid
+    }
+
+    .ydd-tab {
+        display: block;
+        float: left;
+        height: 18px;
+        margin: 0 5px -1px 0;
+        padding: 0 4px;
+        line-height: 18px;
+        border: 1px solid;
+        border-bottom: none
+    }
+
+    .ydd-trans-container {
+        display: block;
+        line-height: 160%
+    }
+
+    .ydd-trans-container a {
+        text-decoration: none;
+    }
+
+    #yddBottom {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 22px;
+        line-height: 22px;
+        overflow: hidden;
+        background-position: left -22px
+    }
+
+    .ydd-padding010 {
+        padding: 0 10px
+    }
+
+    #yddWrapper {
+        color: #252525;
+        z-index: 10001;
+        background: url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ab20.png);
+    }
+
+    #yddContainer {
+        background: #fff;
+        border-color: #4b7598
+    }
+
+    #yddTopBorderlr {
+        border-color: #f0f8fc
+    }
+
+    #yddWrapper .ydd-sp {
+        background-image: url(chrome-extension://eopjamdnofihpioajgfdikhhbobonhbb/ydd-sprite.png)
+    }
+
+    #yddWrapper a,
+    #yddWrapper a:hover,
+    #yddWrapper a:visited {
+        color: #50799b
+    }
+
+    #yddWrapper .ydd-tabs {
+        color: #959595
+    }
+
+    .ydd-tabs,
+    .ydd-tab {
+        background: #fff;
+        border-color: #d5e7f3
+    }
+
+    #yddBottom {
+        color: #363636
+    }
+
+    #yddWrapper {
+        min-width: 250px;
+        max-width: 400px;
+    }
+    </style>
+</html>
+

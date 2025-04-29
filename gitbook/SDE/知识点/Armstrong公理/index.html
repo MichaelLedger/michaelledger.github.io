@@ -1,0 +1,688 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Armstrong公理 · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="../数据库三级模式两级映射/" />
+    
+    
+    <link rel="prev" href="../java数组元素交换的四种方法/" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../../">
+            
+                <a href="../../">
+            
+                    
+                    软件设计师(Software Design Engineer)
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.1" data-path="../../考试大纲/">
+            
+                <a href="../../考试大纲/">
+            
+                    
+                    考试大纲
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2" >
+            
+                <span>
+            
+                    
+                    考试真题
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.2.1" data-path="../../考试真题/2021下半年/计算机与软件工程知识/">
+            
+                <a href="../../考试真题/2021下半年/计算机与软件工程知识/">
+            
+                    
+                    2021下半年考试真题-上午卷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2.2" data-path="../../考试真题/2021下半年/软件设计/">
+            
+                <a href="../../考试真题/2021下半年/软件设计/">
+            
+                    
+                    2021下半年考试真题-下午卷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2.3" data-path="../../考试真题/2021上半年/计算机与软件工程知识/">
+            
+                <a href="../../考试真题/2021上半年/计算机与软件工程知识/">
+            
+                    
+                    2021上半年考试真题-上午卷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2.4" data-path="../../考试真题/2021上半年/软件设计/">
+            
+                <a href="../../考试真题/2021上半年/软件设计/">
+            
+                    
+                    2021上半年考试真题-下午卷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2.5" data-path="../../考试真题/2020下半年/计算机与软件工程知识/">
+            
+                <a href="../../考试真题/2020下半年/计算机与软件工程知识/">
+            
+                    
+                    2020下半年考试真题-上午卷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2.6" data-path="../../考试真题/2020下半年/软件设计/">
+            
+                <a href="../../考试真题/2020下半年/软件设计/">
+            
+                    
+                    2020下半年考试真题-下午卷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2.7" data-path="../../考试真题/2019下半年/计算机与软件工程知识/">
+            
+                <a href="../../考试真题/2019下半年/计算机与软件工程知识/">
+            
+                    
+                    2019下半年考试真题-上午卷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2.8" data-path="../../考试真题/2019下半年/软件设计/">
+            
+                <a href="../../考试真题/2019下半年/软件设计/">
+            
+                    
+                    2019下半年考试真题-下午卷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2.9" data-path="../../考试真题/2019上半年/计算机与软件工程知识/">
+            
+                <a href="../../考试真题/2019上半年/计算机与软件工程知识/">
+            
+                    
+                    2019上半年考试真题-上午卷
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.2.10" data-path="../../考试真题/2019上半年/软件设计/">
+            
+                <a href="../../考试真题/2019上半年/软件设计/">
+            
+                    
+                    2019上半年考试真题-下午卷
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3" >
+            
+                <span>
+            
+                    
+                    知识点
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.1.3.1" data-path="../顺序查找/">
+            
+                <a href="../顺序查找/">
+            
+                    
+                    顺序查找
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.2" data-path="../二分查找/">
+            
+                <a href="../二分查找/">
+            
+                    
+                    二分查找
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.3" data-path="../插入排序/">
+            
+                <a href="../插入排序/">
+            
+                    
+                    插入排序
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.4" data-path="../冒泡排序/">
+            
+                <a href="../冒泡排序/">
+            
+                    
+                    冒泡排序
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.5" data-path="../选择排序/">
+            
+                <a href="../选择排序/">
+            
+                    
+                    选择排序
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.6" data-path="../McCabe环路复杂度计算方法/">
+            
+                <a href="../McCabe环路复杂度计算方法/">
+            
+                    
+                    McCabe环路复杂度计算方法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.7" data-path="../归并排序算法/">
+            
+                <a href="../归并排序算法/">
+            
+                    
+                    归并排序算法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.8" data-path="../java数组元素交换的四种方法/">
+            
+                <a href="../java数组元素交换的四种方法/">
+            
+                    
+                    java数组元素交换的四种方法
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.1.3.9" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Armstrong公理
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.10" data-path="../数据库三级模式两级映射/">
+            
+                <a href="../数据库三级模式两级映射/">
+            
+                    
+                    数据库三级模式两级映射
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.11" data-path="../ISO:IEC和McCall软件质量模型/">
+            
+                <a href="../ISO:IEC和McCall软件质量模型/">
+            
+                    
+                    ISO/IEC和McCall软件质量模型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.12" data-path="../软件测试V模型W模型H模型/">
+            
+                <a href="../软件测试V模型W模型H模型/">
+            
+                    
+                    软件测试V模型W模型H模型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.13" data-path="../软件生存周期模型/">
+            
+                <a href="../软件生存周期模型/">
+            
+                    
+                    软件生存周期模型
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.14" data-path="../开放式系统互联OSI/">
+            
+                <a href="../开放式系统互联OSI/">
+            
+                    
+                    开放式系统互联OSI
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.15" data-path="../TCP报文格式解析/">
+            
+                <a href="../TCP报文格式解析/">
+            
+                    
+                    TCP报文格式解析
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.16" data-path="../已知逻辑地址求物理地址/">
+            
+                <a href="../已知逻辑地址求物理地址/">
+            
+                    
+                    已知逻辑地址求物理地址
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.1.3.17" data-path="../MTTF:MTBF:MTRF的概念/">
+            
+                <a href="../MTTF:MTBF:MTRF的概念/">
+            
+                    
+                    MTTF/MTBF/MTRF的概念
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href="../.." >Armstrong公理</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h2 id="armstrong-&#x516C;&#x7406;">Armstrong &#x516C;&#x7406;</h2>
+<h4 id="&#x51FD;&#x6570;&#x4F9D;&#x8D56;&#x7684;&#x516C;&#x7406;&#x7CFB;&#x7EDF;">&#x51FD;&#x6570;&#x4F9D;&#x8D56;&#x7684;&#x516C;&#x7406;&#x7CFB;&#x7EDF;</h4>
+<p>&#x4E00;&#x3001;Armstrong&#x516C;&#x7406;&#x7CFB;&#x7EDF;&#x8BBE;&#x5173;&#x7CFB;&#x6A21;&#x5F0F;R<u,f>&#xFF0C;&#x5176;&#x4E2D;U&#x4E3A;&#x5C5E;&#x6027;&#x96C6;&#xFF0C;F&#x662F;U&#x4E0A;&#x7684;&#x4E00;&#x7EC4;&#x51FD;&#x6570;&#x4F9D;&#x8D56;&#xFF0C;&#x90A3;&#x4E48;&#x6709;&#x5982;&#x4E0B;&#x63A8;&#x7406;&#x89C4;&#x5219;&#xFF1A;</u,f></p>
+<p>&#x2460; A1&#x81EA;&#x53CD;&#x5F8B;&#xFF1A;&#x82E5;Y&#x2286;X&#x2286;U&#xFF0C;&#x5219;X&#x2192;Y&#x4E3A;F&#x6240;&#x8574;&#x542B;&#xFF1B;</p>
+<p>&#x2461; A2&#x589E;&#x5E7F;&#x5F8B;&#xFF1A;&#x82E5;X&#x2192;Y&#x4E3A;F&#x6240;&#x8574;&#x542B;&#xFF0C;&#x4E14;Z&#x2286;U&#xFF0C;&#x5219;XZ&#x2192;YZ&#x4E3A;F&#x6240;&#x8574;&#x542B;&#xFF1B;</p>
+<p>&#x2462; A3&#x4F20;&#x9012;&#x5F8B;&#xFF1A;&#x82E5;X&#x2192;Y&#xFF0C;Y&#x2192;Z&#x4E3A;F&#x6240;&#x8574;&#x542B;&#xFF0C;&#x5219;X&#x2192;Z&#x4E3A;F&#x6240;&#x8574;&#x542B;&#x3002;</p>
+<p>&#x6839;&#x636E;&#x4E0A;&#x9762;&#x4E09;&#x6761;&#x63A8;&#x7406;&#x89C4;&#x5219;&#xFF0C;&#x53C8;&#x53EF;&#x63A8;&#x51FA;&#x4E0B;&#x9762;&#x4E09;&#x6761;&#x63A8;&#x7406;&#x89C4;&#x5219;&#xFF1A;</p>
+<p>&#x2463; &#x5408;&#x5E76;&#x89C4;&#x5219;&#xFF1A;&#x82E5;X&#x2192;Y&#xFF0C;X&#x2192;Z&#xFF0C;&#x5219;X&#x2192;YZ&#x4E3A;F&#x6240;&#x8574;&#x542B;&#xFF1B;</p>
+<p>&#x2464; &#x4F2A;&#x4F20;&#x9012;&#x89C4;&#x5219;&#xFF1A;&#x82E5;X&#x2192;Y&#xFF0C;WY&#x2192;Z&#xFF0C;&#x5219;XW&#x2192;Z&#x4E3A;F&#x6240;&#x8574;&#x542B;&#xFF1B;</p>
+<p>&#x2465; &#x5206;&#x89E3;&#x89C4;&#x5219;&#xFF1A;&#x82E5;X&#x2192;Y&#xFF0C;Z&#x2286;Y&#xFF0C;&#x5219;X&#x2192;Z&#x4E3A;F&#x6240;&#x8574;&#x542B;&#x3002;</p>
+<p>&#x5F15;&#x7406;&#xFF1A;X&#x2192;A1A2&#x2026;Ak&#x6210;&#x7ACB;&#x7684;&#x5145;&#x5206;&#x5FC5;&#x8981;&#x6761;&#x4EF6;&#x662F;X&#x2192;Ai&#x6210;&#x7ACB;(i=1,2,...,k)&#x3002;</p>
+<p>&#x4E8C;&#x3001;Armstrong&#x516C;&#x7406;&#x7CFB;&#x7EDF;&#x7684;&#x8BC1;&#x660E;</p>
+<p>&#x2460; A1&#x81EA;&#x53CD;&#x5F8B;&#xFF1A;&#x82E5;Y X U&#xFF0C;&#x5219;X&#x2192;Y&#x4E3A;F&#x6240;&#x8574;&#x542B;</p>
+<p>&#x8BC1;&#x660E;1</p>
+<p>&#x8BBE;Y&#x2286;X&#x2286;U&#x3002;</p>
+<p>&#x5BF9;R<u,f>&#x7684;&#x4EFB;&#x4E00;&#x5173;&#x7CFB;r&#x4E2D;&#x7684;&#x4EFB;&#x610F;&#x4E24;&#x4E2A;&#x5143;&#x7EC4;t,s&#xFF1A;</u,f></p>
+<p>&#x82E5;t[X]=s[X]&#xFF0C;&#x7531;&#x4E8E;Y X&#xFF0C;&#x5219;&#x6709;t[Y]=s[Y]&#xFF0C;&#x6240;&#x4EE5;X&#x2192;Y&#x6210;&#x7ACB;&#xFF0C;&#x81EA;&#x53CD;&#x5F8B;&#x5F97;&#x8BC1;&#x3002;</p>
+<p>&#x2461; A2&#x589E;&#x5E7F;&#x5F8B;&#xFF1A;&#x82E5;X&#x2192;Y&#x4E3A;F&#x6240;&#x8574;&#x542B;&#xFF0C;&#x4E14;Z U&#xFF0C;&#x5219;XZ&#x2192;YZ&#x4E3A;F&#x6240;&#x8574;&#x542B;</p>
+<p>&#x8BC1;&#x660E;2</p>
+<p>&#x8BBE;X&#x2192;Y&#x4E3A;F&#x6240;&#x8574;&#x542B;&#xFF0C;&#x4E14;Z&#x2286;U&#x3002;</p>
+<p>&#x5BF9;R<u,f>&#x7684;&#x4EFB;&#x4E00;&#x5173;&#x7CFB;r&#x4E2D;&#x7684;&#x4EFB;&#x610F;&#x4E24;&#x4E2A;&#x5143;&#x7EC4;t,s&#xFF1A;</u,f></p>
+<p>&#x82E5;t[XZ]=s[XZ]&#xFF0C;&#x7531;&#x4E8E;X &#x2286;XZ&#xFF0C;Z&#x2286; XZ&#xFF0C;&#x6839;&#x636E;&#x81EA;&#x53CD;&#x5F8B;&#xFF0C;&#x5219;&#x6709;t[X]=s[X]&#x548C;t[Z]=s[Z]&#xFF1B;</p>
+<p>&#x7531;&#x4E8E;X&#x2192;Y&#xFF0C;&#x4E8E;&#x662F;t[Y]=s[Y]&#xFF0C;&#x6240;&#x4EE5;t[YZ]=s[YZ]&#xFF1B;&#x6240;&#x4EE5;XZ&#x2192;YZ&#x6210;&#x7ACB;&#xFF0C;&#x589E;&#x5E7F;&#x5F8B;&#x5F97;&#x8BC1;&#x3002;</p>
+<p>&#x2462; A3&#x4F20;&#x9012;&#x5F8B;&#xFF1A;&#x82E5;X&#x2192;Y&#xFF0C;Y&#x2192;Z&#x4E3A;F&#x6240;&#x8574;&#x542B;&#xFF0C;&#x5219;X&#x2192;Z&#x4E3A;F&#x6240;&#x8574;&#x542B;</p>
+<p>&#x8BC1;&#x660E;3</p>
+<p>&#x8BBE;X&#x2192;Y&#x53CA;Y&#x2192;Z&#x4E3A;F&#x6240;&#x8574;&#x542B;&#x3002;</p>
+<p>&#x5BF9;R<u,f>&#x7684;&#x4EFB;&#x4E00;&#x5173;&#x7CFB;r&#x4E2D;&#x7684;&#x4EFB;&#x610F;&#x4E24;&#x4E2A;&#x5143;&#x7EC4;t,s&#xFF1A;</u,f></p>
+<p>&#x82E5;t[X]=s[X]&#xFF0C;&#x7531;&#x4E8E;X&#x2192;Y&#xFF0C;&#x6709;t[Y]=s[Y]&#xFF1B;</p>
+<p>&#x518D;&#x7531;&#x4E8E;Y&#x2192;Z&#xFF0C;&#x6709;t[Z]=s[Z]&#xFF0C;&#x6240;&#x4EE5;X&#x2192;Z&#x4E3A;F&#x6240;&#x8574;&#x542B;&#xFF0C;&#x4F20;&#x9012;&#x5F8B;&#x5F97;&#x8BC1;&#x3002;</p>
+<p>&#x2463; &#x5408;&#x5E76;&#x89C4;&#x5219;&#xFF1A;&#x82E5;X&#x2192;Y&#xFF0C;X&#x2192;Z&#xFF0C;&#x5219;X&#x2192;YZ&#x4E3A;F&#x6240;&#x8574;&#x542B;</p>
+<p>&#x8BC1;&#x660E;4</p>
+<p>&#x56E0;X&#x2192;Y &#xFF0C;&#x6240;&#x4EE5;X&#x2192;XY &#xFF08;&#x589E;&#x5E7F;&#x5F8B; XX&#x2192;XY&#x5373;X&#x2192;XY&#xFF09;</p>
+<p>&#x56E0;X&#x2192;Z &#xFF0C;&#x6240;&#x4EE5;XY&#x2192;YZ &#xFF08;&#x589E;&#x5E7F;&#x5F8B;&#xFF09;</p>
+<p>&#x56E0;X&#x2192;XY&#xFF0C;XY&#x2192;YZ</p>
+<p>&#x6545;X&#x2192;YZ &#xFF08;&#x4F20;&#x9012;&#x5F8B;&#xFF09;</p>
+<p>&#x2464; &#x4F2A;&#x4F20;&#x9012;&#x89C4;&#x5219;&#xFF1A;&#x82E5;X&#x2192;Y&#xFF0C;WY&#x2192;Z&#xFF0C;&#x5219;XW&#x2192;Z&#x4E3A;F&#x6240;&#x8574;&#x542B;</p>
+<p>&#x8BC1;&#x660E;5</p>
+<p>&#x56E0;X&#x2192;Y &#xFF0C;&#x6240;&#x4EE5;WX&#x2192;WY &#xFF08;&#x589E;&#x5E7F;&#x5F8B;&#xFF09;</p>
+<p>&#x56E0;WY&#x2192;Z &#xFF0C;&#x6240;&#x4EE5;XW&#x2192;Z &#xFF08;&#x4F20;&#x9012;&#x5F8B;&#xFF09;</p>
+<p>&#x2465; &#x5206;&#x89E3;&#x89C4;&#x5219;&#xFF1A;&#x82E5;X&#x2192;Y&#xFF0C;Z&#x2208;Y&#xFF0C;&#x5219;X&#x2192;Z&#x4E3A;F&#x6240;&#x8574;&#x542B;</p>
+<p>&#x8BC1;&#x660E;6</p>
+<p>&#x56E0;Z&#x2208;Y &#x3000;&#x6240;&#x4EE5;Y&#x2192;Z &#xFF08;&#x81EA;&#x53CD;&#x5F8B;&#xFF09;</p>
+<p>&#x56E0;X&#x2192;Y &#x6240;&#x4EE5;X&#x2192;Z &#xFF08;&#x4F20;&#x9012;&#x5F8B;&#xFF09;</p>
+<h4 id="&#x95ED;&#x5305;&#x53CA;&#x5176;&#x8BA1;&#x7B97;">&#x95ED;&#x5305;&#x53CA;&#x5176;&#x8BA1;&#x7B97;</h4>
+<p>&#x5B9A;&#x4E49;1&#xFF1A;&#x8BBE;F&#x662F;&#x5173;&#x7CFB;&#x6A21;&#x578B;R&#x7684;&#x4E00;&#x4E2A;&#x51FD;&#x6570;&#x4F9D;&#x8D56;&#x96C6;&#xFF0C;X,Y&#x662F;R&#x7684;&#x5C5E;&#x6027;&#x5B50;&#x96C6;&#xFF0C;&#x5982;&#x679C;&#x4ECE;F&#x4E2D;&#x7684;&#x51FD;&#x6570;&#x4F9D;&#x8D56;&#x80FD;&#x591F;&#x63A8;&#x51FA;X&#x2192;Y&#xFF0C;&#x5219;&#x79F0;F [1] X&#x2192;Y&#x3002;</p>
+<p>&#x5B9A;&#x4E49;2&#xFF1A;&#x88AB;F&#x903B;&#x8F91;&#x8574;&#x6DB5;&#x7684;&#x51FD;&#x6570;&#x4F9D;&#x8D56;&#x7684;&#x5168;&#x4F53;&#x6784;&#x6210;&#x7684;&#x96C6;&#x5408;&#xFF0C;&#x79F0;&#x4E3A;F&#x7684;&#x95ED;&#x5305;&#xFF0C;&#x8BB0;&#x4F5C;F+&#x3002;</p>
+<p>&#x5B9A;&#x4E49;3&#xFF1A;&#x8BBE;F&#x662F;&#x5C5E;&#x6027;&#x96C6;U&#x4E0A;&#x7684;&#x4E00;&#x7EC4;&#x51FD;&#x6570;&#x4F9D;&#x8D56;&#xFF0C;&#x5219;&#x5C5E;&#x6027;&#x96C6;X&#x5173;&#x4E8E;F&#x7684;&#x95ED;&#x5305;X+F&#x5B9A;&#x4E49;&#x4E3A;X+F={A|A&#x2208;U&#x4E14;X&#x2192;A&#x53EF;&#x7531;F&#x7ECF;Armstrong&#x516C;&#x7406;&#x5BFC;&#x51FA;}&#xFF0C;&#x5373;X+F={A|X&#x2192;A&#x2208;F+}&#x3002;</p>
+<p>&#x5B9A;&#x7406;1&#xFF1A;&#x8BBE;&#x5173;&#x7CFB;&#x6A21;&#x578B;R(U)&#xFF0C;F&#x4E3A;&#x5176;&#x51FD;&#x6570;&#x4F9D;&#x8D56;&#x96C6;&#xFF0C;X&#xFF0C;Y&#x4E3A;U&#x7684;&#x771F;&#x5B50;&#x96C6;&#xFF0C;&#x5219;&#x4ECE;F&#x63A8;&#x51FA;X&#x2192;Y&#x7684;&#x5145;&#x8981;&#x6761;&#x4EF6;&#x662F;Y&#x662F;X+F&#x7684;&#x771F;&#x5B50;&#x96C6;&#x3002;</p>
+<p>(<code>A&#x2ACB;B</code> : &#x5982;&#x679C;&#x96C6;&#x5408;A&#x662F;&#x96C6;&#x5408;B&#x7684;&#x5B50;&#x96C6;&#xFF0C;&#x5E76;&#x4E14;&#x96C6;&#x5408;B&#x4E0D;&#x662F;&#x96C6;&#x5408;A&#x7684;&#x5B50;&#x96C6;&#xFF0C;&#x90A3;&#x4E48;&#x96C6;&#x5408;A&#x53EB;&#x505A;&#x96C6;&#x5408;B&#x7684;&#x771F;&#x5B50;&#x96C6;&#xFF08;proper subset&#xFF09;&#x3002;&#x5982;&#x679C;A&#x5305;&#x542B;&#x4E8E;B,&#x4E14;A&#x4E0D;&#x7B49;&#x4E8E;B,&#x5C31;&#x8BF4;&#x96C6;&#x5408;A&#x662F;&#x96C6;&#x5408;B&#x7684;&#x771F;&#x5B50;&#x96C6;&#x3002;)</p>
+<h4 id="&#x53C2;&#x8003;">&#x53C2;&#x8003;</h4>
+<p><a href="https://blog.csdn.net/u013290998/article/details/22932807" target="_blank">Armstrong &#x516C;&#x7406;</a></p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="../java数组元素交换的四种方法/" class="navigation navigation-prev " aria-label="Previous page: java数组元素交换的四种方法">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="../数据库三级模式两级映射/" class="navigation navigation-next " aria-label="Next page: 数据库三级模式两级映射">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Armstrong公理","level":"1.1.3.9","depth":3,"next":{"title":"数据库三级模式两级映射","level":"1.1.3.10","depth":3,"path":"知识点/数据库三级模式两级映射/README.md","ref":"知识点/数据库三级模式两级映射/README.md","articles":[]},"previous":{"title":"java数组元素交换的四种方法","level":"1.1.3.8","depth":3,"path":"知识点/java数组元素交换的四种方法/README.md","ref":"知识点/java数组元素交换的四种方法/README.md","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"知识点/Armstrong公理/README.md","mtime":"2022-03-05T12:40:08.664Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2022-05-02T15:20:26.945Z"},"basePath":"../..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../../gitbook/gitbook.js"></script>
+    <script src="../../gitbook/theme.js"></script>
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

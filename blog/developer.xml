@@ -1,0 +1,299 @@
+<?xml version="1.0" ?>
+<!--以下特殊字符不可使用：-->
+<!-- &rsquo;全局替换为' -->
+<!-- <br/>换行符全局替换为\n -->
+<!-- &全局替换为&amp; -->
+<!-- @全局替换为%40 -->
+<blogs>
+    <blog location="markdown_tools.html">
+        <id>1</id>
+        <date>November 30, 2018</date>
+        <title>Tool - Markdown实时预览及Html互转</title>
+        <description>
+            Markdown 是一种简单的、轻量级的标记语法。用户可以使用诸如 * # 等简单的标记符号以最小的输入代价生成极富表现力的文档。
+        </description>
+        <cover>images/markdown.jpg</cover>
+    </blog>
+    <blog location="music/index.html">
+        <id>2</id>
+        <date>December 6, 2018</date>
+        <title>Music - 告白气球（周杰伦）</title>
+        <description>
+            Music - 告白气球（周杰伦）
+        </description>
+        <cover>images/balloon.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>3</id>
+        <date>December 17, 2018</date>
+        <title>iOS - Refactoring Code</title>
+        <description>
+            iOS代码重构 : Refactoring - 改善既有代码的设计
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/refactoring/1.png</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>4</id>
+        <date>January 17, 2019</date>
+        <title>HTML - 文件名和网址大小写敏感问题</title>
+        <description>
+            网址中协议和域名部分不分大小写。路径部分是否区分大小写则不一定，尽量统一使用小写。
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/html-java-book.jpg</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>5</id>
+        <date>February 18, 2019</date>
+        <title>Git - 统计研发人员的代码行数</title>
+        <description>
+            使用脚本快速根据日期统计研发人员的代码行数并导出为csv文件
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/code.jpg</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>6</id>
+        <date>March 4, 2019</date>
+        <title>PM - 产品体验日记：10个优秀设计、1个深度思考</title>
+        <description>
+            灵感、方案、审美、眼界 来源于日常储备
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/product-manager/turned-on-smartphone.jpg</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>7</id>
+        <date>March 6, 2019</date>
+        <title>PM - 身为产品经理，如何进行冲突管理？</title>
+        <description>
+            在说一个人的软实力时有一项——沟通交流能力，有效地沟通能够化解矛盾，将复杂的事情简单化。
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/product-manager/vexed-man.png</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>8</id>
+        <date>April 20, 2019</date>
+        <title>Gitbox - 安装与使用</title>
+        <description>
+            Gitbox下载、安装、使用说明
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/appstore-gitbox.png</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>9</id>
+        <date>May 22, 2019</date>
+        <title>财经 - 创业者和打工者的人生有啥不同之处？</title>
+        <description>
+            创业者和打工者选择人生的道路不一样，人生的风景完全不同。
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/sunset-buildings.jpg</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>10</id>
+        <date>May 22, 2019</date>
+        <title>AI - 关于产品、数据和人的八条经验</title>
+        <description>
+            这是一篇经验帖，作者 Daniel Shenfeld 曾在 12 家创业公司工作过，这些公司覆盖金融科技、医疗、教育技术、生物技术等多个领域，所处的阶段也各有不同，从种子前（pre-seed）到收购后都有。
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/closeup-robot-arm.jpg</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>11</id>
+        <date>June 4, 2019</date>
+        <title>WWDC - Mac Pro 为何设计成&quot;刨丝器&quot;</title>
+        <description>
+            苹果的产品，有两个极致。iPhone 是消费品的极致，Mac 则是生产力工具极致。
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/mac-pro-2019.jpg</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>12</id>
+        <date>June 25, 2019</date>
+        <title>国家与地区缩写 + 各国语言缩写</title>
+        <description>
+            国家缩写和各国语言缩写在配置language时常常使用缩写，留存以备后续使用方便查找。
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/closeup-blue-desk-globe.jpg</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>13</id>
+        <date>July 11, 2019</date>
+        <title>Mac - 清理磁盘空间以及 Git 正确的工作方式</title>
+        <description>
+            使用脚本快速清理 Xcode 和 Git 垃圾回收机制来腾出磁盘空间,同时简单介绍 Git 正确的工作方式：git rebase
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/git.jpeg</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>14</id>
+        <date>July 19, 2019</date>
+        <title>PM - 2020年最值得关注的交互设计趋势</title>
+        <description>2019年已经过去一大半了，笔者从日常的产品体验中整理思考，给我们预测了2020年交互设计领域的最新趋势，结合自己的工作领域和方向，相信一定对大家有所帮助。
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/design_delicacy_model.jpg</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>15</id>
+        <date>August 19, 2019</date>
+        <title>iOS - 脚本快速生成App需要的所有尺寸icon</title>
+        <description>使用脚本将一张1024x1024的图片快速裁剪出App需要的所有尺寸的icon
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/icon_list.png</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>16</id>
+        <date>August 22, 2019</date>
+        <title>iOS - 苹果私有API调用定位</title>
+        <description>审核被拒2.5.1使用苹果私有API，使用命令快速定位
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/macbook-pro-desk.jpg</cover>
+        
+    </blog>
+    <blog location="developer-single.html">
+        <id>17</id>
+        <date>October 12, 2023</date>
+        <title>iOS - App Launch &amp; LLVM</title>
+        <description>Slow app launches are frustrating. Learn about the new app launch instrument and discover how to make your app launch fast. Gain insights into what happens during app launch and how to minimize, prioritize, and optimize work at this critical time. Hear tips and tricks from the engineers making iOS apps launch fast.
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_1.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>18</id>
+        <date>October 18, 2023</date>
+        <title>Git - How to remove files permanently from git history</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_2.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>19</id>
+        <date>October 25, 2023</date>
+        <title>MacOS 使用 Charles 对 iOS 模拟器进行抓包</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_3.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>20</id>
+        <date>November 21, 2023</date>
+        <title>iOS 16.1 - 实时活动 (Live Activity) &amp; 灵动岛 (Dynamic Island) 适配</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_4.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>21</id>
+        <date>December 12, 2023</date>
+        <title>CASA (Cloud Application Security Assessment)</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_5.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>22</id>
+        <date>December 12, 2023</date>
+        <title>Markdown - 绘制项目目录结构图</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_18.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>23</id>
+        <date>December 25, 2023</date>
+        <title>Running Node.js Apps via Rancher build-in dockerd while Docker charges</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_7.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>24</id>
+        <date>August 30, 2024</date>
+        <title>iOS Dependency managers comparison</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_8.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>25</id>
+        <date>September 26, 2024</date>
+        <title>MacOS - Unable to install ruby 3.x on M1 (Apple Silicon)</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_9.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>26</id>
+        <date>Jan 15, 2025</date>
+        <title>Xcode - Improve compile speed and incremental compile for projects mixed with oc &amp; swift</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_19.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>27</id>
+        <date>Feb 12, 2025</date>
+        <title>Swift Package Manager(SPM) Best Practice</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_10.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>28</id>
+        <date>Mar 3, 2025</date>
+        <title>AI Tools for Developers</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_13.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>29</id>
+        <date>Mar 5, 2025</date>
+        <title>HotReloading for Swift, Objective-C &amp; C++</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_6.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>30</id>
+        <date>Mar 26, 2025</date>
+        <title>Amplitude - Best Practice</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_17.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>31</id>
+        <date>Mar 31, 2025</date>
+        <title>Figma MCP Server - Best Practice</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_12.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>32</id>
+        <date>Apr 28, 2025</date>
+        <title>Custom MCP Server - Swift Version</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_2.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>33</id>
+        <date>Apr 28, 2025</date>
+        <title>Storing images and audios on GitHub</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_11.jpg</cover>
+    </blog>
+</blogs>

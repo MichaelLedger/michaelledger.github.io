@@ -1,0 +1,527 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>MichaelLedger's Blog - English</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="MichaelLedger's Blog" />
+	<meta name="keywords" content="MichaelLedger, Blog" />
+	<meta name="author" content="MichaelLedger" />
+
+  	<!-- Facebook and Twitter integration -->
+	<meta property="og:title" content=""/>
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content=""/>
+	<meta property="og:site_name" content=""/>
+	<meta property="og:description" content=""/>
+	<meta name="twitter:title" content="" />
+	<meta name="twitter:image" content="" />
+	<meta name="twitter:url" content="" />
+	<meta name="twitter:card" content="" />
+
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="css/animate.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="css/icomoon.css">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="css/bootstrap.css">
+	
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="css/style.css">
+
+	<!-- Theme Toggle style -->
+	<link rel="stylesheet" href="css/theme-toggle.css">
+
+	<!-- CSS3 Loading style -->
+	<link rel="stylesheet" href="css/css3-shine-line-loading.css">
+
+	<!-- Modernizr JS -->
+	<script src="js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+
+	<!-- pagination -->
+	<link rel="stylesheet" href="../public/pagination/pagination.css">
+
+	<link type="text/css" href="css/canvas-particle.css" rel="stylesheet" />
+
+	</head>
+	<body onload=hideLoading()>
+
+	<div class="container"></div>
+
+	<!-- css3-shine-line-loading -->
+	<!-- <div class="loading" id="loading">
+		<div class="loader">
+			<div class="face" id="face1">
+				<div class="circle"></div>
+			</div>
+			<div class="face" id="face2">
+				<div class="circle"></div>
+			</div>
+		</div>
+	</div> -->
+
+	<div class="fh5co-loader"></div>
+	
+	<div id="page">
+		<div id="fh5co-aside" style="background-image: url(images/mountain.jpg)">
+			<div class="overlay"></div>
+			<div class="featured">
+				<span>English</span>
+				<h2>Michael Ledger</a></h2>
+			</div>
+			<nav role="navigation">
+				<ul>
+					<li><a href="index.html"><i class="icon-home"></i></a></li>
+				</ul>
+			</nav>
+		</div>
+		<div id="fh5co-main-content">
+			<div class="fh5co-post" id="blog-content">
+			</div>
+		</div>
+	</div>
+
+	<div id="pagination-content">
+		<!-- pagination -->
+		<div>
+			<div id="pagination" class="pagination" style="margin: 0;"></div>
+		</div>
+
+		<footer id="blog-footer">
+			<div>
+				Copyright &copy; 2018-2025 MTX Software Technology Co.,Ltd. All rights reserved. Designed by <a href="index.html" target="_blank">MichaelLedger</a>.
+				<br/>
+				For personal study only, please do not reprint, not for any commercial use.</p>
+			</div>
+		</footer>
+	</div>
+
+	<div class="gototop js-top">
+		<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
+	</div>
+	
+	<!-- jQuery -->
+	<script src="js/jquery.min.js"></script>
+	<!-- jQuery Easing -->
+	<script src="js/jquery.easing.1.3.js"></script>
+	<!-- Bootstrap -->
+	<script src="js/bootstrap.min.js"></script>
+	<!-- Waypoints -->
+	<script src="js/jquery.waypoints.min.js"></script>
+	<!-- Stellar Parallax -->
+	<script src="js/jquery.stellar.min.js"></script>
+	<!-- Main -->
+	<script src="js/main.js"></script>
+
+	<!-- Theme Toggle -->
+	<script src="js/theme-toggle.js"></script>
+
+	<script type="text/javascript" src="../public/pagination/pagination.js"></script>
+
+	
+	<!-- Additional script to handle entry containers -->
+	<script>
+		// Handle dark theme for entry containers
+		document.addEventListener('DOMContentLoaded', function() {
+			// Create a MutationObserver to detect when the dark-theme class is added/removed
+			const observer = new MutationObserver(function(mutations) {
+				mutations.forEach(function(mutation) {
+					if (mutation.attributeName === 'class') {
+						const isDarkTheme = document.body.classList.contains('dark-theme');
+						
+						// Fixed fh5co-entry padding container issue
+						const entryContainers = document.querySelectorAll('.fh5co-entry.padding');
+						entryContainers.forEach(function(container) {
+							container.style.backgroundColor = isDarkTheme ? '#222' : '';
+							container.style.color = isDarkTheme ? '#c5c5c5' : '';
+							container.style.boxShadow = isDarkTheme ? '0 0 10px rgba(0, 0, 0, 0.2)' : '';
+						});
+						
+						// Update paragraphs inside entry containers
+						const entryParagraphs = document.querySelectorAll('.fh5co-entry.padding p');
+						entryParagraphs.forEach(function(paragraph) {
+							paragraph.style.color = isDarkTheme ? '#c5c5c5' : '';
+						});
+						
+						// Reinitialize mouse click effect
+						reinitializeMouseClickEffect();
+					}
+				});
+			});
+			
+			// Start observing the body element for class changes
+			observer.observe(document.body, { attributes: true });
+			
+			// Function to reinitialize mouse click effect
+			function reinitializeMouseClickEffect() {
+				// Remove any existing canvas elements
+				document.querySelectorAll('canvas').forEach(function(canvas) {
+					if (canvas.style.position === 'fixed' && canvas.style.pointerEvents === 'none') {
+						canvas.remove();
+					}
+				});
+				
+				// Reinitialize by loading the script again
+				const script = document.createElement('script');
+				script.src = 'js/mouse-click.js';
+				script.onload = function() {
+					console.log('Mouse click effect reinitialized');
+				};
+				document.body.appendChild(script);
+			}
+			
+			// Create another observer for dynamically loaded blog content
+			const contentObserver = new MutationObserver(function(mutations) {
+				mutations.forEach(function(mutation) {
+					if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+						const isDarkTheme = document.body.classList.contains('dark-theme');
+						if (isDarkTheme) {
+							// Apply dark theme to newly added content
+							const entryContainers = document.querySelectorAll('.fh5co-entry.padding');
+							entryContainers.forEach(function(container) {
+								container.style.backgroundColor = '#222';
+								container.style.color = '#c5c5c5';
+								container.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)';
+							});
+							
+							// Update paragraphs inside new entry containers
+							const entryParagraphs = document.querySelectorAll('.fh5co-entry.padding p');
+							entryParagraphs.forEach(function(paragraph) {
+								paragraph.style.color = '#c5c5c5';
+							});
+						}
+					}
+				});
+			});
+			
+			// Start observing the blog content container for new posts
+			const blogContent = document.getElementById('blog-content');
+			if (blogContent) {
+				contentObserver.observe(blogContent, { childList: true, subtree: true });
+			}
+			
+			// Apply styles immediately if page loads in dark mode
+			if (document.body.classList.contains('dark-theme')) {
+				const entryContainers = document.querySelectorAll('.fh5co-entry.padding');
+				entryContainers.forEach(function(container) {
+					container.style.backgroundColor = '#222';
+					container.style.color = '#c5c5c5';
+					container.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.2)';
+				});
+				
+				// Initialize mouse click effect in dark mode
+				reinitializeMouseClickEffect();
+			}
+		});
+	</script>
+
+	<script type="text/javascript">
+		var dataList = new Array();
+		$(document).ready(function() {
+			fetchXMLData()
+
+			if (navigator.onLine) {
+			   // console.log('网络已连接');
+			} else {
+			   // console.log('已断网');
+			   alert('Please check your network connection and try again.')
+			}
+
+			// window.addEventListener('online', function() {
+			// 	console.log('网络已连接');
+			// });
+			// window.addEventListener('offline', function() {
+			// 	console.log('已断网');
+			// });
+		})
+
+		function fetchXMLData() {
+			$.ajax({
+				async:true, //是否异步，默认为true(同步：当执行当前AJAX的时候会停止执行后面的JS代码，直到AJAX执行完毕后时，才能继续执行后面的JS代码)
+                type:"GET",
+                url:"english.xml",//这里通过设置url属性来获取xml
+                dataType:"xml",
+                timeout:300000,      //设定超时，单位毫秒(1秒=1000毫秒)
+                cache:true,       //是否加载缓存
+                success:function(xml){//这里是解析xml
+                    $(xml).find("blog").each(function(i){
+                    	var location = $(this).attr("location");     // 跳转页面地址
+						if (location == null || location.length == 0) {//fallback
+                            location = "english.html"
+                        }
+                        var id_value = $(this).children("id").text();   // 唯一标识
+                        var date = $(this).children("date").text();  // 日期
+                        var title = $(this).children("title").text();  // 标题
+                        var description = $(this).children("description").text();  // 描述
+                        var cover = $(this).children("cover").text();  // 封面图片
+
+                        var blog = {};
+                        if (location.indexOf("english.html") != -1) {
+                        	// Gitalk 回调地址会自动去除'?'，故改用'#'
+                        	blog["location"] = location + "#id=" + id_value;
+                        } else {
+                        	blog["location"] = location;
+                        }
+                        
+                        blog["id"] = id_value;
+                        blog["date"] = date;
+                        blog["title"] = title;
+                        blog["description"] = description;
+                        blog["cover"] = cover;
+                        dataList.push(blog);
+                    });
+
+                    //倒序排列
+                    dataList.reverse();
+
+                    var curPage = 1;
+					var pageSize = 10;
+					var dataTotal = dataList.length;
+					var pageTotal = Math.ceil(dataTotal / pageSize);
+
+					new Page({
+						id: 'pagination',
+						pageTotal: pageTotal, //必填，总页数
+						pageAmount: pageSize, //每页多少条
+						dataTotal: dataTotal, // 总共多少条数据
+						curPage: curPage, // 初始页码，不填默认为1
+						pageSize: pageTotal > (document.body.clientWidth > 768 ? 8 : 5) ? (document.body.clientWidth > 768 ? 8 : 5) : pageTotal, // 控件分页个数,不填默认为5
+						showPageTotalFlag: true, // 是否显示数据统计,不填默认不显示
+						showSkipInputFlag: true, // 是否支持跳转,不填默认不显示
+						getPage: function (page) {
+							//获取当前页数
+							fetchPageData("blog-content", page, pageSize);
+
+							//获取组件高度
+						    var cover = document.getElementById("fh5co-aside");
+							var offset = cover.offsetHeight;  //高度px
+							// console.log(offset)
+
+							var offsetY = document.body.clientWidth > 768 ? 0 : offset;//适配不同的屏幕布局(网页可见区域宽)，跳转到第一篇博客
+							// $('body').animate( {scrollTop: offsetY}, 500);// 在500毫秒内平滑滚动到页面顶部
+							$('html, body').animate({
+								scrollTop: offsetY
+							}, 500, 'easeInOutExpo');
+						}
+					});
+					fetchPageData("blog-content", curPage, pageSize);
+					
+					// Apply correct styling to pagination based on current theme
+					setTimeout(function() {
+						// Check if dark theme is active
+						if (document.body.classList.contains('dark-theme')) {
+							// Apply dark theme styles to pagination elements
+							applyDarkThemeToPagination();
+						}
+					}, 100);
+                },
+                complete: function(XHR, TS) {
+                	// console.log(status)
+                	if (TS === 'timeout') {
+						fetchXMLData()//try again
+                	} else if (TS === 'error') {//maybe is fetching,not network problem
+						// alert('Please check your network connection and try again.')
+                	} else if (TS === 'success') {
+                		//console.log('==fetchXMLDataSuccess==');
+                	}
+
+                	autoAdaptFooter();
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+//          textStatus: "timeout", "error", "notmodified" 和 "parsererror"。
+//          （0）null
+//          （1）timeout 超时
+//          （2）error
+//          （3）notmodified 未修改
+//          （4）parsererror 解析错误
+                	console.log(textStatus)
+                }
+            });
+		}
+
+		function autoAdaptFooter() {
+			if (document.body.clientWidth > 768) {
+				var footer = document.getElementById("pagination-content");
+				var footerHeight = footer.offsetHeight;  //高度px
+				$("#" + "page").css({"margin-bottom" : footerHeight});
+			} else {
+				$("#" + "page").css({"margin-bottom" : 0});
+			}
+		}
+
+		$(window).resize( function  () {           //当浏览器大小变化时
+            autoAdaptFooter();
+        });
+	</script>
+
+
+	<script type="text/javascript">
+		function fetchPageData(divIdentifier, currentPage, pageSize) {
+			if (!divIdentifier) return;
+			
+			if (dataList.count < currentPage * pageSize) return;
+			var currentPageData = new Array();
+			for (var i = (currentPage - 1) * pageSize; i < dataList.length && i < currentPage * pageSize; i++) {
+				var data = dataList[i];
+				currentPageData.push(data);
+			}
+
+			var content = "";
+			for (var i = 0; i < currentPageData.length; i++) {
+				var data = currentPageData[i];
+				var htmlStr = "<div class=\"fh5co-entry padding\" onclick=\"window.location.href='" + data.location +"'\"><div><span class=\"fh5co-post-date\">" + data.date + "</span><h2><a href=\"" + data.location + "\">" + data.title + "</a></h2><p>" + data.description + "</p></div><img src=\"" + data.cover + "\" alt=\"Picture\"></div>";
+				content = content + htmlStr;
+			}
+			// document.all[divIdentifier].innerHTML = content;
+			// document.getElementById(divIdentifier).innerHTML = content;
+
+			$("#" + divIdentifier).html(content);// 使用jQuery
+		}
+	</script>
+
+	<script type="text/javascript">
+		function hideLoading() {
+			// document.all["face1"].style.animation = "disappear 1s";
+			// document.all["face2"].style.animation = "disappear 1s";
+
+			// setTimeout(function(){
+				// document.all["face1"].style.display = "none";
+				// document.all["face2"].style.display = "none";
+				// document.all["loading"].style.display="none";
+			// }, 1000);
+
+			//背景色还原为白色
+			// document.querySelector('body').setAttribute('style', 'background-color:#fff');
+			// document.all["loading"].style.backgroundColor = "#fff";
+		}
+	</script>
+
+	<script type="text/javascript">
+        /*7Core-CN - 网页鼠标点击特效（爱心）*/
+        !function (e, t, a) {function r() {for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");requestAnimationFrame(r)}function n() {var t = "function" == typeof e.onclick && e.onclick;e.onclick = function (e) {t && t(), o(e)}}function o(e) {var a = t.createElement("div");a.className = "heart", s.push({el: a,x: e.clientX - 5,y: e.clientY - 5,scale: 1,alpha: 1,color: c()}), t.body.appendChild(a)}function i(e) {var a = t.createElement("style");a.type = "text/css";try {a.appendChild(t.createTextNode(e))} catch (t) {a.styleSheet.cssText = e}t.getElementsByTagName("head")[0].appendChild(a)}function c() {return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"}var s = [];e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {setTimeout(e, 1e3 / 60)}, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()}(window, document);
+	</script>
+
+	<script type="text/javascript" src="js/jparticle.min.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		$(".container").jParticle({
+			background: "rgba(0,0,0,0)",//背景颜色
+			color: "rgba(252,81,133,0.5)",//粒子和连线的颜色 (#fc5185)
+			particlesNumber:document.body.clientWidth > 768 ? 60 : 30,//粒子数量
+			disableLinks:true,//禁止粒子间连线
+			disableMouse:true,//禁止粒子间连线(鼠标)
+			particle: {
+				minSize: 1,//最小粒子
+				maxSize: 3,//最大粒子
+				speed: 30,//粒子的动画速度
+			 }
+		});
+	});
+	</script>
+	
+	<script type="text/javascript">
+	function applyDarkThemeToPagination() {
+		// First style the pagination containers
+		var paginationContainers = document.querySelectorAll('#pagination-content .pagination, .pagination, #pagination');
+		if (paginationContainers.length > 0) {
+			paginationContainers.forEach(function(container) {
+				container.style.backgroundColor = '#1a1a1a';
+			});
+		}
+		
+		// Target both the pagination in #pagination-content and any other pagination containers
+		var paginationItems = document.querySelectorAll('#pagination-content .pagination li, .pagination li');
+		var paginationActive = document.querySelectorAll('#pagination-content .pagination .active, #pagination-content .pagination li.active, .pagination .active, .pagination li.active');
+		
+		// Apply dark theme styles to regular pagination items
+		if (paginationItems.length > 0) {
+			paginationItems.forEach(function(item) {
+				item.style.backgroundColor = '#222';
+				item.style.color = '#c5c5c5';
+				item.style.borderColor = '#444';
+			});
+		}
+		
+		// Apply dark theme styles to active pagination items 
+		if (paginationActive.length > 0) {
+			paginationActive.forEach(function(active) {
+				active.style.backgroundColor = '#FF6B9D';
+				active.style.color = 'white';
+				
+				// Style any anchors inside active elements
+				var activeAnchors = active.querySelectorAll('a');
+				if (activeAnchors.length > 0) {
+					activeAnchors.forEach(function(a) {
+						a.style.color = 'white';
+					});
+				}
+			});
+		}
+	}
+	
+	// Add an event listener for theme changes
+	document.addEventListener('DOMContentLoaded', function() {
+		// Create a MutationObserver to detect when the dark-theme class is added/removed from body
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.attributeName === 'class') {
+					var isDarkTheme = document.body.classList.contains('dark-theme');
+					if (isDarkTheme) {
+						applyDarkThemeToPagination();
+					} else {
+						// Reset pagination containers
+						var paginationContainers = document.querySelectorAll('#pagination-content .pagination, .pagination, #pagination');
+						if (paginationContainers.length > 0) {
+							paginationContainers.forEach(function(container) {
+								container.style.backgroundColor = '';
+							});
+						}
+						
+						// Reset pagination styles in light mode
+						var paginationItems = document.querySelectorAll('#pagination-content .pagination li, .pagination li');
+						var paginationActive = document.querySelectorAll('#pagination-content .pagination .active, #pagination-content .pagination li.active, .pagination .active, .pagination li.active');
+						
+						if (paginationItems.length > 0) {
+							paginationItems.forEach(function(item) {
+								item.style.backgroundColor = '';
+								item.style.color = '';
+								item.style.borderColor = '';
+							});
+						}
+						
+						if (paginationActive.length > 0) {
+							paginationActive.forEach(function(active) {
+								active.style.backgroundColor = '';
+								active.style.color = '';
+								
+								var activeAnchors = active.querySelectorAll('a');
+								if (activeAnchors.length > 0) {
+									activeAnchors.forEach(function(a) {
+										a.style.color = '';
+									});
+								}
+							});
+						}
+					}
+				}
+			});
+		});
+		
+		// Start observing the body element for class changes
+		observer.observe(document.body, { attributes: true });
+		
+		// Run once on page load to ensure correct initial state
+		if (document.body.classList.contains('dark-theme')) {
+			applyDarkThemeToPagination();
+		}
+	});
+	</script>
+
+	</body>
+</html>
+

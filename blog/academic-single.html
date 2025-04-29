@@ -1,0 +1,795 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Blog Title</title><!-- &mdash; -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="Blog Description" />
+	<meta name="keywords" content="English, Authentic" />
+	<meta name="author" content="MichaelLedger" />
+
+  	<!-- Facebook and Twitter integration -->
+	<meta property="og:title" content=""/>
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content=""/>
+	<meta property="og:site_name" content=""/>
+	<meta property="og:description" content=""/>
+	<meta name="twitter:title" content="" />
+	<meta name="twitter:image" content="" />
+	<meta name="twitter:url" content="" />
+	<meta name="twitter:card" content="" />
+
+	<link href="https://fonts.googleapis.com/css?family=Work+Sans:300,400,500,700,800" rel="stylesheet">
+	
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="css/animate.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="css/icomoon.css">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="css/bootstrap.css">
+	
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="css/style.css">
+
+	<!-- Theme Toggle style -->
+	<link rel="stylesheet" href="css/theme-toggle.css">
+
+	<!-- Modernizr JS -->
+	<script src="js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+
+	<!-- Markdown JS -->
+	<!-- https://github.com/showdownjs/showdown -->
+	<!-- <script src="../public/showdown/dist/showdown.min.js"></script> -->
+
+	<!-- Gitalk is a modern comment component based on Github Issue and Preact. https://gitalk.github.io -->
+	<!-- <link rel="stylesheet" href="../gitalk/gitalk.css"> -->
+
+	<!-- <script src="../gitalk/gitalk.min.js"></script> -->
+	<!-- Gitalk md5加密 clientID & ClientSecret -->
+	<!-- <script src="../gitalk/md5.min.js "></script> -->
+
+	<link type="text/css" href="css/canvas-particle.css" rel="stylesheet" />
+
+	<!-- MathJax -->
+	<!-- online -->
+	<!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.6/latest.js?config=TeX-MML-AM_CHTML' async></script> -->
+	<!-- offline -->
+	<script src='../public/mathjax/MathJax-2.7.6/latest.js?config=TeX-MML-AM_CHTML' async></script>
+	<!-- <script type="text/x-mathjax-config">
+	    MathJax.Hub.Config({
+           showProcessingMessages: true,
+           extensions: ["tex2jax.js"],
+           jax: ["input/TeX", "output/HTML-CSS"],
+           tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+               displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+               processEscapes: true,
+               skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"]
+           },
+           "HTML-CSS": {
+               availableFonts: ["STIX", "TeX"],
+               showMathMenu: false
+           }
+        }); 
+	</script> -->
+	<script type="text/javascript">
+		window.MathJax = {
+			extensions: ["tex2jax.js"],
+			tex2jax: {
+				inlineMath: [ ['$','$'], ["\\(","\\)"] ], 
+				processEscapes: true
+			},
+			"HTML-CSS": {
+				availableFonts: ["STIX", "TeX"],
+                showMathMenu: false
+           }
+		};
+	</script>
+    <base target="_blank">
+	</head>
+	<body class="single">
+
+	<div class="container"></div>
+		
+	<div class="fh5co-loader"></div>
+	
+	<div id="page">
+		<div id="fh5co-aside" style="background-image: url()" data-stellar-background-ratio="0.5">
+			<div class="overlay"></div>
+			<nav role="navigation">
+				<ul>
+					<li><a href="academic.html"><i class="icon-home"></i></a></li>
+				</ul>
+			</nav>
+			<div class="page-title">
+				<!-- <img src="images/person_4.jpg" alt="portrait"> -->
+				<span id="post-date">Date</span>
+				<h2 id="post-title">Title</h2>
+			</div>
+		</div>
+		<div id="fh5co-main-content">
+			<div class="fh5co-post"> 
+				<div class="fh5co-entry padding">
+					<div id="english-content" class="post-content">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- <div id="gitalk-container"></div> -->
+
+	<div class="fh5co-navigation">
+		<div class="fh5co-cover prev fh5co-cover-sm" id="previous-post-cover" style="background-image: url()">
+			<div class="overlay"></div>
+
+			<a class="copy" href="#" id="pervious-post-location" target="_self">
+				<div class="display-t">
+					<div class="display-tc">
+						<div>
+							<span>Previous Post</span>
+							<h2 id="pervious-post-title">Previous Post Title</h2>
+						</div>
+					</div>
+				</div>
+			</a>
+
+		</div>
+		<div class="fh5co-cover next fh5co-cover-sm" id="next-post-cover" style="background-image: url()">
+			<div class="overlay"></div>
+			<a class="copy" href="#" id="next-post-location" target="_self">
+				<div class="display-t">
+					<div class="display-tc">
+						<div>
+							<span>Next Post</span>
+							<h2 id="next-post-title">Next Post Title</h2>
+						</div>
+					</div>
+				</div>
+			</a>
+
+		</div>
+	</div>
+
+	<footer>
+		<div>
+			Copyright &copy; 2018-2025 MTX Software Technology Co.,Ltd. All rights reserved. Designed by <a href="academic.html" target="_blank">MichaelLedger</a>.
+			<br/>
+			For personal study only, please do not reprint, not for any commercial use.</p>
+		</div>
+	</footer>
+
+	<div class="gototop js-top">
+		<a href="#" class="js-gotop"><i class="icon-arrow-up"></i></a>
+	</div>
+	
+	<!-- jQuery -->
+	<script src="js/jquery.min.js"></script>
+	<!-- jQuery Easing -->
+	<script src="js/jquery.easing.1.3.js"></script>
+	<!-- Bootstrap -->
+	<script src="js/bootstrap.min.js"></script>
+	<!-- Waypoints -->
+	<script src="js/jquery.waypoints.min.js"></script>
+	<!-- Stellar Parallax -->
+	<script src="js/jquery.stellar.min.js"></script>
+	<!-- Main -->
+	<script src="js/main.js"></script>
+
+	<!-- Theme Toggle -->
+	<script src="js/theme-toggle.js"></script>
+
+	<!-- bejson : Markdown convert Html -->
+    <!-- <script src="../public/static/bejson/convert/markdown.min.js"></script> -->
+    <!-- <script src="../public/static/bejson/convert/to-markdown.js"></script> -->
+	<!-- https://github.com/pandao/editor.md.git -->
+    <link rel="stylesheet" type="text/css" href="../public/markdown-editor/css/editormd.preview.css" />
+    <script src="../public/markdown-editor/editormd.js"></script>
+    <script src="../public/markdown-editor/lib/marked.min.js"></script>
+    <script src="../public/markdown-editor/lib/prettify.min.js"></script>
+
+	<!-- Marked: https://github.com/markedjs/marked -->
+	<!-- <script src="../public/marked/marked.min.js"></script> -->
+    
+    <!-- MathJax: https://github.com/mathjax/MathJax -->
+    <!-- online js -->
+        <!-- <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_CHTML"></script> -->
+<!--    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>-->
+<!--    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=Tex-AMS-CHTML"></script>-->
+
+    <!-- Asciimathml: https://github.com/asciimath/asciimathml -->
+    <!-- <script src="../public/asciimathml/ASCIIMathML.js"></script> -->
+
+	<script type="text/javascript">
+		var dataList = new Array();
+		$(document).ready(function() {
+			$.ajax({
+				async: true, //是否异步
+                type:"get",
+                url:"academic.xml",//这里通过设置url属性来获取xml
+                dataType:"xml",
+                timeout:300000,      //设定超时
+                cache:true,       //是否设置缓存
+                success:function(xml){//这里是解析xml
+                    $(xml).find("blog").each(function(i){
+                    	var location = $(this).attr("location");     // 跳转页面地址
+                        var id_value = $(this).children("id").text();   // 唯一标识
+                        var date = $(this).children("date").text();  // 日期
+                        var title = $(this).children("title").text();  // 标题
+                        var description = $(this).children("description").text();  // 描述
+                        var cover = $(this).children("cover").text();  // 封面图片
+                        var audio = $(this).children("audio").text();  // 音频地址
+                        var markdownContent = $(this).children("markdown-content").text();  // markdown文本
+
+                        var blog = {};
+                        if (location.indexOf("academic-single.html") != -1) {
+                        	// '#'不会触发MathJax刷新导致数学公式需要刷新页面才能正常显示，故使用'?'
+                        	blog["location"] = location + "?id=" + id_value;
+                        } else {
+                        	blog["location"] = location;
+                        }
+                        
+                        blog["id"] = id_value;
+                        blog["date"] = date;
+                        blog["title"] = title;
+                        blog["description"] = description;
+                        blog["cover"] = cover;
+                        blog["audio"] = audio;
+                        blog["content"] = markdownContent;
+                        dataList.push(blog);                        
+                    });
+                    // '#'不会触发MathJax刷新导致数学公式需要刷新页面才能正常显示，故使用'?'
+                    var englishId = getQueryString("id");
+					fetchDetailData("english-content", englishId);
+                   
+                   // 解决 MathJax 与 Markdown 的冲突 https://liam.page/2015/09/09/fix-conflict-between-mathjax-and-markdown/
+                  // 这里，我们用正则表达式匹配了 <code> 标签内的美元符号，然后将 <code> 标签替换成 <span class=hpl_mathjax_inline> 标签，最后调用 MathJax.Hub.Queue 处理数学公式。经过这样一番处理，This is an example: `$f_i = f_{i + 1}$` 就可以被正确处理了。
+                   /*$("english-content").map(function(){
+                         match = /^\$(.*)\$$/.exec($(this).html());
+                         if (match) {
+                             $(this).replaceWith("<span class=hpl_mathjax_inline>" + $(this).html() + "</span>");
+                             MathJax.Hub.Queue(["Typeset",MathJax.Hub,$(this).get(0)]);
+                         }
+                         match = /^\$\$(.*)\$\$$/.exec($(this).html());
+                         if (match) {
+                             $(this).replaceWith("<span class=hpl_mathjax_inline>" + $(this).html() + "</span>");
+                             MathJax.Hub.Queue(["Typeset",MathJax.Hub,$(this).get(0)]);
+                         }
+                         match = /^\\begin/.exec($(this).html());
+                         if (match) {
+                             $(this).replaceWith("<span class=hpl_mathjax_inline>" + $(this).html() + "</span>");
+                             MathJax.Hub.Queue(["Typeset",MathJax.Hub,$(this).get(0)]);
+                         }
+                   });
+                   */
+                }
+            });
+		})
+	</script>
+
+	<!-- <script type="text/javascript">
+		$(document).ready(function() {
+			const gitalk = new Gitalk({
+				  clientID: '0601261d21cac3d14073',
+				  clientSecret: '5efe7409ca9ad2f0975942b41e8fb60d6970931c',
+				  repo: 'MichaelLedger.github.io',
+				  owner: 'MichaelLedger',
+				  admin: ['MichaelLedger'],
+				  id: location.pathname,      // Ensure uniqueness and length less than 50
+				  distractionFreeMode: false,  // Facebook-like distraction free mode
+				  language: 'zh-CN'
+			})
+
+			gitalk.render('gitalk-container')
+		})
+	</script> -->
+    
+    <!-- 加载和配置MathJax https://mathjax-chinese-doc.readthedocs.io/en/latest/configuration.html#mathjax -->
+   <!--  <script type="text/x-mathjax-config">
+	    MathJax.Hub.Config({
+           showProcessingMessages: false, //关闭js加载过程信息
+           extensions: ["tex2jax.js"],
+           jax: ["input/TeX", "output/HTML-CSS"],
+           tex2jax: {
+               inlineMath: [ ['$','$'], ["\\(","\\)"] ],//行内公式选择符
+               displayMath: [ ['$$','$$'], ["\\[","\\]"] ],//段内公式选择符
+               processEscapes: true,
+               skipTags: ["script", "noscript", "style", "textarea", "pre", "code", "a"] //避开某些标签
+           },
+           "HTML-CSS": {
+               availableFonts: ["STIX", "TeX"],//可选字体
+               showMathMenu: true //关闭右击菜单显示
+           },
+           isMathjaxConfig: true,
+        }); 
+    </script> -->
+
+	<!-- Gitalk 回调地址会自动去除'?'，故改用'#' 而修改hash不会刷新页面，需要监听锚部分的修改事件-->
+	<script type="text/javascript">
+		document.getElementsByTagName("BODY")[0].onhashchange = function() { hashChangedFunction()};
+		function hashChangedFunction() {
+		    // alert("锚部分已修改！");
+		    // 手动滚动到顶部
+		    document.body.scrollTop = 0;
+		    // Gitalk 回调地址会自动去除'?'，故改用'#'
+            var englishId = getHashString("id");
+			fetchDetailData("english-content", englishId);
+		}
+	</script>
+
+	<script type="text/javascript">
+			function fetchDetailData(divIdentifier, englishId) {
+				if (!divIdentifier) return;
+                // resset markdown contents from .md files
+                let readme_file_name = 'academic_' + englishId + '.md'
+                let readmd_file_path = '../markdowns/academic/' + readme_file_name
+                // console.log("readmd_file_path:", readmd_file_path)
+                $.ajax({
+                    async: true, //是否异步
+                    type:"get",
+                    url:readmd_file_path,//这里通过设置url属性来获取markdown
+                    dataType:"text",
+                    timeout:300000,      //设定超时
+                    cache:true,       //是否设置缓存
+                    success:function(markdown){//这里是解析markdown
+                        //console.log('markdown fetched:', markdown)
+                        resetHTMLContent(divIdentifier, englishId, markdown);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log("[warning] markdowns content is empty：", xhr.status, error);
+                        resetHTMLContent(divIdentifier, englishId, null);
+                    }
+                });
+			}
+
+			function resetHTMLContent(divIdentifier, englishId, markdown) {
+				if (!divIdentifier) return;
+				for (var i = 0; i < dataList.length; i++) {
+					var data = dataList[i];
+					if (data.id === englishId) {
+						currentIndex = i;
+						var audioHtmlStr;
+						if (data.audio && data.audio.length > 0) {
+							audioHtmlStr = "<audio style=\"margin-bottom:20px\" preload=\"auto\" controls><source src=\""+ data.audio + "\" id='mp3_fileurl'></audio>";
+						} else {
+							audioHtmlStr = "";
+						}
+						var markdown_new = ''
+						if (markdown && markdown.length > 0) {
+                            markdown_new = markdown;
+                        } else {
+							markdown_new = data.content
+						}
+						// var textHtmlStr = convertMarkdownToHtml(data.content);
+						var textHtmlStr_New = "<div id=\"markdown-view\"></div>"
+						// document.all[divIdentifier].innerHTML = content;
+						// document.getElementById(divIdentifier).innerHTML = content;
+						$("#" + divIdentifier).html(audioHtmlStr + textHtmlStr_New);// 使用jQuery
+						editormd.markdownToHTML("markdown-view", {
+                            markdown: markdown_new,
+							tex: true
+                        });
+						editormd.katexURL = {
+							js  : "../public/markdown-editor/lib/KaTeX/0.3.0/katex.min",  // default: //cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min
+							css : "../public/markdown-editor/lib/KaTeX/0.3.0/katex.min"   // default: //cdnjs.cloudflare.com/ajax/libs/KaTeX/0.3.0/katex.min
+						};	
+						$("#" + "fh5co-aside").css({"background-image" : "url("+ data.cover + ")"});
+						$("#" + "post-date").html(data.date);
+						$("#" + "post-title").html(data.title);
+
+						// $(document).attr("title",data.title);
+						$("title").html(data.title);
+
+						// $(document).attr("description",data.description);
+						$("description").html(data.description);
+
+						var hasPrevious = i > 0;
+						var hasNext = i < dataList.length - 1;
+
+						if (hasPrevious) {
+							var previous = dataList[i-1];
+							$("#" + "previous-post-cover").css({"background-image" : "url("+ previous.cover + ")"});
+							$("#" + "pervious-post-location").attr("href", previous.location);
+							$("#" + "pervious-post-title").html(previous.title);
+						} else {
+							$("#" + "previous-post-cover").css({"background-image" : "url("+ data.cover + ")"});
+							$("#" + "pervious-post-location").attr("href", data.location);
+							$("#" + "pervious-post-title").html(data.title);
+						}
+
+						if (hasNext) {
+							var next = dataList[i+1];
+							$("#" + "next-post-cover").css({"background-image" : "url("+ next.cover + ")"});
+							$("#" + "next-post-location").attr("href", next.location);
+							$("#" + "next-post-title").html(next.title);
+						} else {
+							$("#" + "next-post-cover").css({"background-image" : "url("+ data.cover + ")"});
+							$("#" + "next-post-location").attr("href", data.location);
+							$("#" + "next-post-title").html(data.title);
+						}						
+						break;
+					}
+				}
+				addCodeCopyBtn();
+			}
+
+			function getQueryString(name) {
+			  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+			  var r = window.location.search.substr(1).match(reg);
+			  if (r != null) {
+			    return unescape(r[2]);
+			  }
+			  return null;
+			}
+			function getHashString(name) {
+			  var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+			  var r = window.location.hash.substr(1).match(reg);
+			  if (r != null) {
+			    return unescape(r[2]);
+			  }
+			  return null;
+			}
+			function convertMarkdownToHtml(markdownStr){
+			    //console.log('before:\n'+ markdownStr);
+
+			    // 将XML中的/n解析为<br/>
+			    // \s表示space空格,^\s表示以空格开始，\s$表示以空格结束，前后添加空格，避免转码MathJax的特定语法，比如:'\ne'
+			    markdownStr = markdownStr.replace(/\s\\n\s/g, '<br/>');
+
+			    // bejson
+			    var html = markdown.toHTML(markdownStr);
+
+				// marked
+				// var html = marked(markdownStr);
+
+				// showdown
+			    // var converter = new showdown.Converter();
+			    // var html = converter.makeHtml(markdownStr);
+                
+                // MathJax
+                // var html = markdownStr;
+
+			    html = html.replace(/&lt;br\/&gt;/g, '<br/>');// html转码，换行符正确解析
+			    html = html.replace(/<br\/>/g, '<br\/><br\/>');// 添加一个换行，美化排版
+			    html = html.replace(/&amp;rsquo;/g, '\'');// &rsquo;正常解析为'
+
+			    html = html.replace(/#38/g, '\&'); // '&'替换为'#38'
+
+			    //Latex中的'<'替换为'\less';'>'替换为'\greater'
+			    html = html.replace(/\\less/g, '\<');
+			    html = html.replace(/\\greater/g, '\>');
+
+				// jianshu math image
+				// let mathStr = "<img class=\"math-block\" src=\"https://math.jianshu.com/math?formula=f(x%2C%20y)%20%3D%20100%20*%20%5Clbrace%5B(x%20%2B%20y)%20*%203%5D%20-%2088%5Crbrace\" alt=\"f(x, y) = 100 * \lbrace[(x + y) * 3] - 88\rbrace\" mathimg=\"1\">";
+				// html = html.concat(mathStr);
+
+			    //console.log('after:\n' + html);
+			    
+			    return html;
+			}
+	</script>
+
+<style>
+	.notification {
+		position: fixed;
+		top: 50%; /* Center vertically */
+		left: 50%; /* Center horizontally */
+		transform: translate(-50%, -50%); /* Adjust position to truly center */
+		background-color: #FC5185; /* Green */
+		color: white;
+		padding: 10px;
+		border-radius: 5px;
+		display: none; /* Hidden by default */
+		z-index: 1000; /* Sit on top */
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+		font-family: Arial, sans-serif; /* Font style */
+		font-size: 16px; /* Font size */
+		transition: opacity 0.5s ease; /* Smooth transition for fade out */
+		opacity: 1; /* Start fully visible */
+	}
+
+	.custom-alert {
+		position: fixed;
+		/* top: 20px;
+		right: 20px; */
+		top: 50%; /* Center vertically */
+		left: 50%; /* Center horizontally */
+		transform: translate(-50%, -50%); /* Adjust position to truly center */
+		background-color: #FC5185; /* Green */
+		color: white;
+		padding: 10px;
+		border-radius: 5px;
+		display: none; /* Hidden by default */
+		z-index: 1000; /* Sit on top */
+		box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+		font-family: Arial, sans-serif; /* Font style */
+		font-size: 16px; /* Font size */
+		transition: opacity 0.5s ease; /* Smooth transition for fade out */
+		opacity: 1; /* Start fully visible */
+	}
+
+	pre {
+		position: relative; /* Set position relative for absolute positioning of button */
+		padding: 10px;
+		border: 1px solid #ccc; /* Optional: border for the <pre> element */
+		margin-bottom: 20px; /* Space between <pre> elements */
+	}
+
+	.copy-button {
+		position: absolute; /* Position the button absolutely */
+		top: 10px; /* Distance from the top of the <pre> */
+		right: 10px; /* Distance from the right of the <pre> */
+		background-color: #FC5185;/*#007BFF;*/ /* Button color */
+		color: white; /* Button text color */
+		border: none; /* Remove default border */
+		padding: 5px 10px; /* Button padding */
+		border-radius: 5px; /* Rounded corners */
+		cursor: pointer; /* Pointer cursor on hover */
+		z-index: 1001; /* Ensure button is above the <pre> */
+		display: none; /* Hidden by default */
+	}
+
+	pre:hover .copy-button {
+		display: block; /* Show button when hovering over <pre> */
+	}
+
+	/* Always show the copy button on small devices with reduced opacity */
+	@media (max-width: 768px) {
+		.copy-button {
+			display: block !important; /* Always show the button */
+			opacity: 0.4; /* Set opacity for small devices */
+		}
+	}
+
+	.copy-button:hover {
+		background-color: #c7254e; /* Darker blue on hover */
+		opacity: 1.0; /* Full opacity on hover */
+	}
+</style>
+
+<script>
+	document.addEventListener('DOMContentLoaded', () => {
+		addCodeCopyBtn();
+	});
+
+	function addCodeCopyBtn() {
+		const preElements = document.querySelectorAll('pre.prettyprint.linenums.prettyprinted');
+		console.log('preElements:', preElements);
+		preElements.forEach(pre => {
+			// Create a copy button
+			const button = document.createElement('button');
+			button.innerText = 'Copy';
+			button.className = 'copy-button'; // Add class for styling
+			button.onclick = () => copyToClipboard(pre);
+
+			// Append the button after the <pre> element
+			//pre.parentNode.insertBefore(button, pre.nextSibling);
+
+			// Append the button to the <pre> element
+			pre.appendChild(button);
+		});
+	}
+
+	function copyToClipboard(preElement) {
+		const textToCopy = getTextWithLineBreaks(preElement);//preElement.textContent;//preElement.innerText;
+
+		navigator.clipboard.writeText(textToCopy).then(() => {
+			//alert('Copied to clipboard!');
+			showNotification('Copied to clipboard!');
+		}).catch(err => {
+			console.error('Failed to copy: ', err);
+		});
+	}
+
+	function getTextWithLineBreaks(element) {
+		let text = '';
+		const childNodes = element.childNodes;
+
+		childNodes.forEach((node, index) => {
+			// console.log('node.tagName:', node.tagName);
+			if (node.nodeType === Node.TEXT_NODE) {
+				text += node.textContent; // Add text content
+				// console.log('node.textContent:', node.textContent);
+			} else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BUTTON') {
+				text += getTextWithLineBreaks(node); // Recursively get text from child elements
+				// Use innerHTML to preserve spaces and formatting
+				// text += node.innerHTML.replace(/<br\s*\/?>/g, '\n'); // Convert <br> to newlines
+				if (node.tagName === 'LI' || node.tagName === 'OL') {
+					// Only add a newline if it's not the last node (copy btn at last)
+					if (index < childNodes.length - 1) {
+						// console.log('add line break for:', node.tagName);
+						text += '\n'; // Add a line break after list items or ordered lists
+					}
+				}
+			}
+		});
+
+		// Remove the last newline if it exists
+		if (text.endsWith('\n')) {
+			text = text.slice(0, -1); // Remove the last character (newline)
+		}
+
+		return text;//text.trim(); // Trim any leading or trailing whitespace
+	}
+
+	function showNotification(message) {
+		const notification = document.createElement('div');
+		notification.className = 'custom-alert';//'notification';
+		notification.innerText = message;
+		document.body.appendChild(notification);
+		notification.style.display = 'block'; // Show the notification
+		notification.style.opacity = '1'; // Ensure it's fully visible
+
+		// Fade out effect
+		setTimeout(() => {
+			notification.style.opacity = '0'; // Start fading out
+		}, 1000); // Wait 1 second before starting to fade out
+
+		// Remove the notification from the DOM after fading out
+		setTimeout(() => {
+			document.body.removeChild(notification);
+		}, 1500); // Wait 1.5 seconds to allow fade out to complete
+	}
+	</script>
+
+	<script type="text/javascript">
+        /*7Core-CN - 网页鼠标点击特效（爱心）*/
+        !function (e, t, a) {function r() {for (var e = 0; e < s.length; e++) s[e].alpha <= 0 ? (t.body.removeChild(s[e].el), s.splice(e, 1)) : (s[e].y--, s[e].scale += .004, s[e].alpha -= .013, s[e].el.style.cssText = "left:" + s[e].x + "px;top:" + s[e].y + "px;opacity:" + s[e].alpha + ";transform:scale(" + s[e].scale + "," + s[e].scale + ") rotate(45deg);background:" + s[e].color + ";z-index:99999");requestAnimationFrame(r)}function n() {var t = "function" == typeof e.onclick && e.onclick;e.onclick = function (e) {t && t(), o(e)}}function o(e) {var a = t.createElement("div");a.className = "heart", s.push({el: a,x: e.clientX - 5,y: e.clientY - 5,scale: 1,alpha: 1,color: c()}), t.body.appendChild(a)}function i(e) {var a = t.createElement("style");a.type = "text/css";try {a.appendChild(t.createTextNode(e))} catch (t) {a.styleSheet.cssText = e}t.getElementsByTagName("head")[0].appendChild(a)}function c() {return "rgb(" + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + "," + ~~(255 * Math.random()) + ")"}var s = [];e.requestAnimationFrame = e.requestAnimationFrame || e.webkitRequestAnimationFrame || e.mozRequestAnimationFrame || e.oRequestAnimationFrame || e.msRequestAnimationFrame || function (e) {setTimeout(e, 1e3 / 60)}, i(".heart{width: 10px;height: 10px;position: fixed;background: #f00;transform: rotate(45deg);-webkit-transform: rotate(45deg);-moz-transform: rotate(45deg);}.heart:after,.heart:before{content: '';width: inherit;height: inherit;background: inherit;border-radius: 50%;-webkit-border-radius: 50%;-moz-border-radius: 50%;position: fixed;}.heart:after{top: -5px;}.heart:before{left: -5px;}"), n(), r()}(window, document);
+	</script>
+
+	<script type="text/javascript" src="js/jparticle.min.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		$(".container").jParticle({
+			background: "rgba(0,0,0,0)",//背景颜色
+			color: "rgba(252,81,133,0.5)",//粒子和连线的颜色 (#fc5185)
+			particlesNumber:document.body.clientWidth > 768 ? 60 : 30,//粒子数量
+			disableLinks:true,//禁止粒子间连线
+			disableMouse:true,//禁止粒子间连线(鼠标)
+			particle: {
+				minSize: 1,//最小粒子
+				maxSize: 3,//最大粒子
+				speed: 30,//粒子的动画速度
+			 }
+		});
+	});
+	</script>
+
+	<script src="../gitalk/getmd5.js"></script>
+	</script>
+	
+	<div id="page_end_html">
+        <!-- 底部加了小鱼<・)))><<~ -->
+        <div id="jsi-flying-fish-container"></div>
+        <script src='js/fish.js'></script>
+    </div>
+
+    <!-- Image Preview Functionality -->
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create overlay elements
+            const overlay = document.createElement('div');
+            overlay.className = 'image-preview-overlay';
+            overlay.style.display = 'none'; // Ensure it's hidden initially
+            overlay.style.opacity = '0'; // Set initial opacity to 0
+            overlay.style.visibility = 'hidden'; // Use visibility hidden as extra measure
+            
+            const container = document.createElement('div');
+            container.className = 'image-preview-container';
+            
+            const img = document.createElement('img');
+            img.className = 'image-preview-image';
+            
+            const closeBtn = document.createElement('div');
+            closeBtn.className = 'image-preview-close';
+            
+            // Build structure
+            container.appendChild(img);
+            container.appendChild(closeBtn);
+            overlay.appendChild(container);
+            document.body.appendChild(overlay);
+            
+            // Close function
+            function closePreview() {
+                overlay.classList.remove('active');
+                overlay.style.opacity = '0';
+                // Wait for transition to complete before hiding
+                setTimeout(function() {
+                    overlay.style.display = 'none';
+                    overlay.style.visibility = 'hidden';
+                    // Re-enable page scrolling
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+            
+            // Close on click outside or close button
+            closeBtn.addEventListener('click', closePreview);
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    closePreview();
+                }
+            });
+            
+            // Close on escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && overlay.style.display === 'flex') {
+                    closePreview();
+                }
+            });
+            
+            // Function to initialize click events on images
+            function initializeImageClickEvents() {
+                // Find all images in markdown-view that aren't emojis
+                const markdownView = document.getElementById('markdown-view') || document.getElementById('english-content');
+                if (!markdownView) return;
+                
+                const images = markdownView.querySelectorAll('img:not(.emoji):not([alt^="emoji-"]):not([alt*=" emoji-"]):not([data-preview-initialized])');
+                
+                // Add click event to each image
+                images.forEach(function(image) {
+                    image.setAttribute('data-preview-initialized', 'true');
+                    image.addEventListener('click', function(e) {
+                        e.preventDefault(); // Prevent default click behavior
+                        
+                        // Get the source before showing the overlay
+                        const imgSrc = this.src;
+                        
+                        // Make sure image is set to loading state
+                        img.src = ''; // Clear previous image
+                        
+                        // Show loading state
+                        overlay.style.display = 'flex';
+                        overlay.style.visibility = 'visible';
+                        
+                        // Load the image
+                        img.onload = function() {
+                            // After image has loaded, make it visible with animation
+                            requestAnimationFrame(function() {
+                                overlay.classList.add('active');
+                                overlay.style.opacity = '1';
+                            });
+                            
+                            // Disable page scrolling
+                            document.body.style.overflow = 'hidden';
+                        };
+                        
+                        // Set the source after setting up the onload handler
+                        setTimeout(() => {
+                            img.src = imgSrc;
+                            
+                            // If image is already cached and loads instantly
+                            if (img.complete) {
+                                requestAnimationFrame(function() {
+                                    overlay.classList.add('active');
+                                    overlay.style.opacity = '1';
+                                });
+                                document.body.style.overflow = 'hidden';
+                            }
+                        }, 50); // Small delay to ensure overlay is visible first
+                    });
+                });
+            }
+            
+            // Initialize for existing images
+            // Wait a short time to ensure markup is fully loaded
+            setTimeout(initializeImageClickEvents, 500);
+            
+            // Add observer for dynamically added images
+            const observer = new MutationObserver(function(mutations) {
+                initializeImageClickEvents();
+            });
+            
+            const markdownView = document.getElementById('markdown-view') || document.getElementById('english-content');
+            if (markdownView) {
+                observer.observe(markdownView, { childList: true, subtree: true });
+            }
+        });
+    </script>
+	</body>
+</html>
+

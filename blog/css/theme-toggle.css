@@ -1,0 +1,863 @@
+/* Theme Toggle Styles */
+:root {
+  --background-color: #fff;
+  --text-color: #828282;
+  --heading-color: #000;
+  --link-color: #FC5185;
+  --blockquote-bg: #f8f8f8;
+  --blockquote-border: #e2e8f0;
+  --blockquote-text: #475569;
+  --em-bg: #fffdf2;
+  --em-color: #5a4500;
+  --overlay-color: rgba(0, 0, 0, 0.7);
+  --fh5co-post-bg: #fff;
+  --theme-toggle-icon: "🌙";
+  --footer-bg: #fafafa;
+  --footer-color: #828282;
+  --navigation-bg: rgba(255, 255, 255, 0.9);
+  --code-bg: #f5f5f5;
+  --code-color: #333;
+  --input-bg: #fff;
+  --input-border: #e6e6e6;
+  --input-color: #333;
+  --markdown-bg: #fff;
+  --markdown-color: #333;
+  --editormd-preview-bg: #fff;
+  --fh5co-entry-bg: #fff;
+  --fh5co-entry-color: #828282;
+}
+
+body.dark-theme {
+  --background-color: #1a1a1a;
+  --text-color: #c5c5c5;
+  --heading-color: #f0f0f0;
+  --link-color: #FF6B9D;
+  --blockquote-bg: #2d2d2d;
+  --blockquote-border: #4a4a4a;
+  --blockquote-text: #b0b0b0;
+  --em-bg: #2d2a1e;
+  --em-color: #f0d078;
+  --overlay-color: rgba(0, 0, 0, 0.9);
+  --fh5co-post-bg: #222;
+  --theme-toggle-icon: "☀️";
+  --footer-bg: #222;
+  --footer-color: #c5c5c5;
+  --navigation-bg: rgba(34, 34, 34, 0.95);
+  --code-bg: #2d2d2d;
+  --code-color: #f0f0f0;
+  --input-bg: #333;
+  --input-border: #555;
+  --input-color: #f0f0f0;
+  --markdown-bg: #222;
+  --markdown-color: #e0e0e0;
+  --editormd-preview-bg: #222;
+  --fh5co-entry-bg: #222;
+  --fh5co-entry-color: #c5c5c5;
+}
+
+/* Apply theme variables */
+body {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+  transition: all 0.3s ease;
+}
+
+h1, h2, h3, h4, h5, h6, figure {
+  color: var(--heading-color) !important;
+}
+
+a {
+  color: var(--link-color) !important;
+}
+
+a:hover, a:active, a:focus {
+  color: var(--link-color) !important;
+}
+
+blockquote {
+  background: var(--blockquote-bg) !important;
+  border-left: 4px solid var(--blockquote-border) !important;
+  color: var(--blockquote-text) !important;
+}
+
+blockquote > p {
+  color: var(--blockquote-text) !important;
+}
+
+em {
+  background-color: var(--em-bg) !important;
+  color: var(--em-color) !important;
+}
+
+.offcanvas #page:after {
+  background: var(--overlay-color) !important;
+}
+
+#fh5co-main-content {
+  background-color: var(--background-color) !important;
+}
+
+/* Explicit override for fh5co-main-content in dark mode */
+body.dark-theme #fh5co-main-content {
+  background-color: var(--background-color) !important; /* Uses the dark theme background color */
+  color: var(--text-color) !important;
+}
+
+/* Extra specific selector for single post pages (developer-single.html) */
+body.dark-theme.single #fh5co-main-content,
+body.single.dark-theme #fh5co-main-content {
+  background-color: #1a1a1a !important; /* Hard-coded dark background as fallback */
+}
+
+/* Fix for the container div in dark mode */
+body.dark-theme .container {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+}
+
+/* Explicit styling for container in single posts */
+body.dark-theme.single .container,
+body.single.dark-theme .container {
+  background-color: #1a1a1a !important;
+}
+
+.fh5co-post {
+  background: var(--fh5co-post-bg) !important;
+}
+
+footer {
+  background: var(--footer-bg) !important;
+  color: var(--footer-color) !important;
+}
+
+footer a {
+  color: var(--link-color) !important;
+}
+
+/* Code blocks */
+pre, code {
+  background-color: var(--code-bg) !important;
+  color: var(--code-color) !important;
+}
+
+/* Form elements */
+input, textarea, select {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-color) !important;
+}
+
+/* Navigation elements */
+.fh5co-navigation .prev, .fh5co-navigation .next {
+  background-color: var(--navigation-bg) !important;
+}
+
+/* Theme Toggle Button */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--link-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1002;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  color: white;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1);
+}
+
+.theme-toggle:before {
+  content: var(--theme-toggle-icon);
+  font-size: 20px;
+}
+
+@media screen and (max-width: 768px) {
+  .theme-toggle {
+    top: 10px;
+    right: 10px;
+    width: 35px;
+    height: 35px;
+  }
+  
+  .theme-toggle:before {
+    font-size: 16px;
+  }
+}
+
+/* Additional dark mode styling for specific elements */
+body.dark-theme .fh5co-post .fh5co-entry > div {
+  background-color: var(--fh5co-post-bg) !important;
+}
+
+body.dark-theme #fh5co-aside .overlay {
+  background: rgba(0, 0, 0, 0.8) !important;
+}
+
+body.dark-theme .pagination .active {
+  background-color: var(--link-color) !important;
+}
+
+body.dark-theme .pagination a {
+  color: var(--text-color) !important;
+  background-color: var(--fh5co-post-bg) !important;
+}
+
+body.dark-theme .pagination a:hover {
+  background-color: var(--link-color) !important;
+  color: white !important;
+}
+
+/* Fix for pagination list items in dark mode */
+body.dark-theme .pagination li {
+  background-color: var(--fh5co-post-bg) !important;
+}
+
+body.dark-theme .pagination li.active {
+  background-color: var(--link-color) !important;
+}
+
+body.dark-theme .pagination li.active a {
+  color: white !important;
+}
+
+body.dark-theme .pagination li a:hover {
+  background-color: var(--link-color) !important;
+  color: white !important;
+}
+
+/* Fix for the pagination container itself */
+body.dark-theme .pagination,
+body.dark-theme #pagination.pagination,
+body.dark-theme #pagination-content .pagination {
+  background-color: var(--background-color) !important;
+}
+
+/* Fix for pagination elements when inside #pagination-content */
+body.dark-theme #pagination-content .pagination li {
+  background-color: var(--fh5co-post-bg) !important;
+}
+
+body.dark-theme #pagination-content .pagination li.active {
+  background-color: var(--link-color) !important;
+}
+
+body.dark-theme #pagination-content .pagination .active {
+  background-color: var(--link-color) !important;
+  color: white !important;
+}
+
+body.dark-theme #pagination-content .pagination li a {
+  color: var(--text-color) !important;
+}
+
+body.dark-theme #pagination-content .pagination li.active a {
+  color: white !important;
+}
+
+body.dark-theme #pagination-content .pagination li a:hover {
+  background-color: var(--link-color) !important;
+  color: white !important;
+}
+
+/* Add styling for pagination in light mode for consistency */
+.pagination li {
+  transition: background-color 0.3s ease !important;
+}
+
+/* Ensure smooth transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Markdown Editor Styling */
+#markdown-view {
+  background-color: var(--markdown-bg) !important;
+  color: var(--markdown-color) !important;
+}
+
+body.dark-theme .editormd-preview-container {
+  background-color: var(--editormd-preview-bg) !important;
+  color: var(--text-color) !important;
+}
+
+body.dark-theme .editormd-preview-container h1,
+body.dark-theme .editormd-preview-container h2,
+body.dark-theme .editormd-preview-container h3,
+body.dark-theme .editormd-preview-container h4,
+body.dark-theme .editormd-preview-container h5,
+body.dark-theme .editormd-preview-container h6 {
+  color: var(--heading-color) !important;
+}
+
+body.dark-theme .editormd-preview-container code {
+  background-color: var(--code-bg) !important;
+  color: var(--code-color) !important;
+}
+
+body.dark-theme .editormd-preview-container blockquote {
+  background-color: var(--blockquote-bg) !important;
+  border-left-color: var(--blockquote-border) !important;
+  color: var(--blockquote-text) !important;
+}
+
+body.dark-theme .editormd-preview-container table {
+  /* border-color: #444 !important; */
+}
+
+body.dark-theme .editormd-preview-container table th {
+  background-color: #333 !important;
+  /* border-color: #444 !important; */
+}
+
+body.dark-theme .editormd-preview-container table td {
+  background-color: var(--markdown-bg) !important;
+  /* border-color: #444 !important; */
+}
+
+body.dark-theme .editormd-preview-container hr {
+  /* border-color: #444 !important; */
+}
+
+/* Code Prettify Dark Theme */
+body.dark-theme .prettyprint {
+  background-color: var(--code-bg) !important;
+  color: var(--code-color) !important;
+  /* border-color: #444 !important; */
+}
+
+body.dark-theme .prettyprint .linenums li {
+  /* border-color: #444 !important; */
+  color: #666 !important;
+}
+
+body.dark-theme .prettyprint .com { color: #999 !important; } /* comment */
+body.dark-theme .prettyprint .kwd { color: #8ac6f2 !important; } /* keyword */
+body.dark-theme .prettyprint .typ { color: #f0dfaf !important; } /* type */
+body.dark-theme .prettyprint .lit { color: #dfaf8f !important; } /* literal */
+body.dark-theme .prettyprint .pun { color: #c5c5c5 !important; } /* punctuation */
+body.dark-theme .prettyprint .pln { color: #e0e0e0 !important; } /* plaintext */
+body.dark-theme .prettyprint .tag { color: #8ac6f2 !important; } /* html/xml tag */
+body.dark-theme .prettyprint .atn { color: #f0dfaf !important; } /* attribute name */
+body.dark-theme .prettyprint .atv { color: #dfaf8f !important; } /* attribute value */
+body.dark-theme .prettyprint .dec { color: #dfaf8f !important; } /* decimal */
+body.dark-theme .prettyprint .var { color: #dfaf8f !important; } /* variable */
+body.dark-theme .prettyprint .fun { color: #8ac6f2 !important; } /* function */
+
+/* Additional styling for markdown content */
+body.dark-theme #markdown-view {
+  background-color: var(--markdown-bg) !important;
+  color: var(--markdown-color) !important;
+}
+
+body.dark-theme .editormd-preview-container,
+body.dark-theme .markdown-body {
+  background-color: var(--markdown-bg) !important;
+  color: var(--markdown-color) !important;
+}
+
+/* Make sure code blocks in markdown are properly styled */
+body.dark-theme pre.prettyprint,
+body.dark-theme pre.prettyprinted,
+body.dark-theme .prettyprint.linenums {
+  background-color: var(--code-bg) !important;
+  color: var(--code-color) !important;
+  /* border-color: #444 !important; */
+}
+
+body.dark-theme ol.linenums li {
+  color: #666 !important;
+}
+
+body.dark-theme .prettyprint ol.linenums {
+  background-color: var(--code-bg) !important;
+}
+
+/* Ensure consistent styling for inline code in markdown */
+body.dark-theme .editormd-preview-container code,
+body.dark-theme .markdown-body code {
+  background-color: var(--code-bg) !important;
+  color: var(--code-color) !important;
+  border: 1px solid #444 !important;
+}
+
+/* Remove borders from code tags in markdown-view */
+#markdown-view code {
+  border: none !important;
+  background-color: var(--code-bg) !important;
+  color: var(--code-color) !important;
+  padding: 2px 5px !important;
+  border-radius: 3px !important;
+  font-family: monospace !important;
+}
+
+body.dark-theme #markdown-view code {
+  border: none !important;
+  background-color: var(--code-bg) !important;
+  color: var(--code-color) !important;
+}
+
+/* Style for code blocks (pre > code) without borders */
+#markdown-view pre {
+  margin: 15px 0 !important;
+  padding: 10px !important;
+  background-color: var(--code-bg) !important;
+  border-radius: 4px !important;
+  overflow: auto !important;
+  border: none !important;
+}
+
+#markdown-view pre > code {
+  border: none !important;
+  padding: 0 !important;
+  background-color: transparent !important;
+  display: block !important;
+}
+
+body.dark-theme #markdown-view pre {
+  border: none !important;
+  background-color: var(--code-bg) !important;
+}
+
+body.dark-theme #markdown-view pre > code {
+  border: none !important;
+  background-color: transparent !important;
+}
+
+/* Images in dark mode */
+body.dark-theme .editormd-preview-container img,
+body.dark-theme .markdown-body img {
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+/* Fix for images in markdown-view in dark mode */
+body.dark-theme #markdown-view img {
+  background-color: transparent !important;
+  border: 1px solid #444 !important;
+  border-radius: 4px !important;
+  padding: 0 !important;
+  max-width: 100% !important; /* Ensure it doesn't exceed container */
+  height: auto !important; /* Maintain aspect ratio */
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3) !important;
+  display: inline-block !important; /* Preserve original display property */
+  vertical-align: middle !important; /* Better alignment */
+}
+
+/* Improve image styling for light mode too */
+#markdown-view img {
+  max-width: 100% !important; /* Ensure it doesn't exceed container */
+  height: auto !important; /* Maintain aspect ratio */
+  border-radius: 4px !important;
+  border: 1px solid #e0e0e0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  display: inline-block !important; /* Preserve original display property */
+  vertical-align: middle !important; /* Better alignment */
+}
+
+/* Fix for image sizing to match original dimensions */
+#markdown-view img:not([width]):not([height]) {
+  width: initial !important; /* Revert to original sizing */
+  max-width: 100% !important; /* Still ensure it fits container */
+}
+
+/* Center images and make them smaller in markdown-view - simple approach */
+#markdown-view img:not(.emoji):not([alt^="emoji-"]):not([alt*=" emoji-"]) {
+  max-width: 60% !important; /* Make images smaller */
+  margin-left: auto !important;
+  margin-right: auto !important;
+  margin-top: 20px !important;
+  margin-bottom: 20px !important;
+  display: block !important; /* Force block to enable centering */
+}
+
+/* Override for specifically sized images */
+#markdown-view img[width], 
+#markdown-view img[height] {
+  max-width: 60% !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Specifically for developer-single.html */
+body.single #markdown-view img:not(.emoji):not([alt^="emoji-"]):not([alt*=" emoji-"]) {
+  max-width: 60% !important; /* Even smaller for single post view */
+}
+
+/* Specific fix for emoji-sized images */
+#markdown-view img[alt^="emoji-"],
+#markdown-view img[alt*=" emoji-"],
+#markdown-view img.emoji {
+  width: 1.5em !important;
+  height: 1.5em !important;
+  vertical-align: middle !important;
+  display: inline !important;
+  margin: 0 0.1em !important;
+}
+
+/* Fix for fh5co-entry padding container */
+.fh5co-entry.padding {
+  background-color: var(--fh5co-entry-bg) !important;
+  color: var(--fh5co-entry-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-theme .fh5co-entry.padding {
+  background-color: var(--fh5co-entry-bg) !important;
+  color: var(--fh5co-entry-color) !important;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2) !important;
+}
+
+body.dark-theme .fh5co-entry.padding p {
+  color: var(--text-color) !important;
+}
+
+/* Fix for any other white background elements in the post content */
+body.dark-theme .post-content {
+  background-color: var(--fh5co-entry-bg) !important;
+  color: var(--fh5co-entry-color) !important;
+}
+
+/* Fix for the flying fish container in dark mode */
+body.dark-theme #jsi-flying-fish-container {
+  background-color: transparent !important;
+}
+
+body.dark-theme #jsi-flying-fish-container canvas {
+  background-color: transparent !important;
+  opacity: 0.9 !important; /* Slightly reduce opacity in dark mode for better visibility */
+}
+
+/* Style for the flying fish container in light mode */
+#jsi-flying-fish-container {
+  background-color: rgba(0, 0, 0, 0.7) !important; /* Black with transparency for light mode */
+}
+
+#jsi-flying-fish-container canvas {
+  background-color: transparent !important;
+}
+
+/* Style for the page_end_html in light mode */
+#page_end_html {
+  background-color: rgba(0, 0, 0, 0.7) !important; /* Black with transparency for light mode */
+}
+
+body.dark-theme #page_end_html {
+  background-color: transparent !important;
+}
+
+/* Fix for markdown-view tables in dark mode */
+body.dark-theme #markdown-view table {
+  /* border-color: #444 !important; */
+  border-collapse: collapse !important;
+}
+
+body.dark-theme #markdown-view table th {
+  background-color: #333 !important;
+  border-color: #444 !important;
+  color: #e0e0e0 !important;
+  padding: 8px !important;
+}
+
+body.dark-theme #markdown-view table td {
+  background-color: #222 !important;
+  border-color: #444 !important;
+  color: #c5c5c5 !important;
+  padding: 8px !important;
+}
+
+body.dark-theme #markdown-view table tr:nth-child(even) td {
+  background-color: #2a2a2a !important;
+}
+
+/* Regular mode table styling for markdown-view */
+#markdown-view table {
+  border-collapse: collapse !important;
+  width: 100% !important;
+  margin-bottom: 20px !important;
+}
+
+#markdown-view table th,
+#markdown-view table td {
+  padding: 8px !important;
+  border: 1px solid #e0e0e0 !important;
+}
+
+#markdown-view table th {
+  background-color: #f5f5f5 !important;
+}
+
+/* Fix for markdown-view list items in dark mode */
+body.dark-theme #markdown-view ul,
+body.dark-theme #markdown-view ol {
+  background-color: transparent !important;
+  color: var(--text-color) !important;
+}
+
+body.dark-theme #markdown-view li {
+  background-color: transparent !important;
+  color: var(--text-color) !important;
+  margin-bottom: 5px !important;
+}
+
+/* Nested list items */
+body.dark-theme #markdown-view li > ul,
+body.dark-theme #markdown-view li > ol {
+  margin-top: 5px !important;
+  background-color: transparent !important;
+}
+
+/* Light mode list styling for consistency */
+#markdown-view ul,
+#markdown-view ol {
+  padding-left: 2em !important;
+  margin-bottom: 1em !important;
+}
+
+#markdown-view li {
+  margin-bottom: 5px !important;
+  background-color: transparent !important;
+}
+
+#markdown-view li > ul,
+#markdown-view li > ol {
+  margin-top: 5px !important;
+  margin-bottom: 0 !important;
+}
+
+/* Fix for live2d-widget-close visibility in dark mode */
+body.dark-theme #live2d-widget-close .close {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.5) !important;
+  border-radius: 50% !important;
+  width: 25px !important;
+  height: 25px !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+body.dark-theme #live2d-widget-close .close:hover {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Improvement for light mode too */
+#live2d-widget-close .close {
+  transition: all 0.3s ease !important;
+}
+
+#live2d-widget-close .close:hover {
+  transform: scale(1.1) !important;
+}
+
+/* Fix for post-title visibility against dark background images */
+#post-title {
+  color: white !important;
+  /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 
+              -2px -2px 4px rgba(0, 0, 0, 0.8), 
+              2px -2px 4px rgba(0, 0, 0, 0.8), 
+              -2px 2px 4px rgba(0, 0, 0, 0.8) !important; */
+  /* background-color: rgba(0, 0, 0, 0.5) !important; */
+  padding: 8px 15px !important;
+  border-radius: 5px !important;
+  display: inline-block !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Add consistent styling for post-date as well */
+#post-date {
+  color: rgba(255, 255, 255, 0.9) !important;
+  /* text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important; */
+  /* background-color: rgba(0, 0, 0, 0.4) !important; */
+  padding: 5px 10px !important;
+  border-radius: 3px !important;
+  display: inline-block !important;
+}
+
+/* Ensure these styles work in both light and dark modes */
+body.dark-theme #post-title,
+body.dark-theme #post-date {
+  /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important; */
+}
+
+/* Fix for featured headings that appear over images */
+#fh5co-aside .featured h2 {
+  color: white !important;
+  /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8),
+              -2px -2px 4px rgba(0, 0, 0, 0.8),
+              2px -2px 4px rgba(0, 0, 0, 0.8),
+              -2px 2px 4px rgba(0, 0, 0, 0.8) !important; */
+}
+
+#fh5co-aside .featured > span {
+  color: rgba(255, 255, 255, 0.9) !important;
+  /* text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6) !important; */
+}
+
+/* Ensure the heading is visible in both themes */
+body.dark-theme #fh5co-aside .featured h2 {
+  color: white !important;
+  /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8),
+              -2px -2px 4px rgba(0, 0, 0, 0.8),
+              2px -2px 4px rgba(0, 0, 0, 0.8),
+              -2px 2px 4px rgba(0, 0, 0, 0.8) !important; */
+}
+
+body.dark-theme #fh5co-aside .featured > span {
+  color: rgba(255, 255, 255, 0.9) !important;
+  /* text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6) !important; */
+}
+
+/* Image preview functionality */
+#markdown-view img:not(.emoji):not([alt^="emoji-"]):not([alt*=" emoji-"]) {
+  cursor: pointer !important;
+  transition: transform 0.2s ease !important;
+}
+
+#markdown-view img:not(.emoji):not([alt^="emoji-"]):not([alt*=" emoji-"]):hover {
+  transform: scale(1.03) !important;
+}
+
+.image-preview-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background-color: rgba(0, 0, 0, 0.85) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  z-index: 9999 !important;
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+}
+
+.image-preview-overlay.active {
+  opacity: 1 !important;
+}
+
+.image-preview-container {
+  position: relative !important;
+  max-width: 90% !important;
+  max-height: 90% !important;
+  overflow: hidden !important;
+  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5) !important;
+  border-radius: 5px !important;
+  transform: scale(0.9) !important;
+  transition: transform 0.3s ease !important;
+}
+
+.image-preview-overlay.active .image-preview-container {
+  transform: scale(1) !important;
+}
+
+.image-preview-image {
+  display: block !important;
+  max-width: 100% !important;
+  max-height: 90vh !important;
+  object-fit: contain !important;
+}
+
+.image-preview-close {
+  position: absolute !important;
+  top: 15px !important;
+  right: 15px !important;
+  width: 40px !important;
+  height: 40px !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  cursor: pointer !important;
+  transition: background-color 0.3s ease !important;
+}
+
+.image-preview-close:hover {
+  background-color: rgba(255, 100, 100, 0.7) !important;
+}
+
+.image-preview-close:before, .image-preview-close:after {
+  content: '' !important;
+  position: absolute !important;
+  width: 20px !important;
+  height: 2px !important;
+  background-color: white !important;
+}
+
+.image-preview-close:before {
+  transform: rotate(45deg) !important;
+}
+
+.image-preview-close:after {
+  transform: rotate(-45deg) !important;
+}
+
+/* Handle dark/light mode for image preview */
+body.dark-theme .image-preview-overlay {
+  background-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+body.dark-theme .image-preview-close {
+  background-color: rgba(50, 50, 50, 0.7) !important;
+}
+
+body.dark-theme .image-preview-close:hover {
+  background-color: rgba(255, 100, 100, 0.7) !important;
+}
+
+/* Fix for the pagination-content div in dark mode */
+body.dark-theme #pagination-content,
+body.dark-theme .pagination-content {
+  background-color: var(--background-color) !important;
+  color: var(--text-color) !important;
+}
+
+body.dark-theme #pagination-content .pagination .active {
+  background-color: var(--link-color) !important;
+}
+
+/* Ensure span and h2 in display-t are always white regardless of theme */
+.display-t span,
+.display-t h2,
+body.dark-theme .display-t span,
+body.dark-theme .display-t h2 {
+  color: white !important;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Reduce brightness of light bulb icon in dark mode */
+body.dark-theme em::before {
+  opacity: 0.7 !important; /* Slightly reduce the default opacity */
+  content: "💡" !important; /* Keep the bulb emoji but we'll modify its color */
+  filter: hue-rotate(180deg) brightness(0.9) saturate(0.8) !important; /* Adjust color to a softer, cooler tone */
+}
+
+/* Override the shine animation in dark mode */
+@keyframes darkModeShine {
+  0% {
+    text-shadow: 0 0 0 transparent;
+    opacity: 0.6;
+  }
+  100% {
+    text-shadow: 0 0 5px rgba(255, 204, 0, 0.5), 0 0 10px rgba(255, 204, 0, 0.3);
+    opacity: 0.8;
+  }
+}
+
+body.dark-theme em::before {
+  animation: darkModeShine 1s infinite alternate !important;
+} 

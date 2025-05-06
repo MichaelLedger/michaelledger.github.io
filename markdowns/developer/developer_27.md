@@ -287,6 +287,13 @@ let package = Package(
 )
 ```
 
+## `swift package describe`
+
+[[SR-4554] The command "swift package describe" should not fetch dependencies #5038](https://github.com/swiftlang/swift-package-manager/issues/5038)
+For what it's worth, `swift package show-dependencies`, `swift package describe`, and `swift package dump-package` all utilize the same code pathes, loading up the package manifest with let graph = try loadPackageGraph() which loads the manifests, parses it, loads any pins defined, and does a full dependency resolution pass over the whole kit before returning back - the resulting datastructure handed back is what's passed back to describe to provide the output - or to the variant description mechanisms like show-dependencies.
+
+This is done with the new `swift package resolve` command
+
 ## `swift package resolve` & `swift package update`
 
 Add Dependencies first: Open the `Package.swift` file in your package directory and add any dependencies you need.

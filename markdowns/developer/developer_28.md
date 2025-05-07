@@ -424,6 +424,10 @@ You can open a conversation thread for each Xcode IDE to keep discussions organi
 - Ask = Codebase-specific questions
 - Edit = Direct code modifications
 
+*Cursor Longer Context*
+By default, Cursor intelligently compresses large files.
+☑️ Large files will be sent in full, which may use extra requests.
+
 Attached figgma snapshot will generate UISwift codes running on Xcode.
 
 *Cursor Settings -> General -> Privacy mode -> enabled

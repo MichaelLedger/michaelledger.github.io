@@ -4,6 +4,7 @@
 <!-- <br/>换行符全局替换为\n -->
 <!-- &全局替换为&amp; -->
 <!-- @全局替换为%40 -->
+<!--wallpaper/developer/coding_1~20.jpg-->
 <blogs>
     <blog location="markdown_tools.html">
         <id>1</id>
@@ -295,5 +296,13 @@
         <description>
         </description>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_11.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>34</id>
+        <date>May 29, 2025</date>
+        <title>Github Copilot Pro for Xcode with Agent Mode - Best Practice</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_14.jpg</cover>
     </blog>
 </blogs>

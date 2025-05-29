@@ -193,7 +193,7 @@ For Claude Desktop, you can use the same configuration as for Cursor, but you ne
 
 And here is the result:
 
-![mcp-claude-result](https://github.com/MichaelLedger/MichaelLedger.github.io/blob/media/image/developer/mcp-claude-result.png?raw=true)
+![mcp-claude-result](https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/developer/code/mcp-claude-result.png)
 
 Make sure to restart `Claude Desktop` after adding the server.
 

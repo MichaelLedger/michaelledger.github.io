@@ -146,13 +146,13 @@ exit 0
 
 2. Xcode -> Edit Scheme...
 
-3. Build -> Pre-actions -> New Run Script Action:
+3. Build -> Pre-actions -> New Run Script Action -> Provide build settings from your running target:
 ```
 # Type a script or drag a script file from your workspace to insert its path.
 <path-of-create_simulators.sh>
 ```
 
-4. Run -> Pre-actions -> New Run Script Action:
+4. Run -> Pre-actions -> New Run Script Action -> Provide build settings from your running target:
 ```
 # Type a script or drag a script file from your workspace to insert its path.
 <path-of-run_simulators.sh>

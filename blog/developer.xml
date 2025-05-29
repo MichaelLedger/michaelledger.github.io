@@ -305,4 +305,12 @@
         </description>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_14.jpg</cover>
     </blog>
+    <blog location="developer-single.html">
+        <id>35</id>
+        <date>May 29, 2025</date>
+        <title>Xcode Pre-actions for launching multi simulators simultaneously</title>
+        <description>
+        </description>
+        <cover>https://github.com/michaelledger/media/blob/image/developer/code/multi-simulators.png?raw=true</cover>
+    </blog>
 </blogs>

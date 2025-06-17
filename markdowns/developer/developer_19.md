@@ -17,8 +17,9 @@ $$October 25, 2023$$
 二、继续在 Charles 里，点击顶部菜单栏的 Help -> SSL Proxying -> Install Charles Root Certificate in iOS Simulators；
 *电脑上安装Charles根证书Install Charles Root Certificate，并在钥匙串中设置为信任*；
 三、打开模拟器 -> 设置 App -> 通用 -> 关于本机 -> 滑到底部 -> 证书信任设置，点开后会看到 Charles Proxy CA（…），这时把证书开关打开；
-四、打开模拟器的 Safari 浏览器，在地址栏输入 `chls.pro/ssl`，这时会弹出弹窗提示你安装描述文件，点允许安装;
-*如果无法正常加载，可以通过顶部菜单栏的SSL Proxying -> Save Charles Root Certificate, 然后通过 AirDrop 同步到指定设备*
+四、打开模拟器的 Safari 浏览器，在地址栏输入 `http://chls.pro/ssl`，这时会弹出弹窗提示你安装描述文件，点允许安装;
+*如果safari打开https无效，用http协议打开即可！*
+*如果无法正常加载，可以通过顶部菜单栏的SSL Proxying -> Save Charles Root Certificate, 然后通过 AirDrop 同步到指定iPhone/Simulator*
 五、回到设置 App -> 通用 -> 滑到下面 -> 描述文件 -> 看到 Charles Proxy CA（…）-> 点击证书 -> 点击导航栏右上角安装 Charles 的描述文件；
 *Note that on iOS 10 and later you must then trust the certificate.
 Go to Settings > General > About > Certificate Trust Settings and enable full trust for the Charles Proxy certificate.*

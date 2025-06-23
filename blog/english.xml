@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!--以下特殊字符不可使用：--><!--&rsquo; 全局替换为 '--><!--<br/> 换行符全局替换为 \n--><!--& 英文缩写全局替换为 and--><blogs>
+<?xml version="1.0" ?><!--以下特殊字符不可使用：--><!--&rsquo; 全局替换为 '--><!--<br/> 换行符全局替换为 \n--><!--& 英文缩写全局替换为 and-->
+<!--all resources should uploaded to MichaelLedger/media.git: specific remote branches-->
+<blogs>
     <blog>
         <id>1</id>
         <date>November 27, 2018</date>
@@ -4395,20 +4397,18 @@
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
         <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e11_b.mp3</audio>
     </blog>
-    <!--
     <blog>
-        <id>525</id>
-        <date>January 15, 2025</date>
-        <title>Friends S09E11: (Part One)</title>
+        <id>527</id>
+        <date>June 23, 2025</date>
+        <title>Friends S09E12: The One With Phoebe's Rats(Part One)</title>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
-        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e11_a.mp3</audio>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e12_a.mp3</audio>
     </blog>
     <blog>
-        <id>526</id>
-        <date>January 15, 2025</date>
-        <title>Friends S09E11: (Part Two)</title>
+        <id>528</id>
+        <date>June 23, 2025</date>
+        <title>Friends S09E12: The One With Phoebe's Rats(Part Two)</title>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
-        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e11_b.mp3</audio>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e12_b.mp3</audio>
     </blog>
-    -->
 </blogs>

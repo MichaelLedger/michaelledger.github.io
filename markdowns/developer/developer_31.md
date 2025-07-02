@@ -1,5 +1,161 @@
 # Figma MCP Server - Best Practice
 
+## [Figma Official MCP Server](https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Dev-Mode-MCP-Server)
+
+> 🚧 The Dev Mode MCP Server is currently in [open beta](https://help.figma.com/hc/en-us/articles/4406787442711). Some functions and settings may not yet be available. The feature may change and you may experience bugs or performance issues during the beta period.
+
+Beta types refer to the level of access. These include:
+
+- Beta / Open beta: All Figma users can join the beta
+- Closed beta: Only users who receive an invite can join the beta
+- Limited beta: The beta is available to all Figma users, but is limited to a certain number of beta users
+
+### Who can use this feature
+
+- The Dev Mode MCP Server is in open beta.
+- Available on a Dev or Full seat on the Professional, Organization, or Enterprise plans
+- You must use a code editor or application that supports MCP Servers (i.e. VS Code, Cursor, Windsurf, Claude Code)
+- You can only use the Dev Mode MCP server from the Figma desktop app. [Download the Figma desktop app →](https://www.figma.com/downloads/)
+
+
+### Steps
+Open the Figma desktop app, under `Preferences`, select `Enable Dev Mode MCP Server`.
+
+The server runs locally at http://127.0.0.1:3845/sse. Keep this address handy for your configuration file in the next step.
+
+VS Code:
+```
+"chat.mcp.discovery.enabled": true,
+ "mcp": {
+   "servers": {
+     "Figma Dev Mode MCP": {
+       "type": "sse",
+       "url": "http://127.0.0.1:3845/sse"
+     }
+   }
+ },
+ "chat.agent.enabled": true
+```
+
+Open the chat toolbar `⌥⌘B` and switch to Agent mode.
+
+Open the selection tool menu and look for a section labeled: `MCP Server: Figma Dev Mode MCP`. If no tools are listed, restart the Figma desktop app and VS Code.
+
+Cursor:
+```
+{
+  "mcpServers": {
+    "Figma": {
+      "url": "http://127.0.0.1:3845/sse"
+    }
+  }
+}
+
+```
+
+### MCP best practices
+*1. Structure your Figma file for better code*
+
+Provide the best context for your design intent, so the MCP and your AI assistant can generate code that’s clear, consistent, and aligned with your system.
+
+Use components for anything reused (buttons, cards, inputs, etc.)
+
+Link components to your codebase via Code Connect. This is the best way to get consistent component reuse in code. Without it, the model is guessing.
+
+Use variables for spacing, color, radius, and typography.
+
+Name layers semantically (e.g. CardContainer, not Group 5)
+
+Use Auto layout to communicate responsive intent.
+
+*2. Write effective prompts to guide the AI*
+MCP gives your AI assistant structured Figma data, but your prompt drives the result. Good prompts can:
+```
+Align the result with your framework or styling system
+Follow file structure and naming conventions
+Add code to specific paths (e.g. src/components/ui)
+Add or modify code in existing files instead of creating new ones
+Follow specific layout systems (e.g. grid, flexbox, absolute)
+```
+
+Examples:
+```
+“Generate iOS SwiftUI code from this frame”
+“Use Chakra UI for this layout”
+“Use src/components/ui components”
+“Add this to src/components/marketing/PricingCard.tsx"
+“Use our Stack layout component”
+```
+Think of prompts like a brief to a teammate. Clear intent leads to better results.
+
+*3. Trigger specific tools when needed*
+
+The MCP supports different tools, and each one provides your AI assistant with a different kind of structured context. Sometimes, the assistant doesn’t automatically pick the right one, especially as more tools become available. If results are off, try being explicit in your prompt.
+
+`get_code` provides a structured React + Tailwind representation of your Figma selection. This is a starting point that your AI assistant can translate into any framework or code style, depending on your prompt.
+
+`get_variable_defs` extracts the variables and styles used in your selection (color, spacing, typography, etc). This helps the model reference your tokens directly in the generated code.
+For example, if you’re getting raw code instead of tokens, try something like:
+
+“Get the variable names and values used in this frame.”
+
+*4. Add custom rules*
+
+Set project-level guidance to keep output consistent—just like onboarding notes for a new developer. These are things like:
+```
+Preferred layout primitives
+File organization
+Naming patterns
+What not to hardcode
+```
+You can provide this in whatever format your MCP client uses for instruction files.
+
+Cursor:
+```
+---
+description: Figma Dev Mode MCP rules
+globs: 
+alwaysApply: true
+---
+  - The Figma Dev Mode MCP Server provides an assets endpoint which can serve image and SVG assets
+  - IMPORTANT: If the Figma Dev Mode MCP Server returns a localhost source for an image or an SVG, use that image or SVG source directly
+  - IMPORTANT: DO NOT import/add new icon packages, all the assets should be in the Figma payload
+  - IMPORTANT: do NOT use or create placeholders if a localhost source is provided
+
+```
+
+Claude Code:
+```
+# MCP Servers
+## Figma Dev Mode MCP Rules
+  - The Figma Dev Mode MCP Server provides an assets endpoint which can serve image and SVG assets
+  - IMPORTANT: If the Figma Dev Mode MCP Server returns a localhost source for an image or an SVG, use that image or SVG source directly
+  - IMPORTANT: DO NOT import/add new icon packages, all the assets should be in the Figma payload
+  - IMPORTANT: do NOT use or create placeholders if a localhost source is provided
+```
+
+General rules:
+```
+- IMPORTANT: Always use components from `/path_to_your_design_system` when possible
+- Prioritize Figma fidelity to match designs exactly
+- Avoid hardcoded values, use design tokens from Figma where available
+- Follow WCAG requirements for accessibility
+- Add component documentation
+- Place UI components in `/path_to_your_design_system`; avoid inline styles unless truly necessary
+```
+
+*5. Break down large selections*
+
+Break screens into smaller parts (like components or logical chunks) for faster, more reliable results.
+
+Large selections can slow the tools down, cause errors, or result in incomplete responses, especially when there's too much context for the model to process. Instead:
+
+- Generate code for smaller sections or individual components (e.g. Card, Header, Sidebar)
+- If it feels slow or stuck, reduce your selection size
+This helps keep the context manageable and results more predictable, both for you and for the model.
+
+If something in the output doesn’t look quite right, it usually helps to revisit the basics: how the Figma file is structured, how the prompt is written, and what context is being sent. Following the best practices above can make a big difference, and often leads to more consistent, reusable code.
+
 ## [Framelink Figma MCP Server](https://github.com/GLips/Figma-Context-MCP)
 
 [How to Use Model Context Protocol (MCP) in Cursor](https://cursor.directory/mcp/figma)

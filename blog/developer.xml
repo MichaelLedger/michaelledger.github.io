@@ -313,4 +313,12 @@
         </description>
         <cover>https://github.com/michaelledger/media/blob/image/developer/code/multi-simulators.png?raw=true</cover>
     </blog>
+    <blog location="developer-single.html">
+        <id>36</id>
+        <date>Jul 10, 2025</date>
+        <title>Recommended AI Websites</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/ai_crystal_ball.jpg</cover>
+    </blog>
 </blogs>

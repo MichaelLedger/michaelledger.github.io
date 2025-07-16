@@ -1,5 +1,6 @@
 <?xml version="1.0" ?><!--以下特殊字符不可使用：--><!--&rsquo; 全局替换为 '--><!--<br/> 换行符全局替换为 \n--><!--& 英文缩写全局替换为 and-->
-<!--all resources should uploaded to MichaelLedger/media.git: specific remote branches-->
+<!--all resources should uploaded to MichaelLedger/media.git: specific remote branches % git b -r-->
+<!-- audio resources need several minutes for github to processing -->
 <blogs>
     <blog>
         <id>1</id>
@@ -4410,5 +4411,19 @@
         <title>Friends S09E12: The One With Phoebe's Rats(Part Two)</title>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
         <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e12_b.mp3</audio>
+    </blog>
+    <blog>
+        <id>529</id>
+        <date>July 16, 2025</date>
+        <title>Friends S09E13: The One Where Monica Sings(Part One)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e13_a.mp3</audio>
+    </blog>
+    <blog>
+        <id>530</id>
+        <date>July 16, 2025</date>
+        <title>Friends S09E13: The One Where Monica Sings(Part Two)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e13_b.mp3</audio>
     </blog>
 </blogs>

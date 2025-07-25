@@ -1,5 +1,97 @@
 # How to remove files permanently from git history
 
+This tutorial summarizes the cleanup process performed on this repository to remove unwanted files and tags.
+
+[git-filter-repo](https://github.com/newren/git-filter-repo) is a powerful tool that will create a new repository with modified history.
+
+This means:
+**All commit hashes will change**
+**If this repo is shared with others, they will need to re-clone after the operation**
+**Any branches or clones based on the old history will become incompatible**
+
+## Steps Performed
+
+### 1. Removed Files from Repository History
+Used `git-filter-repo` to permanently remove all `.zip` and `.swift` files from the entire git history:
+
+1.1 [Install git-filter-repo by homebrew](https://formulae.brew.sh/formula/git-filter-repo)
+```bash
+brew install git-filter-repo
+
+which git-filter-repo       
+/opt/homebrew/bin/git-filter-repo
+```
+
+1.2 Clone mirror repository:
+```
+git clone --mirror git@github2.com:MichaelLedger/braintree_ios_spm.git braintree_ios_spm_mirror
+```
+
+1.3 clean of all `.zip` and `.swift` files throughout its history
+```bash
+git filter-repo --invert-paths --path-glob '*.zip' --path-glob '*.swift' --force
+```
+
+Results:
+- Processed 26 commits
+- Removed all .zip and .swift files from entire history
+- Repository history was rewritten
+- All commit hashes were changed
+
+### 2. Remote Repository Setup
+Added and pushed to remote repository:
+
+*Fully backup your repo before push, all commit hashes will be changed!!!*
+
+```bash
+git remote add origin git@github2.com:MichaelLedger/braintree_ios_spm.git
+git push -f origin main
+```
+
+Results:
+- Successfully pushed 703 objects
+- Force push was required due to history rewrite
+- Old history was replaced with the new clean history
+
+### 3. Tag Cleanup
+Removed all version tags from both remote and local repository:
+
+```bash
+# List tag names
+git tag -l
+
+# Remove from remote
+git push origin --delete 6.30.0 6.32.0 6.34.0
+
+# Remove locally
+git tag -d 6.30.0 6.32.0 6.34.0
+```
+
+Removed tags:
+- 6.30.0
+- 6.32.0
+- 6.34.0
+
+## Important Notes
+
+1. This cleanup process was irreversible and:
+   - Rewrote the entire repository history
+   - Changed all commit hashes
+   - Removed all tags
+
+2. For other developers:
+   - Need to re-clone the repository
+   - Old clones are no longer compatible
+   - All tags have been removed
+
+3. Repository is now clean of:
+   - All .zip files
+   - All .swift files
+   - All version tags 
+
+That's all, ignore below steps! 🎉🍺
+--------
+
 Imagine you have a secure file or a big file that does not need to be sent to git, but as you didn’t know how to do that you sent tenths of commits with this file and now you decided to remove it.
 If you just remove it normally and add to `.gitgnore` it will remove from your current commit but not from all the pasts commit.
 You will need to use BFG Repo-Cleaner to remove this file from all the past commits.

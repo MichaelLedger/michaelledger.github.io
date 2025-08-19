@@ -4426,4 +4426,18 @@
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
         <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e13_b.mp3</audio>
     </blog>
+    <blog>
+        <id>531</id>
+        <date>Aug 19, 2025</date>
+        <title>Friends S09E14: The One With The Blind Dates(Part One)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e14_a.mp3</audio>
+    </blog>
+    <blog>
+        <id>532</id>
+        <date>Aug 19, 2025</date>
+        <title>Friends S09E14: The One With The Blind Dates(Part Two)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e14_b.mp3</audio>
+    </blog>
 </blogs>

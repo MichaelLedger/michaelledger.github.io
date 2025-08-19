@@ -40,6 +40,7 @@ Port: *
 ## 注意事项
 **抓包结束后，请按步骤6回到电脑系统设置页，把网页代理和安全网页代理去掉，否则关掉 Charles 后电脑上不了网。**
 
+## Edge Cases
 **Passkey**
 Charles设置代理真机抓包会导致Passkey系统域名配置校验失败，需要关闭网络代理才能验证通过！
 
@@ -48,4 +49,33 @@ Charles设置代理真机抓包会导致Passkey系统域名配置校验失败，
 ```
 "NSLocalizedFailureReason": Application with identifier <Team-ID>.<Bundle-ID> is not associated with domain xxx.com
 ASAuthorizationController credential request failed with error: Error Domain=com.apple.AuthenticationServices.AuthorizationError Code=1004
+```
+
+**iCloud Photo**
+如果你的apple账户图片存储在icloud，第一次下载的时候不能开代理，否则图片无法下载
+```
+https://gateway.icloud.com
+SSL handshake with client failed - Remote host terminated the handshake
+```
+
+**Peer does not support HTTP/2 properly (e.g. upload API)**
+Charles -> Proxy Settings... -> Proxies -> HTTP Proxy -> Deselect ☑️ Support HTTP/2
+```
+HTTP/2 error encountered on Connection 193 (Code 18,446,744,073,709,551,080): Remote peer returned unexpected data while we expected SETTINGS frame.  Perhaps, peer does not support HTTP/2 properly.
+```
+```
+16:20:50.381 ❤️ ERROR APIRequest.mulipartFormDataWithFileV2():436 - URLSessionTask failed with error: The network connection was lost. Network.error
+Task <A0B03193-7273-40A5-8BFD-735B3B988728>.<10> HTTP load failed, 66,064/0 bytes (error code: 18,446,744,073,709,550,611 [1:57])
+Task <A0B03193-7273-40A5-8BFD-735B3B988728>.<10> finished with error [18,446,744,073,709,550,611] Error Domain=NSURLErrorDomain Code=-1005 "The network connection was lost." UserInfo={_kCFStreamErrorCodeKey=57, NSUnderlyingError=0x159fa63d0 {Error Domain=kCFErrorDomainCFNetwork Code=-1005 "(null)" UserInfo={_kCFStreamErrorCodeKey=57, _kCFStreamErrorDomainKey=1}}, _NSURLErrorFailingURLSessionTaskErrorKey=LocalUploadTask <A0B03193-7273-40A5-8BFD-735B3B988728>.<10>, _NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalUploadTask <A0B03193-7273-40A5-8BFD-735B3B988728>.<10>"
+), NSLocalizedDescription=The network connection was lost., NSErrorFailingURLStringKey=https://mapi.personalcreations.com/pca/v2/photo, NSErrorFailingURLKey=https://mapi.personalcreations.com/pca/v2/photo, _kCFStreamErrorDomainKey=1}
+```
+
+```
+(lldb) po error
+▿ AFError
+  ▿ sessionTaskFailed : 1 element
+    - error : Error Domain=NSURLErrorDomain Code=-1005 "The network connection was lost." UserInfo={_kCFStreamErrorCodeKey=57, NSUnderlyingError=0x166d9d650 {Error Domain=kCFErrorDomainCFNetwork Code=-1005 "(null)" UserInfo={_kCFStreamErrorCodeKey=57, _kCFStreamErrorDomainKey=1}}, _NSURLErrorFailingURLSessionTaskErrorKey=LocalUploadTask <3DB2A638-BD37-4E0C-BCC9-FE86DC994D38>.<11>, _NSURLErrorRelatedURLSessionTaskErrorKey=(
+    "LocalUploadTask <3DB2A638-BD37-4E0C-BCC9-FE86DC994D38>.<11>"
+), NSLocalizedDescription=The network connection was lost., NSErrorFailingURLStringKey=https://mapi.personalcreations.com/pca/v2/photo, NSErrorFailingURLKey=https://mapi.personalcreations.com/pca/v2/photo, _kCFStreamErrorDomainKey=1}
 ```

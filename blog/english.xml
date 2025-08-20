@@ -4440,4 +4440,18 @@
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
         <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e14_b.mp3</audio>
     </blog>
+    <blog>
+        <id>533</id>
+        <date>Aug 20, 2025</date>
+        <title>Friends S09E15: The One With The Mugging(Part One)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e15_a.mp3</audio>
+    </blog>
+    <blog>
+        <id>534</id>
+        <date>Aug 20, 2025</date>
+        <title>Friends S09E15: The One With The Mugging(Part Two)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e15_b.mp3</audio>
+    </blog>
 </blogs>

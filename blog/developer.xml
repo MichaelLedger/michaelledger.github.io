@@ -321,4 +321,12 @@
         </description>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/ai_crystal_ball.jpg</cover>
     </blog>
+    <blog location="developer-single.html">
+        <id>37</id>
+        <date>Feb 24, 2026</date>
+        <title>Speeding Up Swift Package Manager (SPM) Resolution from Github</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_3.jpg</cover>
+    </blog>
 </blogs>

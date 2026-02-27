@@ -1,5 +1,11 @@
 # Swift Package Manager(SPM) Best Practice
 
+## [Speeding Up Swift Package Manager (SPM) Resolution from Github](./developer-single.html#id=37)
+
+### SPM resolve failed with ssh errors:
+project -> package dependencies -> Packages: Locations
+recommend to replacing all `git@github.com:` with `https://github.com/`
+
 ## Environments
 MacOS 15.2
 Xcode 16.2

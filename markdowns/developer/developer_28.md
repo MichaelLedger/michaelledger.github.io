@@ -1,5 +1,40 @@
 # AI Tools for Developers
 
+### [Cursor Model Pricing](https://cursor.com/docs/models#model-pricing)
+### [Cursor Dashboard - Usage](https://cursor.com/dashboard?tab=usage)
+### [Cursor Dashboard Portal](https://cursor.com/dashboard)
+### [Cursor Agent Portal](https://cursor.com/agents)
+
+> How much usage do I need?
+
+For individual plans, here are typical usage levels based on our data:
+
+Daily Tab users: Always stay within $20
+
+Limited Agent users: Often stay within the included $20
+
+Daily Agent users: Typically $60–$100/mo total usage
+
+Power users (multiple agents/automation): Often $200+/mo total usage
+
+> Recommend pricing-fridendly models:
+
+*Daily Tab users: Auto / Kimi K2.5 / Grok Code*
+
+*Daily Agent users: GPT-5.1 Codex Mini-Low / Claude 4.5 Haiku / Claude 4.6 Sonnet / GPT-5.3 Codex*
+
+**NOTE: Do not use fast/high/pro model, try mini-low model to save your money!**
+
+```
+fast: proirity processing but more expensive
+high: high reasoning effort but more expensive
+pro: best quality but more expensive
+--------
+mini-low: smaller model & low reasoning effort but cheaper
+mini: smaller model & medium reasoning effort but cheaper
+low: low reasoning effort but cheaper
+```
+
 ## [Community-driven Evaluation for Best LLM and AI chatbots](https://lmarena.ai)
 
 ## [ChatGPT](https://chatgpt.com)

@@ -35,8 +35,19 @@ main {
 }
 
 nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   margin-bottom: 24px;
   font-size: 0.95rem;
+}
+
+.site-nav-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0;
 }
 
 nav a {
@@ -47,6 +58,29 @@ nav a {
 nav a:hover { text-decoration: underline; }
 
 nav span { color: var(--secondary); margin: 0 8px; }
+
+.lang-select {
+  appearance: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 6px 28px 6px 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  max-width: 140px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--secondary) 50%), linear-gradient(135deg, var(--secondary) 50%, transparent 50%);
+  background-position: calc(100% - 14px) calc(50% - 2px), calc(100% - 9px) calc(50% - 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.lang-select:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  outline-offset: 2px;
+}
 
 h1 {
   font-size: 1.75rem;

@@ -1,0 +1,128 @@
+:root {
+  color-scheme: light dark;
+  --text: #1c1c1e;
+  --secondary: #636366;
+  --border: #e5e5ea;
+  --bg: #ffffff;
+  --accent: #8b4513;
+  --card: color-mix(in srgb, var(--bg) 92%, var(--accent));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #f2f2f7;
+    --secondary: #aeaeb2;
+    --border: #38383a;
+    --bg: #1c1c1e;
+    --accent: #d2a679;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--bg);
+}
+
+main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+nav {
+  margin-bottom: 24px;
+  font-size: 0.95rem;
+}
+
+nav a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+nav a:hover { text-decoration: underline; }
+
+nav span { color: var(--secondary); margin: 0 8px; }
+
+h1 {
+  font-size: 1.75rem;
+  margin: 0 0 8px;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin: 28px 0 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+h2:first-of-type { border-top: none; padding-top: 0; }
+
+.meta {
+  color: var(--secondary);
+  font-size: 0.95rem;
+  margin-bottom: 32px;
+}
+
+p, li { margin: 0 0 12px; }
+
+ul { padding-left: 1.25rem; }
+
+a { color: var(--accent); }
+
+.hero {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.app-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font-size: 2.5rem;
+  font-weight: 500;
+  font-family: "Songti SC", "STSong", serif;
+  margin-bottom: 12px;
+}
+
+.card, .contact {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+}
+
+.card h2 {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+  font-size: 1.05rem;
+}
+
+.faq dt {
+  font-weight: 600;
+  margin-top: 16px;
+}
+
+.faq dd {
+  margin: 6px 0 0;
+  color: var(--secondary);
+}
+
+footer {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  color: var(--secondary);
+  font-size: 0.9rem;
+}

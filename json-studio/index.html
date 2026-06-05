@@ -116,6 +116,62 @@
     .btn-danger:hover { background: rgba(248, 81, 73, 0.12); border-color: var(--danger); }
     .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
+    .btn-icon {
+      padding: 7px 11px;
+      min-width: 36px;
+      justify-content: center;
+    }
+
+    .layout-quick {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 2px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+    }
+
+    .layout-quick .btn-layout {
+      padding: 5px 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1;
+    }
+
+    .layout-quick .btn-layout:hover {
+      background: var(--bg-hover);
+      color: var(--text);
+    }
+
+    .layout-quick .btn-layout.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+
+    .icon-btn:hover {
+      background: var(--bg-hover);
+      color: var(--accent);
+      border-color: #444c56;
+    }
+
     .options-bar {
       display: flex;
       align-items: center;
@@ -176,6 +232,47 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      min-width: 0;
+    }
+
+    .sidebar-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .sidebar-header-row .sidebar-title {
+      margin-bottom: 0;
+    }
+
+    .sidebar-expanded-only {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .sidebar-collapsed-only {
+      display: none;
+      flex: 1;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 0;
+    }
+
+    .main.sidebar-collapsed {
+      --sidebar-width: 48px;
+    }
+
+    .sidebar.collapsed .sidebar-expanded-only {
+      display: none;
+    }
+
+    .sidebar.collapsed .sidebar-collapsed-only {
+      display: flex;
     }
 
     .sidebar-header {
@@ -312,9 +409,11 @@
 
     /* Editor / Viewer split */
     .workspace {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: row;
       overflow: hidden;
+      min-height: 0;
+      --input-pane-size: 50%;
     }
 
     .panel {
@@ -322,9 +421,42 @@
       flex-direction: column;
       overflow: hidden;
       min-width: 0;
+      min-height: 0;
     }
 
-    .panel + .panel { border-left: 1px solid var(--border); }
+    .panel-input {
+      flex: 0 0 var(--input-pane-size);
+      min-width: 160px;
+      max-width: calc(100% - 166px);
+    }
+
+    .panel-tree {
+      flex: 1 1 0;
+      min-width: 160px;
+    }
+
+    .workspace-resizer {
+      flex: 0 0 6px;
+      background: var(--border);
+      cursor: col-resize;
+      z-index: 2;
+      transition: background 0.15s;
+      touch-action: none;
+    }
+
+    .workspace-resizer:hover,
+    body.is-resizing-panes .workspace-resizer {
+      background: var(--accent);
+    }
+
+    body.is-resizing-panes {
+      user-select: none;
+      cursor: col-resize;
+    }
+
+    body.is-resizing-panes.is-resizing-panes-row {
+      cursor: row-resize;
+    }
 
     .panel-header {
       display: flex;
@@ -503,8 +635,19 @@
 
     /* Responsive */
     @media (max-width: 1100px) {
-      .workspace { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
-      .panel + .panel { border-left: none; border-top: 1px solid var(--border); }
+      .workspace { flex-direction: column; }
+      .panel-input {
+        min-width: 0;
+        max-width: none;
+        min-height: 120px;
+        max-height: calc(100% - 126px);
+      }
+      .panel-tree { min-height: 120px; }
+      .workspace-resizer {
+        cursor: row-resize;
+        flex: 0 0 6px;
+        width: 100%;
+      }
     }
 
     @media (max-width: 768px) {
@@ -536,7 +679,12 @@
         <button class="btn" id="btn-minify" title="Minify JSON">Minify</button>
         <button class="btn" id="btn-copy" title="Copy formatted JSON">Copy</button>
         <button class="btn" id="btn-upload" title="Upload JSON file">Upload</button>
-        <button class="btn btn-icon" id="btn-history-toggle" title="Toggle history">☰</button>
+        <div class="layout-quick" role="group" aria-label="Quick panel size">
+          <button type="button" class="btn btn-layout" id="btn-layout-tree" title="Shrink input — more tree view">◧</button>
+          <button type="button" class="btn btn-layout active" id="btn-layout-balanced" title="Balanced split">◫</button>
+          <button type="button" class="btn btn-layout" id="btn-layout-input" title="Shrink tree — more input">◨</button>
+        </div>
+        <button class="btn btn-icon" id="btn-history-toggle" title="Toggle history panel">☰</button>
         <input type="file" id="file-input" class="hidden-input" accept=".json,.txt,application/json">
       </div>
       <div class="options-bar">
@@ -561,21 +709,29 @@
 
     <div class="main">
       <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-          <div class="sidebar-title">Parse History</div>
-          <input type="search" class="search-input" id="history-search" placeholder="Search history…">
-          <div class="cache-path" id="cache-path">Browser storage (IndexedDB)</div>
+        <div class="sidebar-expanded-only">
+          <div class="sidebar-header">
+            <div class="sidebar-header-row">
+              <div class="sidebar-title">Parse History</div>
+              <button type="button" class="icon-btn" id="btn-sidebar-collapse" title="Collapse history panel" aria-label="Collapse history panel">◀</button>
+            </div>
+            <input type="search" class="search-input" id="history-search" placeholder="Search history…">
+            <div class="cache-path" id="cache-path">Browser storage (IndexedDB)</div>
+          </div>
+          <div class="history-list" id="history-list">
+            <div class="history-empty">Parse JSON to save history locally.</div>
+          </div>
+          <div class="sidebar-footer">
+            <button class="btn btn-danger" id="btn-clear-history">Clear All</button>
+          </div>
         </div>
-        <div class="history-list" id="history-list">
-          <div class="history-empty">Parse JSON to save history locally.</div>
-        </div>
-        <div class="sidebar-footer">
-          <button class="btn btn-danger" id="btn-clear-history">Clear All</button>
+        <div class="sidebar-collapsed-only">
+          <button type="button" class="icon-btn" id="btn-sidebar-expand" title="Expand history panel" aria-label="Expand history panel">▶</button>
         </div>
       </aside>
 
-      <div class="workspace">
-        <section class="panel">
+      <div class="workspace" id="workspace">
+        <section class="panel panel-input">
           <div class="panel-header">
             <span>Input</span>
             <span id="input-stats"></span>
@@ -584,13 +740,14 @@
             <textarea id="json-input" spellcheck="false" autocomplete="off" placeholder="Paste JSON here, or drop a .json file…"></textarea>
           </div>
         </section>
-        <section class="panel">
+        <div class="workspace-resizer" id="workspace-resizer" role="separator" aria-orientation="vertical" aria-label="Resize input and tree panels" tabindex="0"></div>
+        <section class="panel panel-tree">
           <div class="panel-header">
             <span>Tree View</span>
             <span id="parse-status"></span>
           </div>
           <div class="panel-body">
-            <pre id="json-renderer"></pre>
+            <div id="json-renderer"></div>
           </div>
         </section>
       </div>
@@ -1382,6 +1539,8 @@
   }
 
   function handleTreeClick(e) {
+    if (e.target.closest('a.json-link')) return;
+
     const placeholder = e.target.closest('a.json-placeholder');
     if (placeholder) {
       e.preventDefault();
@@ -1558,7 +1717,13 @@
   $('#btn-clear-history').addEventListener('click', () => {
     if (confirm('Clear all parse history?')) clearAllHistory();
   });
-  $('#btn-history-toggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
+  $('#btn-history-toggle').addEventListener('click', () => {
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      $('#sidebar').classList.toggle('open');
+    } else {
+      toggleSidebarCollapsed();
+    }
+  });
 
   historySearch.addEventListener('input', () => {
     renderHistoryList(historySearch.value.trim().toLowerCase());
@@ -1623,8 +1788,156 @@
     }
   });
 
+  /* ── Resizable input / tree split ────────────────────────────── */
+  const PANE_RATIO_KEY = 'json-studio-input-pane-ratio';
+  const SIDEBAR_COLLAPSED_KEY = 'json-studio-sidebar-collapsed';
+  const PANE_MIN_PX = 160;
+  const LAYOUT_PRESETS = {
+    tree: 0.15,
+    balanced: 0.5,
+    input: 0.85,
+  };
+
+  function workspaceIsStacked() {
+    return window.matchMedia('(max-width: 1100px)').matches;
+  }
+
+  function getInputPaneRatio() {
+    const workspace = $('#workspace');
+    if (!workspace) return 0.5;
+    const raw = getComputedStyle(workspace).getPropertyValue('--input-pane-size').trim();
+    const pct = parseFloat(raw);
+    return Number.isNaN(pct) ? 0.5 : pct / 100;
+  }
+
+  function updateLayoutQuickActive(ratio) {
+    const r = ratio ?? getInputPaneRatio();
+    [
+      { id: 'btn-layout-tree', value: LAYOUT_PRESETS.tree },
+      { id: 'btn-layout-balanced', value: LAYOUT_PRESETS.balanced },
+      { id: 'btn-layout-input', value: LAYOUT_PRESETS.input },
+    ].forEach(({ id, value }) => {
+      const btn = $('#' + id);
+      if (btn) btn.classList.toggle('active', Math.abs(r - value) < 0.02);
+    });
+  }
+
+  function setInputPaneRatio(ratio) {
+    const workspace = $('#workspace');
+    if (!workspace) return;
+    const r = Math.min(0.85, Math.max(0.15, ratio));
+    workspace.style.setProperty('--input-pane-size', (r * 100).toFixed(2) + '%');
+    try {
+      localStorage.setItem(PANE_RATIO_KEY, String(r));
+    } catch (_) { /* ignore */ }
+    updateLayoutQuickActive(r);
+  }
+
+  function isSidebarCollapsed() {
+    return $('#sidebar')?.classList.contains('collapsed') ?? false;
+  }
+
+  function setSidebarCollapsed(collapsed) {
+    const sidebar = $('#sidebar');
+    const main = $('.main');
+    if (!sidebar || !main) return;
+    sidebar.classList.toggle('collapsed', collapsed);
+    main.classList.toggle('sidebar-collapsed', collapsed);
+    try {
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, collapsed ? '1' : '0');
+    } catch (_) { /* ignore */ }
+  }
+
+  function toggleSidebarCollapsed() {
+    setSidebarCollapsed(!isSidebarCollapsed());
+  }
+
+  function initLayoutQuickButtons() {
+    $('#btn-layout-tree')?.addEventListener('click', () => setInputPaneRatio(LAYOUT_PRESETS.tree));
+    $('#btn-layout-balanced')?.addEventListener('click', () => setInputPaneRatio(LAYOUT_PRESETS.balanced));
+    $('#btn-layout-input')?.addEventListener('click', () => setInputPaneRatio(LAYOUT_PRESETS.input));
+    $('#btn-sidebar-collapse')?.addEventListener('click', () => setSidebarCollapsed(true));
+    $('#btn-sidebar-expand')?.addEventListener('click', () => setSidebarCollapsed(false));
+
+    if (localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1') {
+      setSidebarCollapsed(true);
+    }
+  }
+
+  function initPaneResizer() {
+    const workspace = $('#workspace');
+    const resizer = $('#workspace-resizer');
+    if (!workspace || !resizer) return;
+
+    const saved = parseFloat(localStorage.getItem(PANE_RATIO_KEY));
+    if (!Number.isNaN(saved)) setInputPaneRatio(saved);
+    else updateLayoutQuickActive(LAYOUT_PRESETS.balanced);
+
+    function updateResizerAria() {
+      const stacked = workspaceIsStacked();
+      resizer.setAttribute('aria-orientation', stacked ? 'horizontal' : 'vertical');
+    }
+
+    function resizeFromPointer(clientX, clientY) {
+      const rect = workspace.getBoundingClientRect();
+      const stacked = workspaceIsStacked();
+      const total = stacked ? rect.height : rect.width;
+      const pos = stacked ? clientY - rect.top : clientX - rect.left;
+      const minRatio = PANE_MIN_PX / total;
+      const maxRatio = 1 - minRatio;
+      setInputPaneRatio(Math.min(maxRatio, Math.max(minRatio, pos / total)));
+    }
+
+    let dragging = false;
+
+    function startDrag(e) {
+      if (e.button !== undefined && e.button !== 0) return;
+      e.preventDefault();
+      dragging = true;
+      document.body.classList.add('is-resizing-panes');
+      if (workspaceIsStacked()) document.body.classList.add('is-resizing-panes-row');
+      resizer.setPointerCapture(e.pointerId);
+    }
+
+    function onDrag(e) {
+      if (!dragging) return;
+      resizeFromPointer(e.clientX, e.clientY);
+    }
+
+    function endDrag(e) {
+      if (!dragging) return;
+      dragging = false;
+      document.body.classList.remove('is-resizing-panes', 'is-resizing-panes-row');
+      try {
+        resizer.releasePointerCapture(e.pointerId);
+      } catch (_) { /* ignore */ }
+    }
+
+    resizer.addEventListener('pointerdown', startDrag);
+    resizer.addEventListener('pointermove', onDrag);
+    resizer.addEventListener('pointerup', endDrag);
+    resizer.addEventListener('pointercancel', endDrag);
+
+    resizer.addEventListener('keydown', (e) => {
+      const step = e.shiftKey ? 0.1 : 0.05;
+      const current = parseFloat(localStorage.getItem(PANE_RATIO_KEY) || '0.5');
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        setInputPaneRatio(current - step);
+      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        setInputPaneRatio(current + step);
+      }
+    });
+
+    updateResizerAria();
+    window.addEventListener('resize', updateResizerAria);
+  }
+
   /* ── Init ────────────────────────────────────────────────────── */
   async function init() {
+    initLayoutQuickButtons();
+    initPaneResizer();
     try {
       db = await openDB();
     } catch (err) {

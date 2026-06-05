@@ -62,6 +62,22 @@
         a.json-placeholder:hover {
             text-decoration: underline;
         }
+        .json-truncated {
+            color: #d29922;
+            font-style: italic;
+            font-size: 0.9em;
+            list-style: none;
+        }
+        .json-large-notice {
+            padding: 8px 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            background: #f6f8fa;
+            color: #555;
+            font-size: 12px;
+            line-height: 1.5;
+            font-family: sans-serif;
+        }
         /* [jquery.json-viewer.css] END */
  
         body {
@@ -80,6 +96,13 @@
         }
         pre#json-renderer {
             border: 1px solid #aaa;
+            max-height: 70vh;
+            overflow: auto;
+        }
+        #parse-status {
+            font-size: 13px;
+            color: #555;
+            margin: 0 0 8px;
         }
     </style>
     <!-- <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script> -->
@@ -128,287 +151,587 @@
         </label>
     </p>
     <button id="btn-json-viewer" title="run jsonViewer()">Transform to HTML</button>
+    <p id="parse-status"></p>
     <pre id="json-renderer"></pre>
 </body>
 <script>
     $(function() {
-        function renderJson() {
-            try {
-                var input = eval('(' + $('#json-input').val() + ')');
-            }
-            catch (error) {
-                return alert("Cannot eval JSON: " + error);
-            }
-            var options = {
+        var parsedData = null;
+        var parseGeneration = 0;
+        var parseWorker = null;
+
+        function byteSize(str) {
+            return new Blob([str]).size;
+        }
+
+        function getOptions() {
+            return {
                 collapsed: $('#collapsed').is(':checked'),
                 rootCollapsable: $('#root-collapsable').is(':checked'),
                 withQuotes: $('#with-quotes').is(':checked'),
                 withLinks: $('#with-links').is(':checked')
             };
-            $('#json-renderer').jsonViewer(input, options);
         }
-        // Generate on click
-        $('#btn-json-viewer').click(renderJson);
-        // Generate on option change
-        $('p.options input[type=checkbox]').click(renderJson);
-        // Display JSON sample on page load
+
+        function parseInputSync(text) {
+            try {
+                return { ok: true, data: JSON.parse(text) };
+            } catch (e1) {
+                try {
+                    return { ok: true, data: eval('(' + text + ')') };
+                } catch (e2) {
+                    return { ok: false, error: e2.message };
+                }
+            }
+        }
+
+        function createParseWorker() {
+            var src = [
+                'self.onmessage=function(e){',
+                'var m=e.data,id=m.id,text=m.text,shouldFormat=m.shouldFormat;',
+                'try{var data=JSON.parse(text);',
+                'var out={id:id,ok:true,data:data};',
+                'if(shouldFormat)out.formatted=JSON.stringify(data,null,2);',
+                'self.postMessage(out);',
+                '}catch(err){',
+                'try{var data=eval("("+text+")");',
+                'var out={id:id,ok:true,data:data};',
+                'if(shouldFormat)out.formatted=JSON.stringify(data,null,2);',
+                'self.postMessage(out);',
+                '}catch(e2){self.postMessage({id:id,ok:false,error:e2.message});}',
+                '}',
+                '};'
+            ].join('');
+            return new Worker(URL.createObjectURL(new Blob([src], { type: 'application/javascript' })));
+        }
+
+        function parseInWorker(text, shouldFormat, generation) {
+            return new Promise(function(resolve) {
+                if (!parseWorker) parseWorker = createParseWorker();
+                function handler(e) {
+                    if (e.data.id !== generation) return;
+                    parseWorker.removeEventListener('message', handler);
+                    resolve(e.data);
+                }
+                parseWorker.addEventListener('message', handler);
+                parseWorker.postMessage({ id: generation, text: text, shouldFormat: shouldFormat });
+            });
+        }
+
+        async function renderJson() {
+            var text = $('#json-input').val().trim();
+            if (!text) {
+                parsedData = null;
+                $('#json-renderer').empty().removeClass('json-document');
+                $('#parse-status').text('');
+                return;
+            }
+
+            var size = byteSize(text);
+            var generation = ++parseGeneration;
+            var shouldFormat = size <= $.jsonViewer.LARGE_FILE_FORMAT_THRESHOLD;
+
+            $('#parse-status').text('Parsing…');
+            $('#btn-json-viewer').prop('disabled', true);
+
+            var result;
+            if (size >= $.jsonViewer.PARSE_WORKER_THRESHOLD) {
+                result = await parseInWorker(text, shouldFormat, generation);
+                if (!result.ok) {
+                    result = parseInputSync(text);
+                    if (result.ok && shouldFormat) {
+                        result.formatted = JSON.stringify(result.data, null, 2);
+                    }
+                }
+            } else {
+                result = parseInputSync(text);
+                if (result.ok && shouldFormat) {
+                    result.formatted = JSON.stringify(result.data, null, 2);
+                }
+            }
+
+            $('#btn-json-viewer').prop('disabled', false);
+            if (generation !== parseGeneration) return;
+
+            if (!result.ok) {
+                parsedData = null;
+                $('#parse-status').text('Error: ' + result.error);
+                $('#json-renderer').empty();
+                return alert('Cannot eval JSON: ' + result.error);
+            }
+
+            parsedData = result.data;
+            if (result.formatted) {
+                $('#json-input').val(result.formatted);
+            }
+
+            var options = getOptions();
+            $('#json-renderer').jsonViewer(result.data, options, size);
+
+            var status = 'Valid JSON';
+            if (!shouldFormat) status += ' · format skipped (large file)';
+            if ($.jsonViewer.treeLimitReached) status += ' · tree outline capped';
+            $('#parse-status').text(status);
+        }
+
+        $('#btn-json-viewer').click(function() { renderJson(); });
+        $('p.options input[type=checkbox]').change(function() {
+            if (parsedData) {
+                $('#json-renderer').jsonViewer(parsedData, getOptions(), byteSize($('#json-input').val()));
+                var status = 'Valid JSON';
+                if ($.jsonViewer.treeLimitReached) status += ' · tree outline capped';
+                $('#parse-status').text(status);
+            } else {
+                renderJson();
+            }
+        });
         renderJson();
     });
  
     //[jquery.json-viewer.js] START
     /**
-     * jQuery json-viewer
+     * jQuery json-viewer (lazy tree — Cursor / VS Code style)
      * @author: Alexandre Bodelot <alexandre.bodelot@gmail.com>
      * @link: https://github.com/abodelot/jquery.json-viewer
      */
     (function($) {
- 
-        /**
-         * Check if arg is either an array with at least 1 element, or a dict with at least 1 key
-         * @return boolean
-         */
-        function isCollapsable(arg) {
-            return arg instanceof Object && Object.keys(arg).length > 0;
+
+        $.jsonViewer = {
+            LARGE_FILE_FORMAT_THRESHOLD: 2 * 1024 * 1024,
+            PARSE_WORKER_THRESHOLD: 64 * 1024,
+            MAX_TREE_NODES: 5000,
+            MAX_STRING_DISPLAY: 500,
+            MAX_LINKIFY_LENGTH: 20000,
+            DOM_BATCH_SIZE: 250,
+            treeLimitReached: false
+        };
+
+        var lazyNodeData = new WeakMap();
+        var treeNodeCount = 0;
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
         }
- 
-        /**
-         * Check if a string represents a valid url
-         * @return boolean
-         */
+
+        function isCollapsable(value) {
+            return value !== null && typeof value === 'object' && (
+                Array.isArray(value) ? value.length > 0 : Object.keys(value).length > 0
+            );
+        }
+
+        function countChildren(value) {
+            if (Array.isArray(value)) return value.length;
+            if (value && typeof value === 'object') return Object.keys(value).length;
+            return 0;
+        }
+
+        function childLabel(value, count) {
+            if (Array.isArray(value)) return count + (count > 1 ? ' items' : ' item');
+            return count + (count > 1 ? ' keys' : ' key');
+        }
+
+        function getExpandDepth(options) {
+            return options.collapsed ? 0 : 1;
+        }
+
         function isUrl(string) {
+            if (string.length > $.jsonViewer.MAX_LINKIFY_LENGTH) return false;
             var urlRegexp = /^(https?:\/\/|ftps?:\/\/)?([a-z0-9%-]+\.){1,}([a-z0-9-]+)?(:(\d{1,5}))?(\/([a-z0-9\-._~:/?#[\]@!$&'()*+,;=%]+)?)?$/i;
             return urlRegexp.test(string);
         }
- 
-        /**
-         * Transform a json object into html representation
-         * @return string
-         */
-        function json2html(json, options) {
-            var html = '';
-            if (typeof json === 'string') {
-                // Escape tags and quotes
-                json = json
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/'/g, '&apos;')
-                    .replace(/"/g, '&quot;');
 
-                if (options.withLinks && isUrl(json)) {
-                    html += '<a href="' + json + '" class="json-string" target="_blank">' + json + '</a>';
-                } else {
-                    // Escape double quotes in the rendered non-URL string.
-                    json = json.replace(/&quot;/g, '\\&quot;');
-                    html += '<span class="json-string">"' + json + '"</span>';
-                }
-            } else if (typeof json === 'number') {
-                html += '<span class="json-literal">' + json + '</span>';
-            } else if (typeof json === 'boolean') {
-                html += '<span class="json-literal">' + json + '</span>';
-            } else if (json === null) {
-                html += '<span class="json-literal">null</span>';
-            } else if (json instanceof Array) {
-                if (json.length > 0) {
-                    html += '[<ol class="json-array">';
-                    for (var i = 0; i < json.length; ++i) {
-                        html += '<li>';
-                        // Add toggle button if item is collapsable
-                        if (isCollapsable(json[i])) {
-                            html += '<a href class="json-toggle"></a>';
-                        }
-                        html += json2html(json[i], options);
-                        // Add comma if item is not last
-                        if (i < json.length - 1) {
-                            html += ',';
-                        }
-                        html += '</li>';
-                    }
-                    html += '</ol>]';
-                } else {
-                    html += '[]';
-                }
-            } else if (typeof json === 'object') {
-                var keyCount = Object.keys(json).length;
-                if (keyCount > 0) {
-                    html += '{<ul class="json-dict">';
-                    for (var key in json) {
-                        if (Object.prototype.hasOwnProperty.call(json, key)) {
-                            html += '<li>';
-                            var keyRepr = options.withQuotes ?
-                                '<span class="json-string">"' + key + '"</span>' : key;
-                            // Add toggle button if item is collapsable
-                            if (isCollapsable(json[key])) {
-                                html += '<a href class="json-toggle">' + keyRepr + '</a>';
-                            } else {
-                                html += keyRepr;
-                            }
-                            html += ': ' + json2html(json[key], options);
-                            // Add comma if item is not last
-                            if (--keyCount > 0) {
-                                html += ',';
-                            }
-                            html += '</li>';
-                        }
-                    }
-                    html += '</ul>}';
-                } else {
-                    html += '{}';
-                }
-            }
-            return html;
+        function canRenderMoreNodes() {
+            return treeNodeCount < $.jsonViewer.MAX_TREE_NODES;
         }
 
-        /**
-         * Transform a json object into re-indent format json string
-         * @return string
-         */
-         function json2ReIndent(json, options, indentNum) {
-            var html ='';
-            if (typeof json === 'string') {
-                // Escape tags and quotes
-                /**
-                 * THTML的&lt; &gt; &amp; &quot; &copy; 分别是 <，>，&，"，© 的转义字符
-                 * XML只有5个转义符: &lt; &gt;&amp; &quot; &apos;
-                 */
-                json = json
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    .replace(/'/g, '&apos;')
-                    .replace(/"/g, '&quot;')
-                    .replace(/[\r\n]/g,"<br>");
-
-                if (options.withLinks && isUrl(json)) {
-                    html += '"' + json + '"';
-                } else {
-                    // Escape double quotes in the rendered non-URL string.
-                    json = json.replace(/&quot;/g, '\\&quot;');
-                    html += '"' + json + '"';
-                }
-            } else if (typeof json === 'number') {
-                html += json;
-            } else if (typeof json === 'boolean') {
-                html += json;
-            } else if (json === null) {
-                html += 'null';
-            } else if (json instanceof Array) {
-                if (json.length > 0) {
-                    html += '[' + '\n';
-                    for (var i = 0; i < json.length; ++i) {
-                        html = appendRepeatedIndent(html, indentNum);
-                        html += json2ReIndent(json[i], options, indentNum+1);
-                        // Add comma if item is not last
-                        if (i < json.length - 1) {
-                            html += ',' + '\n';
-                        }
-                    }
-                    html += '\n';
-                    html = appendRepeatedIndent(html, indentNum-1);
-                    html += ']';
-                } else {
-                    html += '[]';
-                }
-            } else if (typeof json === 'object') {
-                var keyCount = Object.keys(json).length;
-                if (keyCount > 0) {
-                    html += '{' + '\n';
-                    for (var key in json) {
-                        if (Object.prototype.hasOwnProperty.call(json, key)) {
-                            // var keyRepr = options.withQuotes ? '<span class="json-string">"' + key + '"</span>' : key;
-                            var keyRepr = key;
-                            // Add toggle button if item is collapsable
-                            html = appendRepeatedIndent(html, indentNum);
-                            html += '"' + keyRepr + '"';
-                            html += ': ' + json2ReIndent(json[key], options, indentNum+1);
-                            // Add comma if item is not last
-                            if (--keyCount > 0) {
-                                html += ',' + '\n';
-                            }
-                        }
-                    }
-                    html += '\n';
-                    html = appendRepeatedIndent(html, indentNum-1);
-                    html +=  '}';
-                } else {
-                    html += '{}';
-                }
+        function trackNode() {
+            treeNodeCount += 1;
+            if (treeNodeCount >= $.jsonViewer.MAX_TREE_NODES) {
+                $.jsonViewer.treeLimitReached = true;
             }
-            //restore tags and quotes
-            html = html
-                    .replace(/&amp;/g, '&')
-                    .replace(/&lt;/g, '<')
-                    .replace(/&gt;/g, '>')
-                    .replace(/&apos;/g, '\'')
-                    .replace(/&quot;/g, '"');
-            return html;
         }
 
-        function appendRepeatedIndent(str, repeatCount) {
-            for (let i = 0; i < repeatCount; i++) {
-                // str += '\t';
-                str += '  ';
-            }
-            return str;
+        function appendTruncatedNotice(list, remaining) {
+            var li = document.createElement('li');
+            li.className = 'json-truncated';
+            li.textContent = '… +' + remaining + ' more (outline limit ' + $.jsonViewer.MAX_TREE_NODES + ')';
+            list.appendChild(li);
+            trackNode();
         }
- 
+
+        function renderPrimitive(value, options) {
+            if (typeof value === 'string') {
+                var raw = value;
+                var display = raw.length > $.jsonViewer.MAX_STRING_DISPLAY
+                    ? raw.slice(0, $.jsonViewer.MAX_STRING_DISPLAY) + '…'
+                    : raw;
+                var escaped = escapeHtml(display).replace(/&quot;/g, '\\&quot;');
+                if (options.withLinks && isUrl(raw)) {
+                    var a = document.createElement('a');
+                    a.href = raw;
+                    a.className = 'json-string';
+                    a.target = '_blank';
+                    a.textContent = escaped;
+                    return a;
+                }
+                var span = document.createElement('span');
+                span.className = 'json-string';
+                span.textContent = '"' + display + '"';
+                return span;
+            }
+            var node = document.createElement('span');
+            node.className = 'json-literal';
+            if (typeof value === 'number' || typeof value === 'boolean') {
+                node.textContent = String(value);
+            } else {
+                node.textContent = 'null';
+            }
+            return node;
+        }
+
+        function createKeyElement(key, options, collapsed) {
+            var toggle = document.createElement('a');
+            toggle.href = '#';
+            toggle.className = 'json-toggle' + (collapsed ? ' collapsed' : '');
+            if (options.withQuotes) {
+                var keySpan = document.createElement('span');
+                keySpan.className = 'json-string';
+                keySpan.textContent = '"' + key + '"';
+                toggle.appendChild(keySpan);
+            } else {
+                toggle.appendChild(document.createTextNode(key));
+            }
+            return toggle;
+        }
+
+        function createPlainKeyElement(key, options) {
+            if (options.withQuotes) {
+                var keySpan = document.createElement('span');
+                keySpan.className = 'json-string';
+                keySpan.textContent = '"' + key + '"';
+                return keySpan;
+            }
+            return document.createTextNode(key);
+        }
+
+        function createPlaceholder(count, value) {
+            var ph = document.createElement('a');
+            ph.href = '#';
+            ph.className = 'json-placeholder';
+            ph.textContent = childLabel(value, count);
+            return ph;
+        }
+
+        function populateCollectionList(list, value, depth, options, enforceCap) {
+            if (Array.isArray(value)) {
+                for (var i = 0; i < value.length; i++) {
+                    if (enforceCap && !canRenderMoreNodes()) {
+                        appendTruncatedNotice(list, value.length - i);
+                        break;
+                    }
+                    var li = document.createElement('li');
+                    appendValueToLi(li, value[i], depth, options, i < value.length - 1, enforceCap);
+                    list.appendChild(li);
+                    if (enforceCap) trackNode();
+                }
+                return;
+            }
+            var keys = Object.keys(value);
+            for (var j = 0; j < keys.length; j++) {
+                if (enforceCap && !canRenderMoreNodes()) {
+                    appendTruncatedNotice(list, keys.length - j);
+                    break;
+                }
+                var liKey = document.createElement('li');
+                appendKeyedValueToLi(liKey, keys[j], value[keys[j]], depth, options, j < keys.length - 1, enforceCap);
+                list.appendChild(liKey);
+                if (enforceCap) trackNode();
+            }
+        }
+
+        function populateCollectionListBatched(list, value, depth, options, startIndex, onDone, enforceCap) {
+            var isArray = Array.isArray(value);
+            var keys = isArray ? null : Object.keys(value);
+            var total = countChildren(value);
+            var index = startIndex;
+
+            function batch() {
+                var end = Math.min(index + $.jsonViewer.DOM_BATCH_SIZE, total);
+                for (; index < end; index++) {
+                    if (enforceCap && !canRenderMoreNodes()) {
+                        appendTruncatedNotice(list, total - index);
+                        onDone();
+                        return;
+                    }
+                    var li = document.createElement('li');
+                    if (isArray) {
+                        appendValueToLi(li, value[index], depth, options, index < total - 1, enforceCap);
+                    } else {
+                        appendKeyedValueToLi(li, keys[index], value[keys[index]], depth, options, index < total - 1, enforceCap);
+                    }
+                    list.appendChild(li);
+                    if (enforceCap) trackNode();
+                }
+                if (index < total) {
+                    requestAnimationFrame(batch);
+                } else {
+                    onDone();
+                }
+            }
+            requestAnimationFrame(batch);
+        }
+
+        function appendValueToLi(li, value, depth, options, addComma, enforceCap) {
+            var expandDepth = getExpandDepth(options);
+            if (isCollapsable(value)) {
+                var shouldExpand = enforceCap && depth < expandDepth;
+                var toggle = document.createElement('a');
+                toggle.href = '#';
+                toggle.className = 'json-toggle' + (shouldExpand ? '' : ' collapsed');
+                li.appendChild(toggle);
+
+                if (shouldExpand) {
+                    var list = document.createElement(Array.isArray(value) ? 'ol' : 'ul');
+                    list.className = Array.isArray(value) ? 'json-array' : 'json-dict';
+                    populateCollectionList(list, value, depth + 1, options, enforceCap);
+                    li.appendChild(list);
+                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: true, list: list });
+                } else {
+                    toggle.classList.add('collapsed');
+                    li.appendChild(createPlaceholder(countChildren(value), value));
+                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: false, list: null });
+                }
+            } else {
+                li.appendChild(renderPrimitive(value, options));
+            }
+            if (addComma) li.appendChild(document.createTextNode(','));
+        }
+
+        function appendKeyedValueToLi(li, key, value, depth, options, addComma, enforceCap) {
+            var collapsable = isCollapsable(value);
+            var expandDepth = getExpandDepth(options);
+            var shouldExpand = collapsable && enforceCap && depth < expandDepth;
+
+            if (collapsable) {
+                li.appendChild(createKeyElement(key, options, !shouldExpand));
+            } else {
+                li.appendChild(createPlainKeyElement(key, options));
+            }
+            li.appendChild(document.createTextNode(': '));
+
+            if (collapsable) {
+                var toggle = li.querySelector('a.json-toggle');
+
+                if (shouldExpand) {
+                    var list = document.createElement(Array.isArray(value) ? 'ol' : 'ul');
+                    list.className = Array.isArray(value) ? 'json-array' : 'json-dict';
+                    populateCollectionList(list, value, depth + 1, options, enforceCap);
+                    li.appendChild(list);
+                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: true, list: list });
+                } else {
+                    toggle.classList.add('collapsed');
+                    li.appendChild(createPlaceholder(countChildren(value), value));
+                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: false, list: null });
+                }
+            } else {
+                li.appendChild(renderPrimitive(value, options));
+            }
+            if (addComma) li.appendChild(document.createTextNode(','));
+        }
+
+        function buildRootCollectionShell(container, value, options) {
+            var isArray = Array.isArray(value);
+            var count = countChildren(value);
+            container.appendChild(document.createTextNode(isArray ? '[' : '{'));
+
+            var shouldExpand = getExpandDepth(options) > 0;
+            var enforceCap = shouldExpand;
+
+            if (shouldExpand) {
+                var list = document.createElement(isArray ? 'ol' : 'ul');
+                list.className = isArray ? 'json-array' : 'json-dict';
+                populateCollectionList(list, value, 1, options, enforceCap);
+                container.appendChild(list);
+                lazyNodeData.set(container, { value: value, depth: 0, options: options, built: true, list: list, isRoot: true });
+            } else {
+                var toggle = document.createElement('a');
+                toggle.href = '#';
+                toggle.className = 'json-toggle collapsed';
+                container.appendChild(toggle);
+                container.appendChild(createPlaceholder(count, value));
+                lazyNodeData.set(container, {
+                    value: value, depth: 0, options: options, built: false, list: null, isRoot: true, toggle: toggle
+                });
+            }
+            container.appendChild(document.createTextNode(isArray ? ']' : '}'));
+        }
+
+        function expandLazyNode(holder, toggle, $status) {
+            var meta = lazyNodeData.get(holder);
+            if (!meta || meta.built) return false;
+
+            var isArray = Array.isArray(meta.value);
+            var list = document.createElement(isArray ? 'ol' : 'ul');
+            list.className = isArray ? 'json-array' : 'json-dict';
+            meta.built = true;
+            meta.list = list;
+
+            var activeToggle = meta.toggle || toggle;
+            var placeholder = holder.querySelector(':scope > a.json-placeholder');
+            var total = countChildren(meta.value);
+
+            if (activeToggle) activeToggle.classList.remove('collapsed');
+            if (activeToggle) activeToggle.after(list);
+            else holder.appendChild(list);
+            if (placeholder) placeholder.remove();
+
+            if (total > $.jsonViewer.DOM_BATCH_SIZE) {
+                if ($status) $status.text('Expanding ' + total + ' items…');
+                populateCollectionListBatched(list, meta.value, meta.depth + 1, meta.options, 0, function() {
+                    if ($status) $status.text('Valid JSON');
+                }, false);
+            } else {
+                populateCollectionList(list, meta.value, meta.depth + 1, meta.options, false);
+            }
+            return true;
+        }
+
+        function showBuiltNode(holder, toggle) {
+            var meta = lazyNodeData.get(holder);
+            var list = (meta && meta.list) || holder.querySelector(':scope > ul.json-dict, :scope > ol.json-array');
+            if (!list) return;
+            list.style.display = '';
+            toggle.classList.remove('collapsed');
+            var placeholder = holder.querySelector(':scope > a.json-placeholder');
+            if (placeholder) placeholder.remove();
+        }
+
+        function collapseNode(holder, toggle) {
+            var meta = lazyNodeData.get(holder);
+            var list = (meta && meta.list) || holder.querySelector(':scope > ul.json-dict, :scope > ol.json-array');
+            if (!list) return;
+            list.style.display = 'none';
+            toggle.classList.add('collapsed');
+
+            var count = meta ? countChildren(meta.value) : 0;
+            var val = meta ? meta.value : [];
+            var placeholder = holder.querySelector(':scope > a.json-placeholder');
+            if (placeholder) {
+                placeholder.textContent = childLabel(val, count);
+            } else {
+                list.after(createPlaceholder(count, val));
+            }
+        }
+
+        function bindTreeEvents($container) {
+            $container.off('click.jsonViewer');
+            $container.on('click.jsonViewer', 'a.json-placeholder', function(e) {
+                e.preventDefault();
+                $(this).siblings('a.json-toggle').first().trigger('click');
+                return false;
+            });
+            $container.on('click.jsonViewer', 'a.json-toggle', function(e) {
+                e.preventDefault();
+                var toggle = this;
+                var holder = toggle.parentElement;
+                var meta = lazyNodeData.get(holder);
+                var isCollapsed = toggle.classList.contains('collapsed');
+
+                if (meta && meta.isOuterRoot) {
+                    if (isCollapsed) {
+                        meta.list.style.display = '';
+                        toggle.classList.remove('collapsed');
+                    } else {
+                        meta.list.style.display = 'none';
+                        toggle.classList.add('collapsed');
+                    }
+                    return false;
+                }
+
+                if (isCollapsed) {
+                    if (!meta || !meta.built) {
+                        expandLazyNode(holder, toggle, $('#parse-status'));
+                    } else {
+                        showBuiltNode(holder, toggle);
+                    }
+                } else {
+                    collapseNode(holder, toggle);
+                }
+                return false;
+            });
+        }
+
+        function renderLazyTree(container, json, options, fileSize) {
+            treeNodeCount = 0;
+            $.jsonViewer.treeLimitReached = false;
+            container.innerHTML = '';
+            container.classList.add('json-document');
+
+            if (fileSize > $.jsonViewer.LARGE_FILE_FORMAT_THRESHOLD) {
+                var notice = document.createElement('div');
+                notice.className = 'json-large-notice';
+                notice.textContent = 'Large file mode: tree loads on expand only. Auto-format skipped above 2 MB. Outline capped at '
+                    + $.jsonViewer.MAX_TREE_NODES + ' nodes on initial expand.';
+                container.appendChild(notice);
+            }
+
+            var root = document.createElement('div');
+            root.className = 'json-root';
+
+            if (!isCollapsable(json)) {
+                root.appendChild(renderPrimitive(json, options));
+            } else if (options.rootCollapsable) {
+                var outerToggle = document.createElement('a');
+                outerToggle.href = '#';
+                outerToggle.className = 'json-toggle collapsed';
+                root.appendChild(outerToggle);
+
+                var inner = document.createElement('div');
+                inner.className = 'json-root-inner';
+                buildRootCollectionShell(inner, json, options);
+                inner.style.display = 'none';
+                root.appendChild(inner);
+
+                lazyNodeData.set(root, {
+                    value: json,
+                    depth: 0,
+                    options: options,
+                    built: true,
+                    list: inner,
+                    isRoot: true,
+                    toggle: outerToggle,
+                    isOuterRoot: true
+                });
+            } else {
+                buildRootCollectionShell(root, json, options);
+            }
+
+            container.appendChild(root);
+            trackNode();
+        }
+
         /**
          * jQuery plugin method
          * @param json: a javascript object
          * @param options: an optional options hash
+         * @param fileSize: optional byte size for large-file mode
          */
-        $.fn.jsonViewer = function(json, options) {
-            // Merge user options with default options
+        $.fn.jsonViewer = function(json, options, fileSize) {
             options = Object.assign({}, {
                 collapsed: false,
-                rootCollapsable: true,
+                rootCollapsable: false,
                 withQuotes: false,
                 withLinks: true
             }, options);
- 
-            // jQuery chaining
+
             return this.each(function() {
- 
-                // Transform to HTML
-                var html = json2html(json, options);
-                if (options.rootCollapsable && isCollapsable(json)) {
-                    html = '<a href class="json-toggle"></a>' + html;
-                }
-
-                // Insert HTML in target DOM element
-                $(this).html(html);
-                $(this).addClass('json-document');
- 
-                // Bind click on toggle buttons
-                $(this).off('click');
-                $(this).on('click', 'a.json-toggle', function() {
-                    var target = $(this).toggleClass('collapsed').siblings('ul.json-dict, ol.json-array');
-                    target.toggle();
-                    if (target.is(':visible')) {
-                        target.siblings('.json-placeholder').remove();
-                    } else {
-                        var count = target.children('li').length;
-                        var placeholder = count + (count > 1 ? ' items' : ' item');
-                        target.after('<a href class="json-placeholder">' + placeholder + '</a>');
-                    }
-                    return false;
-                });
- 
-                // Simulate click on toggle button when placeholder is clicked
-                $(this).on('click', 'a.json-placeholder', function() {
-                    $(this).siblings('a.json-toggle').click();
-                    return false;
-                });
- 
-                if (options.collapsed == true) {
-                    // Trigger click to collapse all nodes
-                    $(this).find('a.json-toggle').click();
-                }
-
-                // Custom: Re-Indent json string from input text area and reset text
-                var reIndentJson = json2ReIndent(json, options, 1);
-                reIndentJson = reIndentJson.replace(/<br\>/g, "\u005c\u006e");//unicode 转中文 -> \n 即换行符
-                document.getElementById("json-input").value = reIndentJson;
+                var $el = $(this);
+                renderLazyTree(this, json, options, fileSize || 0);
+                bindTreeEvents($el);
             });
         };
     })(jQuery);

@@ -427,6 +427,26 @@
     a.json-link { color: var(--accent); text-decoration: none; }
     a.json-link:hover { text-decoration: underline; }
 
+    .json-truncated {
+      color: var(--warning);
+      font-style: italic;
+      font-size: 0.9em;
+      list-style: none;
+      padding: 2px 0;
+    }
+
+    .json-large-notice {
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(88, 166, 255, 0.25);
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+      font-family: var(--font-sans);
+    }
+
     /* Toast */
     .toast-container {
       position: fixed;
@@ -593,6 +613,14 @@
   const STORE_CONTENT = 'content';
   const CACHE_LIMIT = 1024 * 1024 * 1024; // 1 GB
 
+  /* VS Code / Cursor-aligned performance thresholds */
+  const LARGE_FILE_FORMAT_THRESHOLD = 2 * 1024 * 1024; // skip auto-format above 2 MB
+  const PARSE_WORKER_THRESHOLD = 64 * 1024; // offload parse to worker above 64 KB
+  const MAX_TREE_NODES = 5000; // json.maxItemsComputed
+  const MAX_STRING_DISPLAY = 500;
+  const MAX_LINKIFY_LENGTH = 20000; // maxTokenizationLineLength
+  const DOM_BATCH_SIZE = 250; // nodes per animation frame when expanding large lists
+
   const SAMPLE_JSON = `{
   "id": 1001,
   "type": "donut",
@@ -625,6 +653,11 @@
   let db = null;
   let activeHistoryId = null;
   let historyEntries = [];
+  let parsedData = null;
+  let treeNodeCount = 0;
+  let treeLimitReached = false;
+  let parseGeneration = 0;
+  let parseWorker = null;
 
   /* ── Utilities ───────────────────────────────────────────────── */
   function uuid() {
@@ -932,18 +965,47 @@
       .replace(/"/g, '&quot;');
   }
 
-  /* ── JSON parsing (supports relaxed JSON like original) ──────── */
-  function parseJson(text) {
+  /* ── JSON parsing (worker + relaxed fallback) ────────────────── */
+  function createParseWorker() {
+    const src = [
+      'self.onmessage=function(e){',
+      'var m=e.data,id=m.id,text=m.text,shouldFormat=m.shouldFormat;',
+      'try{',
+      'var data=JSON.parse(text);',
+      'var out={id:id,ok:true,data:data};',
+      'if(shouldFormat)out.formatted=JSON.stringify(data,null,2);',
+      'self.postMessage(out);',
+      '}catch(err){',
+      'self.postMessage({id:id,ok:false,error:err.message});',
+      '}',
+      '};',
+    ].join('');
+    return new Worker(URL.createObjectURL(new Blob([src], { type: 'application/javascript' })));
+  }
+
+  function parseJsonSync(text) {
     try {
       return { ok: true, data: JSON.parse(text) };
     } catch (_) {
-      /* fallback: relaxed JS object literal (legacy compat) */
       try {
         return { ok: true, data: Function('"use strict"; return (' + text + ')')() };
       } catch (err) {
         return { ok: false, error: err.message };
       }
     }
+  }
+
+  function parseInWorker(text, shouldFormat, generation) {
+    return new Promise((resolve) => {
+      if (!parseWorker) parseWorker = createParseWorker();
+      const handler = (e) => {
+        if (e.data.id !== generation) return;
+        parseWorker.removeEventListener('message', handler);
+        resolve(e.data);
+      };
+      parseWorker.addEventListener('message', handler);
+      parseWorker.postMessage({ id: generation, text, shouldFormat });
+    });
   }
 
   function getViewerOptions() {
@@ -955,148 +1017,466 @@
     };
   }
 
-  /* ── JSON tree renderer (vanilla, from jquery.json-viewer) ─── */
-  function isCollapsable(arg) {
-    return arg instanceof Object && Object.keys(arg).length > 0;
+  function getExpandDepth(options) {
+    return options.collapsed ? 0 : 1;
+  }
+
+  /* ── Lazy JSON tree (Cursor / VS Code style) ─────────────────── */
+  const lazyNodeData = new WeakMap();
+
+  function isCollapsable(value) {
+    return value !== null && typeof value === 'object' && (
+      Array.isArray(value) ? value.length > 0 : Object.keys(value).length > 0
+    );
+  }
+
+  function countChildren(value) {
+    if (Array.isArray(value)) return value.length;
+    if (value && typeof value === 'object') return Object.keys(value).length;
+    return 0;
+  }
+
+  function childLabel(value, count) {
+    if (Array.isArray(value)) return count === 1 ? '1 item' : count + ' items';
+    return count === 1 ? '1 key' : count + ' keys';
   }
 
   function isUrl(string) {
-    return /^(https?:\/\/|ftps?:\/\/)[^\s/$.?#][^\s]*$/i.test(string);
+    return string.length <= MAX_LINKIFY_LENGTH
+      && /^(https?:\/\/|ftps?:\/\/)[^\s/$.?#][^\s]*$/i.test(string);
   }
 
-  function json2html(json, options) {
-    let html = '';
-    if (typeof json === 'string') {
-      const escaped = escapeHtml(json);
-      if (options.withLinks && isUrl(json)) {
-        html += `<a href="${escapeHtml(json)}" class="json-link json-string" target="_blank" rel="noopener">"${escaped}"</a>`;
-      } else {
-        html += `<span class="json-string">"${escaped}"</span>`;
-      }
-    } else if (typeof json === 'number') {
-      html += `<span class="json-number">${json}</span>`;
-    } else if (typeof json === 'boolean') {
-      html += `<span class="json-literal">${json}</span>`;
-    } else if (json === null) {
-      html += '<span class="json-literal">null</span>';
-    } else if (Array.isArray(json)) {
-      if (json.length > 0) {
-        html += '[<ol class="json-array">';
-        for (let i = 0; i < json.length; i++) {
-          html += '<li>';
-          if (isCollapsable(json[i])) html += '<a href class="json-toggle"></a>';
-          html += json2html(json[i], options);
-          if (i < json.length - 1) html += ',';
-          html += '</li>';
-        }
-        html += '</ol>]';
-      } else {
-        html += '[]';
-      }
-    } else if (typeof json === 'object') {
-      let keyCount = Object.keys(json).length;
-      if (keyCount > 0) {
-        html += '{<ul class="json-dict">';
-        for (const key in json) {
-          if (!Object.prototype.hasOwnProperty.call(json, key)) continue;
-          html += '<li>';
-          const keyRepr = options.withQuotes
-            ? `<span class="json-key">"${escapeHtml(key)}"</span>`
-            : `<span class="json-key">${escapeHtml(key)}</span>`;
-          if (isCollapsable(json[key])) {
-            html += `<a href class="json-toggle">${keyRepr}</a>`;
-          } else {
-            html += keyRepr;
-          }
-          html += ': ' + json2html(json[key], options);
-          if (--keyCount > 0) html += ',';
-          html += '</li>';
-        }
-        html += '</ul>}';
-      } else {
-        html += '{}';
-      }
-    }
-    return html;
+  function canRenderMoreNodes() {
+    return treeNodeCount < MAX_TREE_NODES;
   }
 
-  function renderTree(json, options) {
-    let html = json2html(json, options);
-    if (options.rootCollapsable && isCollapsable(json)) {
-      html = '<a href class="json-toggle"></a>' + html;
+  function trackNode() {
+    treeNodeCount += 1;
+    if (treeNodeCount >= MAX_TREE_NODES) treeLimitReached = true;
+  }
+
+  function appendTruncatedNotice(list, remaining) {
+    const li = document.createElement('li');
+    li.className = 'json-truncated';
+    li.textContent = '… +' + remaining + ' more (outline limit ' + MAX_TREE_NODES + ')';
+    list.appendChild(li);
+    trackNode();
+  }
+
+  function renderPrimitive(value, options) {
+    const span = document.createElement('span');
+    if (typeof value === 'string') {
+      const display = value.length > MAX_STRING_DISPLAY
+        ? value.slice(0, MAX_STRING_DISPLAY) + '…'
+        : value;
+      if (options.withLinks && isUrl(value)) {
+        const a = document.createElement('a');
+        a.href = value;
+        a.className = 'json-link json-string';
+        a.target = '_blank';
+        a.rel = 'noopener';
+        a.textContent = '"' + display + '"';
+        return a;
+      }
+      span.className = 'json-string';
+      span.textContent = '"' + display + '"';
+      return span;
     }
-    jsonRenderer.innerHTML = html;
+    if (typeof value === 'number') {
+      span.className = 'json-number';
+      span.textContent = String(value);
+    } else if (typeof value === 'boolean') {
+      span.className = 'json-literal';
+      span.textContent = String(value);
+    } else {
+      span.className = 'json-literal';
+      span.textContent = 'null';
+    }
+    return span;
+  }
+
+  function createKeyElement(key, options, collapsable) {
+    const label = options.withQuotes ? '"' + key + '"' : key;
+    if (collapsable) {
+      const toggle = document.createElement('a');
+      toggle.href = '#';
+      toggle.className = 'json-toggle collapsed';
+      const keySpan = document.createElement('span');
+      keySpan.className = 'json-key';
+      keySpan.textContent = label;
+      toggle.appendChild(keySpan);
+      return toggle;
+    }
+    const keySpan = document.createElement('span');
+    keySpan.className = 'json-key';
+    keySpan.textContent = label;
+    return keySpan;
+  }
+
+  function createPlaceholder(count, value) {
+    const ph = document.createElement('a');
+    ph.href = '#';
+    ph.className = 'json-placeholder';
+    ph.textContent = childLabel(value, count);
+    return ph;
+  }
+
+  function populateCollectionList(list, value, depth, options, enforceCap) {
+    if (Array.isArray(value)) {
+      for (let i = 0; i < value.length; i++) {
+        if (enforceCap && !canRenderMoreNodes()) {
+          appendTruncatedNotice(list, value.length - i);
+          break;
+        }
+        const li = document.createElement('li');
+        appendValueToLi(li, value[i], depth, options, i < value.length - 1, enforceCap);
+        list.appendChild(li);
+        if (enforceCap) trackNode();
+      }
+      return;
+    }
+
+    const keys = Object.keys(value);
+    for (let i = 0; i < keys.length; i++) {
+      if (enforceCap && !canRenderMoreNodes()) {
+        appendTruncatedNotice(list, keys.length - i);
+        break;
+      }
+      const key = keys[i];
+      const li = document.createElement('li');
+      appendKeyedValueToLi(li, key, value[key], depth, options, i < keys.length - 1, enforceCap);
+      list.appendChild(li);
+      if (enforceCap) trackNode();
+    }
+  }
+
+  function populateCollectionListBatched(list, value, depth, options, startIndex, onDone, enforceCap) {
+    const isArray = Array.isArray(value);
+    const keys = isArray ? null : Object.keys(value);
+    const total = countChildren(value);
+    let index = startIndex;
+
+    function batch() {
+      const end = Math.min(index + DOM_BATCH_SIZE, total);
+      for (; index < end; index++) {
+        if (enforceCap && !canRenderMoreNodes()) {
+          appendTruncatedNotice(list, total - index);
+          onDone();
+          return;
+        }
+        const li = document.createElement('li');
+        if (isArray) {
+          appendValueToLi(li, value[index], depth, options, index < total - 1, enforceCap);
+        } else {
+          appendKeyedValueToLi(li, keys[index], value[keys[index]], depth, options, index < total - 1, enforceCap);
+        }
+        list.appendChild(li);
+        if (enforceCap) trackNode();
+      }
+      if (index < total) {
+        requestAnimationFrame(batch);
+      } else {
+        onDone();
+      }
+    }
+    requestAnimationFrame(batch);
+  }
+
+  function appendValueToLi(li, value, depth, options, addComma, enforceCap) {
+    const expandDepth = getExpandDepth(options);
+    if (isCollapsable(value)) {
+      const toggle = document.createElement('a');
+      toggle.href = '#';
+      toggle.className = 'json-toggle';
+      li.appendChild(toggle);
+
+      const shouldExpand = enforceCap && depth < expandDepth;
+      if (shouldExpand) {
+        const list = document.createElement(Array.isArray(value) ? 'ol' : 'ul');
+        list.className = Array.isArray(value) ? 'json-array' : 'json-dict';
+        populateCollectionList(list, value, depth + 1, options, enforceCap);
+        li.appendChild(list);
+        lazyNodeData.set(li, { value, depth, options, built: true, list });
+      } else {
+        toggle.classList.add('collapsed');
+        li.appendChild(createPlaceholder(countChildren(value), value));
+        lazyNodeData.set(li, { value, depth, options, built: false, list: null });
+      }
+    } else {
+      li.appendChild(renderPrimitive(value, options));
+    }
+    if (addComma) li.appendChild(document.createTextNode(','));
+  }
+
+  function appendKeyedValueToLi(li, key, value, depth, options, addComma, enforceCap) {
+    const collapsable = isCollapsable(value);
+    li.appendChild(createKeyElement(key, options, collapsable));
+    li.appendChild(document.createTextNode(': '));
+
+    if (collapsable) {
+      const expandDepth = getExpandDepth(options);
+      const toggle = li.querySelector(':scope > a.json-toggle');
+      const shouldExpand = enforceCap && depth < expandDepth;
+
+      if (shouldExpand) {
+        const list = document.createElement(Array.isArray(value) ? 'ol' : 'ul');
+        list.className = Array.isArray(value) ? 'json-array' : 'json-dict';
+        populateCollectionList(list, value, depth + 1, options, enforceCap);
+        li.appendChild(list);
+        lazyNodeData.set(li, { value, depth, options, built: true, list });
+      } else {
+        toggle.classList.add('collapsed');
+        li.appendChild(createPlaceholder(countChildren(value), value));
+        lazyNodeData.set(li, { value, depth, options, built: false, list: null });
+      }
+    } else {
+      li.appendChild(renderPrimitive(value, options));
+    }
+    if (addComma) li.appendChild(document.createTextNode(','));
+  }
+
+  function buildRootCollectionShell(container, value, options) {
+    const isArray = Array.isArray(value);
+    const count = countChildren(value);
+    const open = document.createTextNode(isArray ? '[' : '{');
+    const close = document.createTextNode(isArray ? ']' : '}');
+    container.appendChild(open);
+
+    const expandDepth = getExpandDepth(options);
+    const shouldExpand = expandDepth > 0;
+
+    const enforceCap = shouldExpand;
+    if (shouldExpand) {
+      const list = document.createElement(isArray ? 'ol' : 'ul');
+      list.className = isArray ? 'json-array' : 'json-dict';
+      populateCollectionList(list, value, 1, options, enforceCap);
+      container.appendChild(list);
+      lazyNodeData.set(container, { value, depth: 0, options, built: true, list, isRoot: true });
+    } else {
+      const toggle = document.createElement('a');
+      toggle.href = '#';
+      toggle.className = 'json-toggle collapsed';
+      container.appendChild(toggle);
+      container.appendChild(createPlaceholder(count, value));
+      lazyNodeData.set(container, {
+        value, depth: 0, options, built: false, list: null, isRoot: true, toggle,
+      });
+    }
+    container.appendChild(close);
+  }
+
+  function expandLazyNode(holder, toggle) {
+    const meta = lazyNodeData.get(holder);
+    if (!meta || meta.built) return false;
+
+    const isArray = Array.isArray(meta.value);
+    const list = document.createElement(isArray ? 'ol' : 'ul');
+    list.className = isArray ? 'json-array' : 'json-dict';
+    meta.built = true;
+    meta.list = list;
+
+    const activeToggle = meta.toggle || toggle;
+    const placeholder = holder.querySelector(':scope > a.json-placeholder');
+    const total = countChildren(meta.value);
+
+    if (activeToggle) activeToggle.classList.remove('collapsed');
+    if (activeToggle) activeToggle.after(list);
+    else holder.appendChild(list);
+
+    if (placeholder) placeholder.remove();
+
+    if (total > DOM_BATCH_SIZE) {
+      parseStatus.innerHTML = '<span style="color:var(--accent)">Expanding ' + total + ' items…</span>';
+      populateCollectionListBatched(list, meta.value, meta.depth + 1, meta.options, 0, updateParseStatusAfterTree, false);
+    } else {
+      populateCollectionList(list, meta.value, meta.depth + 1, meta.options, false);
+    }
+    return true;
+  }
+
+  function showBuiltNode(holder, toggle) {
+    const meta = lazyNodeData.get(holder);
+    const list = meta?.list || holder.querySelector(':scope > ul.json-dict, :scope > ol.json-array');
+    if (!list) return;
+    list.style.display = '';
+    toggle.classList.remove('collapsed');
+    const placeholder = holder.querySelector(':scope > a.json-placeholder');
+    if (placeholder) placeholder.remove();
+  }
+
+  function collapseNode(holder, toggle) {
+    const meta = lazyNodeData.get(holder);
+    const list = meta?.list || holder.querySelector(':scope > ul.json-dict, :scope > ol.json-array');
+    if (!list) return;
+    list.style.display = 'none';
+    toggle.classList.add('collapsed');
+
+    const count = meta ? countChildren(meta.value) : countChildren([]);
+    const val = meta ? meta.value : [];
+    let placeholder = holder.querySelector(':scope > a.json-placeholder');
+    if (placeholder) {
+      placeholder.textContent = childLabel(val, count);
+    } else {
+      placeholder = createPlaceholder(count, val);
+      list.after(placeholder);
+    }
+  }
+
+  function updateParseStatusAfterTree() {
+    let status = '<span style="color:var(--success)">✓ Valid JSON</span>';
+    if (treeLimitReached) {
+      status += ' <span style="color:var(--warning)">· tree capped at ' + MAX_TREE_NODES + '</span>';
+    }
+    parseStatus.innerHTML = status;
+  }
+
+  function renderTreeLazy(json, options, fileSize) {
+    treeNodeCount = 0;
+    treeLimitReached = false;
+    jsonRenderer.innerHTML = '';
     jsonRenderer.classList.add('json-document');
 
-    jsonRenderer.onclick = (e) => {
-      const toggle = e.target.closest('a.json-toggle');
-      if (toggle) {
-        e.preventDefault();
-        toggle.classList.toggle('collapsed');
-        const parent = toggle.parentElement;
-        const target = [...parent.children].find(
-          (el) => el.matches('ul.json-dict, ol.json-array')
-        );
-        if (!target) return;
-        const hidden = target.style.display !== 'none';
-        target.style.display = hidden ? 'none' : '';
-        let placeholder = parent.querySelector(':scope > a.json-placeholder');
-        if (hidden) {
-          if (!placeholder) {
-            const count = target.children.length;
-            placeholder = document.createElement('a');
-            placeholder.href = '#';
-            placeholder.className = 'json-placeholder';
-            placeholder.textContent = count + (count > 1 ? ' items' : ' item');
-            target.after(placeholder);
-          }
-        } else if (placeholder) {
-          placeholder.remove();
-        }
-        return;
-      }
-      const placeholder = e.target.closest('a.json-placeholder');
-      if (placeholder) {
-        e.preventDefault();
-        const toggleEl = placeholder.parentElement.querySelector(':scope > a.json-toggle');
-        if (toggleEl) toggleEl.click();
-      }
-    };
+    if (fileSize > LARGE_FILE_FORMAT_THRESHOLD) {
+      const notice = document.createElement('div');
+      notice.className = 'json-large-notice';
+      notice.textContent = 'Large file mode: tree loads on expand only (like VS Code). Auto-format skipped above '
+        + formatBytes(LARGE_FILE_FORMAT_THRESHOLD) + '. Outline capped at ' + MAX_TREE_NODES + ' nodes.';
+      jsonRenderer.appendChild(notice);
+    }
 
-    if (options.collapsed) {
-      jsonRenderer.querySelectorAll('a.json-toggle').forEach((t) => t.click());
+    const root = document.createElement('div');
+    root.className = 'json-root';
+
+    if (!isCollapsable(json)) {
+      root.appendChild(renderPrimitive(json, options));
+    } else {
+      if (options.rootCollapsable) {
+        const outerToggle = document.createElement('a');
+        outerToggle.href = '#';
+        outerToggle.className = 'json-toggle collapsed';
+        root.appendChild(outerToggle);
+
+        const inner = document.createElement('div');
+        inner.className = 'json-root-inner';
+        buildRootCollectionShell(inner, json, options);
+        inner.style.display = 'none';
+        root.appendChild(inner);
+
+        lazyNodeData.set(root, {
+          value: json,
+          depth: 0,
+          options,
+          built: true,
+          list: inner,
+          isRoot: true,
+          toggle: outerToggle,
+          isOuterRoot: true,
+        });
+      } else {
+        buildRootCollectionShell(root, json, options);
+      }
+    }
+
+    jsonRenderer.appendChild(root);
+    trackNode();
+  }
+
+  function handleTreeClick(e) {
+    const placeholder = e.target.closest('a.json-placeholder');
+    if (placeholder) {
+      e.preventDefault();
+      const holder = placeholder.parentElement;
+      const toggle = holder.querySelector(':scope > a.json-toggle');
+      if (toggle) toggle.click();
+      return;
+    }
+
+    const toggle = e.target.closest('a.json-toggle');
+    if (!toggle) return;
+    e.preventDefault();
+
+    const holder = toggle.parentElement;
+    const meta = lazyNodeData.get(holder);
+    const isCollapsed = toggle.classList.contains('collapsed');
+
+    if (meta?.isOuterRoot) {
+      if (isCollapsed) {
+        meta.list.style.display = '';
+        toggle.classList.remove('collapsed');
+      } else {
+        meta.list.style.display = 'none';
+        toggle.classList.add('collapsed');
+      }
+      return;
+    }
+
+    if (isCollapsed) {
+      if (!meta || !meta.built) expandLazyNode(holder, toggle);
+      else showBuiltNode(holder, toggle);
+    } else {
+      collapseNode(holder, toggle);
     }
   }
+
+  jsonRenderer.addEventListener('click', handleTreeClick);
 
   async function parseAndRender(saveHistory = true) {
     const text = jsonInput.value.trim();
     if (!text) {
+      parsedData = null;
       jsonRenderer.innerHTML = '';
       parseStatus.textContent = '';
       inputStats.textContent = '';
       return;
     }
 
-    const result = parseJson(text);
+    const size = byteSize(text);
+    const generation = ++parseGeneration;
+    const shouldFormat = size <= LARGE_FILE_FORMAT_THRESHOLD;
+
+    parseStatus.innerHTML = '<span style="color:var(--accent)">Parsing…</span>';
+    inputStats.textContent = formatBytes(size);
+
+    let result;
+    if (size >= PARSE_WORKER_THRESHOLD) {
+      result = await parseInWorker(text, shouldFormat, generation);
+      if (!result.ok) {
+        result = parseJsonSync(text);
+        if (result.ok && shouldFormat) result.formatted = JSON.stringify(result.data, null, 2);
+      }
+    } else {
+      result = parseJsonSync(text);
+      if (result.ok && shouldFormat) result.formatted = JSON.stringify(result.data, null, 2);
+    }
+
+    if (generation !== parseGeneration) return;
+
     if (!result.ok) {
-      parseStatus.innerHTML = `<span style="color:var(--danger)">✕ ${escapeHtml(result.error)}</span>`;
+      parsedData = null;
+      parseStatus.innerHTML = '<span style="color:var(--danger)">✕ ' + escapeHtml(result.error) + '</span>';
       jsonRenderer.innerHTML = '';
-      inputStats.textContent = formatBytes(byteSize(text));
       return;
     }
 
-    const formatted = JSON.stringify(result.data, null, 2);
-    jsonInput.value = formatted;
+    parsedData = result.data;
+    const contentForHistory = result.formatted || text;
+
+    if (result.formatted) {
+      jsonInput.value = result.formatted;
+    }
 
     const options = getViewerOptions();
-    renderTree(result.data, options);
+    renderTreeLazy(result.data, options, size);
 
-    parseStatus.innerHTML = '<span style="color:var(--success)">✓ Valid JSON</span>';
-    inputStats.textContent = formatBytes(byteSize(formatted));
+    let status = '<span style="color:var(--success)">✓ Valid JSON</span>';
+    if (!shouldFormat) status += ' <span style="color:var(--text-muted)">· format skipped</span>';
+    if (treeLimitReached) status += ' <span style="color:var(--warning)">· tree capped</span>';
+    parseStatus.innerHTML = status;
+    inputStats.textContent = formatBytes(byteSize(jsonInput.value));
 
     if (saveHistory && db) {
       try {
-        const entry = await saveToHistory(formatted, result.data);
+        const entry = await saveToHistory(contentForHistory, result.data);
         if (entry) {
           activeHistoryId = entry.id;
           await refreshHistory();
@@ -1108,17 +1488,28 @@
     }
   }
 
-  function minifyJson() {
+  async function minifyJson() {
     const text = jsonInput.value.trim();
     if (!text) return;
-    const result = parseJson(text);
+
+    let result;
+    if (byteSize(text) >= PARSE_WORKER_THRESHOLD) {
+      const generation = ++parseGeneration;
+      result = await parseInWorker(text, false, generation);
+      if (!result.ok) result = parseJsonSync(text);
+    } else {
+      result = parseJsonSync(text);
+    }
+
     if (!result.ok) {
       toast('Invalid JSON: ' + result.error, 'error');
       return;
     }
+    parsedData = result.data;
     jsonInput.value = JSON.stringify(result.data);
     toast('Minified', 'success');
-    parseAndRender(false);
+    renderTreeLazy(result.data, getViewerOptions(), byteSize(jsonInput.value));
+    updateParseStatusAfterTree();
   }
 
   async function copyJson() {
@@ -1193,7 +1584,12 @@
 
   document.querySelectorAll('.options-bar input').forEach((el) => {
     el.addEventListener('change', () => {
-      if (jsonInput.value.trim()) parseAndRender(false);
+      if (parsedData) {
+        renderTreeLazy(parsedData, getViewerOptions(), byteSize(jsonInput.value));
+        updateParseStatusAfterTree();
+      } else if (jsonInput.value.trim()) {
+        parseAndRender(false);
+      }
     });
   });
 

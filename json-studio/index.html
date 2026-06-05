@@ -522,14 +522,24 @@
     .json-literal { color: var(--json-bool); font-weight: 600; }
     .json-number { color: var(--json-number); }
 
+    button.json-toggle,
     a.json-toggle {
       position: relative;
       color: inherit;
       text-decoration: none;
+      border: none;
+      background: none;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      cursor: pointer;
+      text-align: left;
     }
 
+    button.json-toggle:focus,
     a.json-toggle:focus { outline: none; }
 
+    button.json-toggle::before,
     a.json-toggle::before {
       font-size: 0.85em;
       color: var(--text-muted);
@@ -541,20 +551,34 @@
       line-height: 1em;
       left: -1.3em;
       transition: transform 0.15s;
+      pointer-events: none;
     }
 
+    button.json-toggle:hover::before,
     a.json-toggle:hover::before { color: var(--accent); }
+    button.json-toggle.collapsed::before,
     a.json-toggle.collapsed::before { transform: rotate(-90deg); }
 
+    button.json-placeholder,
     a.json-placeholder {
       color: var(--text-muted);
       padding: 0 0.5em;
       text-decoration: none;
       font-style: italic;
       font-size: 0.9em;
+      border: none;
+      background: none;
+      font: inherit;
+      cursor: pointer;
     }
 
+    button.json-placeholder:hover,
     a.json-placeholder:hover { color: var(--accent); text-decoration: underline; }
+
+    a.json-link {
+      position: relative;
+      z-index: 1;
+    }
 
     a.json-link { color: var(--accent); text-decoration: none; }
     a.json-link:hover { text-decoration: underline; }
@@ -782,7 +806,7 @@
   "id": 1001,
   "type": "donut",
   "name": "Michael Ledger",
-  "description": "https://en.wikipedia.org/wiki/Doughnut",
+  "description": "https://www.google.com",
   "price": 2.55,
   "available": {
     "store": 42,
@@ -1229,9 +1253,9 @@
       if (options.withLinks && isUrl(value)) {
         const a = document.createElement('a');
         a.href = value;
-        a.className = 'json-link json-string';
         a.target = '_blank';
-        a.rel = 'noopener';
+        a.rel = 'noopener noreferrer';
+        a.className = 'json-link json-string';
         a.textContent = '"' + display + '"';
         return a;
       }
@@ -1252,12 +1276,17 @@
     return span;
   }
 
+  function createToggleButton(collapsed) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'json-toggle' + (collapsed ? ' collapsed' : '');
+    return btn;
+  }
+
   function createKeyElement(key, options, collapsable) {
     const label = options.withQuotes ? '"' + key + '"' : key;
     if (collapsable) {
-      const toggle = document.createElement('a');
-      toggle.href = '#';
-      toggle.className = 'json-toggle collapsed';
+      const toggle = createToggleButton(true);
       const keySpan = document.createElement('span');
       keySpan.className = 'json-key';
       keySpan.textContent = label;
@@ -1271,8 +1300,8 @@
   }
 
   function createPlaceholder(count, value) {
-    const ph = document.createElement('a');
-    ph.href = '#';
+    const ph = document.createElement('button');
+    ph.type = 'button';
     ph.className = 'json-placeholder';
     ph.textContent = childLabel(value, count);
     return ph;
@@ -1342,9 +1371,7 @@
   function appendValueToLi(li, value, depth, options, addComma, enforceCap) {
     const expandDepth = getExpandDepth(options);
     if (isCollapsable(value)) {
-      const toggle = document.createElement('a');
-      toggle.href = '#';
-      toggle.className = 'json-toggle';
+      const toggle = createToggleButton(false);
       li.appendChild(toggle);
 
       const shouldExpand = enforceCap && depth < expandDepth;
@@ -1372,7 +1399,7 @@
 
     if (collapsable) {
       const expandDepth = getExpandDepth(options);
-      const toggle = li.querySelector(':scope > a.json-toggle');
+      const toggle = li.querySelector(':scope > .json-toggle');
       const shouldExpand = enforceCap && depth < expandDepth;
 
       if (shouldExpand) {
@@ -1410,9 +1437,7 @@
       container.appendChild(list);
       lazyNodeData.set(container, { value, depth: 0, options, built: true, list, isRoot: true });
     } else {
-      const toggle = document.createElement('a');
-      toggle.href = '#';
-      toggle.className = 'json-toggle collapsed';
+      const toggle = createToggleButton(true);
       container.appendChild(toggle);
       container.appendChild(createPlaceholder(count, value));
       lazyNodeData.set(container, {
@@ -1433,7 +1458,7 @@
     meta.list = list;
 
     const activeToggle = meta.toggle || toggle;
-    const placeholder = holder.querySelector(':scope > a.json-placeholder');
+    const placeholder = holder.querySelector(':scope > .json-placeholder');
     const total = countChildren(meta.value);
 
     if (activeToggle) activeToggle.classList.remove('collapsed');
@@ -1457,7 +1482,7 @@
     if (!list) return;
     list.style.display = '';
     toggle.classList.remove('collapsed');
-    const placeholder = holder.querySelector(':scope > a.json-placeholder');
+    const placeholder = holder.querySelector(':scope > .json-placeholder');
     if (placeholder) placeholder.remove();
   }
 
@@ -1470,7 +1495,7 @@
 
     const count = meta ? countChildren(meta.value) : countChildren([]);
     const val = meta ? meta.value : [];
-    let placeholder = holder.querySelector(':scope > a.json-placeholder');
+    let placeholder = holder.querySelector(':scope > .json-placeholder');
     if (placeholder) {
       placeholder.textContent = childLabel(val, count);
     } else {
@@ -1508,9 +1533,7 @@
       root.appendChild(renderPrimitive(json, options));
     } else {
       if (options.rootCollapsable) {
-        const outerToggle = document.createElement('a');
-        outerToggle.href = '#';
-        outerToggle.className = 'json-toggle collapsed';
+        const outerToggle = createToggleButton(true);
         root.appendChild(outerToggle);
 
         const inner = document.createElement('div');
@@ -1538,19 +1561,22 @@
     trackNode();
   }
 
-  function handleTreeClick(e) {
-    if (e.target.closest('a.json-link')) return;
+  function eventFind(e, selector) {
+    const path = typeof e.composedPath === 'function' ? e.composedPath() : [];
+    return path.find((el) => el instanceof Element && el.matches(selector)) || null;
+  }
 
-    const placeholder = e.target.closest('a.json-placeholder');
+  function handleTreeClick(e) {
+    const placeholder = eventFind(e, '.json-placeholder');
     if (placeholder) {
       e.preventDefault();
       const holder = placeholder.parentElement;
-      const toggle = holder.querySelector(':scope > a.json-toggle');
+      const toggle = holder.querySelector(':scope > .json-toggle');
       if (toggle) toggle.click();
       return;
     }
 
-    const toggle = e.target.closest('a.json-toggle');
+    const toggle = eventFind(e, '.json-toggle');
     if (!toggle) return;
     e.preventDefault();
 

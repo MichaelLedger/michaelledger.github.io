@@ -98,11 +98,89 @@
             border: 1px solid #aaa;
             max-height: 70vh;
             overflow: auto;
+            margin-top: 4px;
         }
+
+        .action-bar {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin: 20px 0 24px;
+            flex-wrap: wrap;
+        }
+
+        #btn-json-viewer {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+            transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+        }
+
+        #btn-json-viewer:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+            transform: translateY(-1px);
+        }
+
+        #btn-json-viewer:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+        }
+
+        #btn-json-viewer:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
         #parse-status {
-            font-size: 13px;
-            color: #555;
-            margin: 0 0 8px;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0;
+            padding: 8px 16px;
+            border-radius: 999px;
+            line-height: 1.4;
+            min-height: 20px;
+        }
+
+        #parse-status:empty {
+            display: none;
+        }
+
+        #parse-status.is-parsing {
+            color: #1d4ed8;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+        }
+
+        #parse-status.is-ok {
+            color: #166534;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+        }
+
+        #parse-status.is-warn {
+            color: #92400e;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+        }
+
+        #parse-status.is-error {
+            color: #b91c1c;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
         }
     </style>
     <!-- <script src="http://libs.baidu.com/jquery/2.1.4/jquery.min.js"></script> -->
@@ -150,8 +228,10 @@
             With Links
         </label>
     </p>
-    <button id="btn-json-viewer" title="run jsonViewer()">Transform to HTML</button>
-    <p id="parse-status"></p>
+    <div class="action-bar">
+        <button id="btn-json-viewer" type="button" title="run jsonViewer()">Transform to HTML</button>
+        <p id="parse-status" role="status" aria-live="polite"></p>
+    </div>
     <pre id="json-renderer"></pre>
 </body>
 <script>
@@ -218,12 +298,32 @@
             });
         }
 
+        function setParseStatus(text, state) {
+            var $el = $('#parse-status');
+            $el.removeClass('is-parsing is-ok is-warn is-error');
+            if (!text) {
+                $el.text('');
+                return;
+            }
+            $el.text(text);
+            if (state) $el.addClass('is-' + state);
+        }
+
+        function buildOkStatus(shouldFormat) {
+            var status = '✓ Valid JSON';
+            var state = 'ok';
+            if (!shouldFormat || $.jsonViewer.treeLimitReached) state = 'warn';
+            if (!shouldFormat) status += ' · format skipped (large file)';
+            if ($.jsonViewer.treeLimitReached) status += ' · tree outline capped';
+            return { status: status, state: state };
+        }
+
         async function renderJson() {
             var text = $('#json-input').val().trim();
             if (!text) {
                 parsedData = null;
                 $('#json-renderer').empty().removeClass('json-document');
-                $('#parse-status').text('');
+                setParseStatus('', null);
                 return;
             }
 
@@ -231,7 +331,7 @@
             var generation = ++parseGeneration;
             var shouldFormat = size <= $.jsonViewer.LARGE_FILE_FORMAT_THRESHOLD;
 
-            $('#parse-status').text('Parsing…');
+            setParseStatus('Parsing…', 'parsing');
             $('#btn-json-viewer').prop('disabled', true);
 
             var result;
@@ -255,7 +355,7 @@
 
             if (!result.ok) {
                 parsedData = null;
-                $('#parse-status').text('Error: ' + result.error);
+                setParseStatus('✕ ' + result.error, 'error');
                 $('#json-renderer').empty();
                 return alert('Cannot eval JSON: ' + result.error);
             }
@@ -268,19 +368,16 @@
             var options = getOptions();
             $('#json-renderer').jsonViewer(result.data, options, size);
 
-            var status = 'Valid JSON';
-            if (!shouldFormat) status += ' · format skipped (large file)';
-            if ($.jsonViewer.treeLimitReached) status += ' · tree outline capped';
-            $('#parse-status').text(status);
+            var ok = buildOkStatus(shouldFormat);
+            setParseStatus(ok.status, ok.state);
         }
 
         $('#btn-json-viewer').click(function() { renderJson(); });
         $('p.options input[type=checkbox]').change(function() {
             if (parsedData) {
                 $('#json-renderer').jsonViewer(parsedData, getOptions(), byteSize($('#json-input').val()));
-                var status = 'Valid JSON';
-                if ($.jsonViewer.treeLimitReached) status += ' · tree outline capped';
-                $('#parse-status').text(status);
+                var ok = buildOkStatus(true);
+                setParseStatus(ok.status, ok.state);
             } else {
                 renderJson();
             }
@@ -590,9 +687,13 @@
             if (placeholder) placeholder.remove();
 
             if (total > $.jsonViewer.DOM_BATCH_SIZE) {
-                if ($status) $status.text('Expanding ' + total + ' items…');
+                if ($status && $status.length) {
+                    $status.removeClass('is-ok is-warn is-error').addClass('is-parsing').text('Expanding ' + total + ' items…');
+                }
                 populateCollectionListBatched(list, meta.value, meta.depth + 1, meta.options, 0, function() {
-                    if ($status) $status.text('Valid JSON');
+                    if ($status && $status.length) {
+                        $status.removeClass('is-parsing is-error').addClass('is-ok').text('✓ Valid JSON');
+                    }
                 }, false);
             } else {
                 populateCollectionList(list, meta.value, meta.depth + 1, meta.options, false);

@@ -1,18 +1,18 @@
 # JSON Studio
 
-A standalone, zero-dependency JSON viewer and formatter with local parse history. Open locally or deploy as a single HTML file.
+A standalone, zero-dependency JSON viewer and formatter with local parse history. Open locally or deploy the folder as a static site (`index.html` is the entry point).
 
-**File:** `json-studio.html`
+**File:** `index.html`
 
 ---
 
 ## Quick Start
 
 ```bash
-open json-studio.html
+open index.html
 ```
 
-Or double-click the file in Finder. No server, no folder permission, no install step.
+Or double-click `index.html` in Finder. No server, no folder permission, no install step.
 
 ---
 

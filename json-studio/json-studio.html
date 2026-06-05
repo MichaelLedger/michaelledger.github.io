@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON Studio</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --bg-elevated: #161b22;
+      --bg-hover: #1c2333;
+      --border: #2d333b;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-soft: rgba(88, 166, 255, 0.12);
+      --success: #3fb950;
+      --warning: #d29922;
+      --danger: #f85149;
+      --json-key: #79c0ff;
+      --json-string: #a5d6ff;
+      --json-number: #79c0ff;
+      --json-bool: #ff7b72;
+      --json-null: #ff7b72;
+      --sidebar-width: 300px;
+      --header-height: 56px;
+      --radius: 10px;
+      --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      --font-mono: "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      overflow: hidden;
+    }
+
+    .app {
+      display: grid;
+      grid-template-rows: var(--header-height) 1fr;
+      height: 100vh;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-elevated);
+      z-index: 10;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+    }
+
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #58a6ff, #a371f7);
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
+      white-space: nowrap;
+    }
+
+    .btn:hover { background: var(--bg-hover); border-color: #444c56; }
+    .btn:active { transform: scale(0.98); }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0d1117;
+    }
+    .btn-primary:hover { background: #79b8ff; border-color: #79b8ff; }
+    .btn-danger { color: var(--danger); }
+    .btn-danger:hover { background: rgba(248, 81, 73, 0.12); border-color: var(--danger); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+    .options-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-left: auto;
+      flex-wrap: wrap;
+    }
+
+    .option-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .option-label input { accent-color: var(--accent); }
+
+    .cache-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+
+    .cache-bar {
+      width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      overflow: hidden;
+    }
+
+    .cache-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--success), var(--warning), var(--danger));
+      border-radius: 2px;
+      transition: width 0.3s;
+    }
+
+    /* Main layout */
+    .main {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--border);
+      background: var(--bg-elevated);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--text-muted); }
+
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+
+    .history-list::-webkit-scrollbar { width: 6px; }
+    .history-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .history-empty {
+      padding: 32px 16px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .history-item {
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      margin-bottom: 4px;
+      transition: background 0.15s, border-color 0.15s;
+      position: relative;
+    }
+
+    .history-item:hover { background: var(--bg-hover); }
+    .history-item.active {
+      background: var(--accent-soft);
+      border-color: rgba(88, 166, 255, 0.3);
+    }
+
+    .history-date {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .history-summary {
+      font-size: 13px;
+      line-height: 1.4;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      word-break: break-word;
+    }
+
+    .history-meta {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .history-actions {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 2px;
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    .history-item:hover .history-actions { opacity: 1; }
+
+    .history-action {
+      width: 22px;
+      height: 22px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .history-action:hover { background: var(--bg-hover); color: var(--accent); }
+    .history-action.danger:hover { background: rgba(248, 81, 73, 0.15); color: var(--danger); }
+
+    .cache-path {
+      font-size: 10px;
+      color: var(--text-muted);
+      padding: 0 16px 8px;
+      word-break: break-all;
+      line-height: 1.4;
+    }
+
+    .sidebar-footer {
+      padding: 10px 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+    }
+
+    .sidebar-footer .btn { flex: 1; justify-content: center; font-size: 12px; padding: 6px 10px; }
+
+    /* Editor / Viewer split */
+    .workspace {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+    }
+
+    .panel {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    .panel + .panel { border-left: 1px solid var(--border); }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-elevated);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .panel-body {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #json-input {
+      width: 100%;
+      height: 100%;
+      padding: 16px;
+      border: none;
+      outline: none;
+      resize: none;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      tab-size: 2;
+    }
+
+    #json-renderer {
+      margin: 0;
+      padding: 16px;
+      height: 100%;
+      overflow: auto;
+      background: var(--bg);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    #json-renderer::-webkit-scrollbar { width: 8px; height: 8px; }
+    #json-renderer::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* JSON tree styles */
+    .json-document { padding: 0; }
+
+    ul.json-dict, ol.json-array {
+      list-style-type: none;
+      margin: 0 0 0 1px;
+      border-left: 1px solid var(--border);
+      padding-left: 1.5em;
+    }
+
+    .json-string { color: var(--json-string); }
+    .json-key { color: var(--json-key); }
+    .json-literal { color: var(--json-bool); font-weight: 600; }
+    .json-number { color: var(--json-number); }
+
+    a.json-toggle {
+      position: relative;
+      color: inherit;
+      text-decoration: none;
+    }
+
+    a.json-toggle:focus { outline: none; }
+
+    a.json-toggle::before {
+      font-size: 0.85em;
+      color: var(--text-muted);
+      content: "\25BC";
+      position: absolute;
+      display: inline-block;
+      width: 1em;
+      text-align: center;
+      line-height: 1em;
+      left: -1.3em;
+      transition: transform 0.15s;
+    }
+
+    a.json-toggle:hover::before { color: var(--accent); }
+    a.json-toggle.collapsed::before { transform: rotate(-90deg); }
+
+    a.json-placeholder {
+      color: var(--text-muted);
+      padding: 0 0.5em;
+      text-decoration: none;
+      font-style: italic;
+      font-size: 0.9em;
+    }
+
+    a.json-placeholder:hover { color: var(--accent); text-decoration: underline; }
+
+    a.json-link { color: var(--accent); text-decoration: none; }
+    a.json-link:hover { text-decoration: underline; }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      font-size: 13px;
+      animation: slideIn 0.25s ease;
+      max-width: 360px;
+    }
+
+    .toast.success { border-color: var(--success); }
+    .toast.error { border-color: var(--danger); }
+    .toast.info { border-color: var(--accent); }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Drop overlay */
+    .drop-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 17, 23, 0.85);
+      backdrop-filter: blur(4px);
+      display: none;
+      place-items: center;
+      z-index: 999;
+      pointer-events: none;
+    }
+
+    .drop-overlay.visible { display: grid; }
+
+    .drop-message {
+      padding: 32px 48px;
+      border: 2px dashed var(--accent);
+      border-radius: 16px;
+      font-size: 18px;
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+
+    /* Responsive */
+    @media (max-width: 1100px) {
+      .workspace { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+      .panel + .panel { border-left: none; border-top: 1px solid var(--border); }
+    }
+
+    @media (max-width: 768px) {
+      .main { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .sidebar.open {
+        display: flex;
+        position: fixed;
+        inset: var(--header-height) 0 0 0;
+        z-index: 20;
+        width: 100%;
+        max-width: 360px;
+      }
+      .options-bar { display: none; }
+    }
+
+    .hidden-input { display: none; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">{ }</div>
+        JSON Studio
+      </div>
+      <div class="header-actions">
+        <button class="btn btn-primary" id="btn-parse" title="Parse &amp; format JSON">Parse</button>
+        <button class="btn" id="btn-minify" title="Minify JSON">Minify</button>
+        <button class="btn" id="btn-copy" title="Copy formatted JSON">Copy</button>
+        <button class="btn" id="btn-upload" title="Upload JSON file">Upload</button>
+        <button class="btn btn-icon" id="btn-history-toggle" title="Toggle history">☰</button>
+        <input type="file" id="file-input" class="hidden-input" accept=".json,.txt,application/json">
+      </div>
+      <div class="options-bar">
+        <label class="option-label" title="Collapse all nodes by default">
+          <input type="checkbox" id="opt-collapsed" checked> Collapse
+        </label>
+        <label class="option-label" title="Allow root element to be collapsed">
+          <input type="checkbox" id="opt-root-collapsable"> Root collapse
+        </label>
+        <label class="option-label" title="Surround keys with quotes">
+          <input type="checkbox" id="opt-with-quotes"> Key quotes
+        </label>
+        <label class="option-label" title="Linkify URL values">
+          <input type="checkbox" id="opt-with-links" checked> Links
+        </label>
+        <div class="cache-badge" title="Local cache usage (.json-studio)">
+          <span id="cache-label">0 B / 1 GB</span>
+          <div class="cache-bar"><div class="cache-bar-fill" id="cache-bar-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="main">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-title">Parse History</div>
+          <input type="search" class="search-input" id="history-search" placeholder="Search history…">
+          <div class="cache-path" id="cache-path">Browser storage (IndexedDB)</div>
+        </div>
+        <div class="history-list" id="history-list">
+          <div class="history-empty">Parse JSON to save history locally.</div>
+        </div>
+        <div class="sidebar-footer">
+          <button class="btn btn-danger" id="btn-clear-history">Clear All</button>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <section class="panel">
+          <div class="panel-header">
+            <span>Input</span>
+            <span id="input-stats"></span>
+          </div>
+          <div class="panel-body">
+            <textarea id="json-input" spellcheck="false" autocomplete="off" placeholder="Paste JSON here, or drop a .json file…"></textarea>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="panel-header">
+            <span>Tree View</span>
+            <span id="parse-status"></span>
+          </div>
+          <div class="panel-body">
+            <pre id="json-renderer"></pre>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="drop-overlay" id="drop-overlay">
+    <div class="drop-message">Drop JSON file here</div>
+  </div>
+  <div class="toast-container" id="toast-container"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Constants ─────────────────────────────────────────────── */
+  const DB_NAME = '.json-studio';
+  const DB_VERSION = 4;
+  const STORE_HISTORY = 'history';
+  const STORE_CONTENT = 'content';
+  const CACHE_LIMIT = 1024 * 1024 * 1024; // 1 GB
+
+  const SAMPLE_JSON = `{
+  "id": 1001,
+  "type": "donut",
+  "name": "Michael Ledger",
+  "description": "https://en.wikipedia.org/wiki/Doughnut",
+  "price": 2.55,
+  "available": {
+    "store": 42,
+    "warehouse": 600
+  },
+  "toppings": [
+    { "id": 5001, "type": "None" },
+    { "id": 5002, "type": "Glazed" },
+    { "id": 5005, "type": "Sugar" }
+  ]
+}`;
+
+  /* ── DOM refs ────────────────────────────────────────────────── */
+  const $ = (sel) => document.querySelector(sel);
+  const jsonInput = $('#json-input');
+  const jsonRenderer = $('#json-renderer');
+  const historyList = $('#history-list');
+  const historySearch = $('#history-search');
+  const cacheLabel = $('#cache-label');
+  const cacheBarFill = $('#cache-bar-fill');
+  const parseStatus = $('#parse-status');
+  const inputStats = $('#input-stats');
+  const dropOverlay = $('#drop-overlay');
+
+  let db = null;
+  let activeHistoryId = null;
+  let historyEntries = [];
+
+  /* ── Utilities ───────────────────────────────────────────────── */
+  function uuid() {
+    if (crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+      const r = (Math.random() * 16) | 0;
+      return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
+    });
+  }
+
+  function formatBytes(bytes) {
+    if (bytes === 0) return '0 B';
+    const units = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+    const val = bytes / Math.pow(1024, i);
+    return (i === 0 ? val : val.toFixed(i > 1 ? 1 : 0)) + ' ' + units[i];
+  }
+
+  function formatDate(iso) {
+    const d = new Date(iso);
+    const now = new Date();
+    const isToday = d.toDateString() === now.toDateString();
+    const time = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    if (isToday) return 'Today ' + time;
+    return d.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + time;
+  }
+
+  function toast(msg, type = 'info') {
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.textContent = msg;
+    $('#toast-container').appendChild(el);
+    setTimeout(() => el.remove(), 3200);
+  }
+
+  function byteSize(str) {
+    return new Blob([str]).size;
+  }
+
+  function entryFileName(entry) {
+    return entry.fileName || `${entry.createdAt}_${entry.id.slice(0, 8)}.json`;
+  }
+
+  function downloadTextFile(fileName, content) {
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  /* ── IndexedDB storage ───────────────────────────────────────── */
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = (e) => {
+        const database = e.target.result;
+        if (!database.objectStoreNames.contains(STORE_HISTORY)) {
+          database.createObjectStore(STORE_HISTORY, { keyPath: 'id' });
+        }
+        if (!database.objectStoreNames.contains(STORE_CONTENT)) {
+          database.createObjectStore(STORE_CONTENT, { keyPath: 'id' });
+        }
+        if (database.objectStoreNames.contains('handles')) {
+          database.deleteObjectStore('handles');
+        }
+      };
+      req.onsuccess = (e) => resolve(e.target.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  function dbTx(storeNames, mode) {
+    return db.transaction(storeNames, mode);
+  }
+
+  async function dbGetAllHistory() {
+    return new Promise((resolve, reject) => {
+      const tx = dbTx(STORE_HISTORY, 'readonly');
+      const req = tx.objectStore(STORE_HISTORY).getAll();
+      req.onsuccess = () => {
+        const items = req.result || [];
+        items.sort((a, b) => b.createdAt - a.createdAt);
+        resolve(items);
+      };
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function dbPutHistory(entry, content) {
+    const meta = {
+      id: entry.id,
+      createdAt: entry.createdAt,
+      date: entry.date,
+      summary: entry.summary,
+      size: entry.size,
+      fileName: entry.fileName,
+    };
+    return new Promise((resolve, reject) => {
+      const tx = dbTx([STORE_HISTORY, STORE_CONTENT], 'readwrite');
+      tx.objectStore(STORE_HISTORY).put(meta);
+      tx.objectStore(STORE_CONTENT).put({ id: entry.id, content });
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function dbDeleteHistory(id) {
+    return new Promise((resolve, reject) => {
+      const tx = dbTx([STORE_HISTORY, STORE_CONTENT], 'readwrite');
+      tx.objectStore(STORE_HISTORY).delete(id);
+      tx.objectStore(STORE_CONTENT).delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function dbClearHistory() {
+    return new Promise((resolve, reject) => {
+      const tx = dbTx([STORE_HISTORY, STORE_CONTENT], 'readwrite');
+      tx.objectStore(STORE_HISTORY).clear();
+      tx.objectStore(STORE_CONTENT).clear();
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function readEntryContent(id) {
+    return new Promise((resolve, reject) => {
+      const tx = dbTx(STORE_CONTENT, 'readonly');
+      const req = tx.objectStore(STORE_CONTENT).get(id);
+      req.onsuccess = () => resolve(req.result?.content ?? null);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function getTotalCacheSize() {
+    const entries = await dbGetAllHistory();
+    return entries.reduce((sum, e) => sum + (e.size || 0), 0);
+  }
+
+  async function enforceCacheLimit(excludeId) {
+    let total = await getTotalCacheSize();
+    if (total <= CACHE_LIMIT) return;
+
+    const all = await dbGetAllHistory();
+    const sorted = all
+      .filter((e) => e.id !== excludeId)
+      .sort((a, b) => a.createdAt - b.createdAt);
+
+    for (const entry of sorted) {
+      if (total <= CACHE_LIMIT) break;
+      await dbDeleteHistory(entry.id);
+      total -= entry.size;
+    }
+  }
+
+  function generateSummary(obj) {
+    if (obj === null) return 'null';
+    if (Array.isArray(obj)) {
+      const preview = obj.slice(0, 3).map((v) => {
+        if (v === null) return 'null';
+        if (typeof v === 'object') return Array.isArray(v) ? `[${v.length}]` : '{…}';
+        return String(v).slice(0, 30);
+      });
+      const suffix = obj.length > 3 ? ` … +${obj.length - 3} more` : '';
+      return `Array[${obj.length}]: [${preview.join(', ')}${suffix}]`;
+    }
+    if (typeof obj === 'object') {
+      const keys = Object.keys(obj);
+      const preview = keys.slice(0, 4).map((k) => {
+        const v = obj[k];
+        let val;
+        if (v === null) val = 'null';
+        else if (typeof v === 'object') val = Array.isArray(v) ? `[${v.length}]` : '{…}';
+        else val = String(v).slice(0, 24);
+        return `${k}: ${val}`;
+      });
+      const suffix = keys.length > 4 ? ` … +${keys.length - 4} keys` : '';
+      return `Object{${keys.length}}: { ${preview.join(', ')}${suffix} }`;
+    }
+    const s = String(obj);
+    return s.length > 80 ? s.slice(0, 80) + '…' : s;
+  }
+
+  async function saveToHistory(content, parsed) {
+    if (!db) return null;
+
+    const size = byteSize(content);
+    const now = Date.now();
+    const date = new Date().toISOString();
+    const summary = generateSummary(parsed);
+
+    const latest = historyEntries[0];
+    if (latest) {
+      const latestContent = await readEntryContent(latest.id);
+      if (latestContent === content) {
+        latest.createdAt = now;
+        latest.date = date;
+        latest.summary = summary;
+        latest.size = size;
+        await dbPutHistory(latest, content);
+        await refreshHistory();
+        return latest;
+      }
+    }
+
+    const entry = {
+      id: uuid(),
+      createdAt: now,
+      date,
+      summary,
+      size,
+    };
+    entry.fileName = `${now}_${entry.id.slice(0, 8)}.json`;
+    await dbPutHistory(entry, content);
+    await enforceCacheLimit(entry.id);
+
+    return entry;
+  }
+
+  async function deleteHistoryEntry(id) {
+    if (!historyEntries.find((e) => e.id === id)) return;
+    await dbDeleteHistory(id);
+    if (activeHistoryId === id) activeHistoryId = null;
+    await refreshHistory();
+  }
+
+  async function clearAllHistory() {
+    await dbClearHistory();
+    activeHistoryId = null;
+    await refreshHistory();
+    toast('History cleared', 'success');
+  }
+
+  async function downloadHistoryEntry(id) {
+    const entry = historyEntries.find((e) => e.id === id);
+    if (!entry) return;
+    const content = await readEntryContent(id);
+    if (!content) {
+      toast('Content not found', 'error');
+      return;
+    }
+    downloadTextFile(entryFileName(entry), content);
+  }
+
+  async function updateCacheUI() {
+    const total = await getTotalCacheSize();
+    const pct = Math.min(100, (total / CACHE_LIMIT) * 100);
+    cacheLabel.textContent = formatBytes(total) + ' / 1 GB';
+    cacheBarFill.style.width = pct.toFixed(1) + '%';
+  }
+
+  async function refreshHistory() {
+    historyEntries = db ? await dbGetAllHistory() : [];
+    await updateCacheUI();
+    renderHistoryList(historySearch.value.trim().toLowerCase());
+  }
+
+  function renderHistoryList(filter) {
+    const filtered = filter
+      ? historyEntries.filter(
+          (e) =>
+            e.summary.toLowerCase().includes(filter) ||
+            e.date.toLowerCase().includes(filter) ||
+            (e.fileName && e.fileName.toLowerCase().includes(filter))
+        )
+      : historyEntries;
+
+    if (filtered.length === 0) {
+      historyList.innerHTML = filter
+        ? '<div class="history-empty">No matching history entries.</div>'
+        : '<div class="history-empty">Parse JSON to save history locally.</div>';
+      return;
+    }
+
+    historyList.innerHTML = filtered
+      .map(
+        (e) => `
+      <div class="history-item${e.id === activeHistoryId ? ' active' : ''}" data-id="${e.id}">
+        <div class="history-actions">
+          <button class="history-action" data-download="${e.id}" title="Download JSON">↓</button>
+          <button class="history-action danger" data-delete="${e.id}" title="Delete">×</button>
+        </div>
+        <div class="history-date">${formatDate(e.date)}</div>
+        <div class="history-summary">${escapeHtml(e.summary)}</div>
+        <div class="history-meta">
+          <span>${formatBytes(e.size)}</span>
+          <span title="${escapeHtml(e.fileName || '')}">${escapeHtml(e.fileName || '')}</span>
+        </div>
+      </div>`
+      )
+      .join('');
+  }
+
+  function escapeHtml(str) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* ── JSON parsing (supports relaxed JSON like original) ──────── */
+  function parseJson(text) {
+    try {
+      return { ok: true, data: JSON.parse(text) };
+    } catch (_) {
+      /* fallback: relaxed JS object literal (legacy compat) */
+      try {
+        return { ok: true, data: Function('"use strict"; return (' + text + ')')() };
+      } catch (err) {
+        return { ok: false, error: err.message };
+      }
+    }
+  }
+
+  function getViewerOptions() {
+    return {
+      collapsed: $('#opt-collapsed').checked,
+      rootCollapsable: $('#opt-root-collapsable').checked,
+      withQuotes: $('#opt-with-quotes').checked,
+      withLinks: $('#opt-with-links').checked,
+    };
+  }
+
+  /* ── JSON tree renderer (vanilla, from jquery.json-viewer) ─── */
+  function isCollapsable(arg) {
+    return arg instanceof Object && Object.keys(arg).length > 0;
+  }
+
+  function isUrl(string) {
+    return /^(https?:\/\/|ftps?:\/\/)[^\s/$.?#][^\s]*$/i.test(string);
+  }
+
+  function json2html(json, options) {
+    let html = '';
+    if (typeof json === 'string') {
+      const escaped = escapeHtml(json);
+      if (options.withLinks && isUrl(json)) {
+        html += `<a href="${escapeHtml(json)}" class="json-link json-string" target="_blank" rel="noopener">"${escaped}"</a>`;
+      } else {
+        html += `<span class="json-string">"${escaped}"</span>`;
+      }
+    } else if (typeof json === 'number') {
+      html += `<span class="json-number">${json}</span>`;
+    } else if (typeof json === 'boolean') {
+      html += `<span class="json-literal">${json}</span>`;
+    } else if (json === null) {
+      html += '<span class="json-literal">null</span>';
+    } else if (Array.isArray(json)) {
+      if (json.length > 0) {
+        html += '[<ol class="json-array">';
+        for (let i = 0; i < json.length; i++) {
+          html += '<li>';
+          if (isCollapsable(json[i])) html += '<a href class="json-toggle"></a>';
+          html += json2html(json[i], options);
+          if (i < json.length - 1) html += ',';
+          html += '</li>';
+        }
+        html += '</ol>]';
+      } else {
+        html += '[]';
+      }
+    } else if (typeof json === 'object') {
+      let keyCount = Object.keys(json).length;
+      if (keyCount > 0) {
+        html += '{<ul class="json-dict">';
+        for (const key in json) {
+          if (!Object.prototype.hasOwnProperty.call(json, key)) continue;
+          html += '<li>';
+          const keyRepr = options.withQuotes
+            ? `<span class="json-key">"${escapeHtml(key)}"</span>`
+            : `<span class="json-key">${escapeHtml(key)}</span>`;
+          if (isCollapsable(json[key])) {
+            html += `<a href class="json-toggle">${keyRepr}</a>`;
+          } else {
+            html += keyRepr;
+          }
+          html += ': ' + json2html(json[key], options);
+          if (--keyCount > 0) html += ',';
+          html += '</li>';
+        }
+        html += '</ul>}';
+      } else {
+        html += '{}';
+      }
+    }
+    return html;
+  }
+
+  function renderTree(json, options) {
+    let html = json2html(json, options);
+    if (options.rootCollapsable && isCollapsable(json)) {
+      html = '<a href class="json-toggle"></a>' + html;
+    }
+    jsonRenderer.innerHTML = html;
+    jsonRenderer.classList.add('json-document');
+
+    jsonRenderer.onclick = (e) => {
+      const toggle = e.target.closest('a.json-toggle');
+      if (toggle) {
+        e.preventDefault();
+        toggle.classList.toggle('collapsed');
+        const parent = toggle.parentElement;
+        const target = [...parent.children].find(
+          (el) => el.matches('ul.json-dict, ol.json-array')
+        );
+        if (!target) return;
+        const hidden = target.style.display !== 'none';
+        target.style.display = hidden ? 'none' : '';
+        let placeholder = parent.querySelector(':scope > a.json-placeholder');
+        if (hidden) {
+          if (!placeholder) {
+            const count = target.children.length;
+            placeholder = document.createElement('a');
+            placeholder.href = '#';
+            placeholder.className = 'json-placeholder';
+            placeholder.textContent = count + (count > 1 ? ' items' : ' item');
+            target.after(placeholder);
+          }
+        } else if (placeholder) {
+          placeholder.remove();
+        }
+        return;
+      }
+      const placeholder = e.target.closest('a.json-placeholder');
+      if (placeholder) {
+        e.preventDefault();
+        const toggleEl = placeholder.parentElement.querySelector(':scope > a.json-toggle');
+        if (toggleEl) toggleEl.click();
+      }
+    };
+
+    if (options.collapsed) {
+      jsonRenderer.querySelectorAll('a.json-toggle').forEach((t) => t.click());
+    }
+  }
+
+  async function parseAndRender(saveHistory = true) {
+    const text = jsonInput.value.trim();
+    if (!text) {
+      jsonRenderer.innerHTML = '';
+      parseStatus.textContent = '';
+      inputStats.textContent = '';
+      return;
+    }
+
+    const result = parseJson(text);
+    if (!result.ok) {
+      parseStatus.innerHTML = `<span style="color:var(--danger)">✕ ${escapeHtml(result.error)}</span>`;
+      jsonRenderer.innerHTML = '';
+      inputStats.textContent = formatBytes(byteSize(text));
+      return;
+    }
+
+    const formatted = JSON.stringify(result.data, null, 2);
+    jsonInput.value = formatted;
+
+    const options = getViewerOptions();
+    renderTree(result.data, options);
+
+    parseStatus.innerHTML = '<span style="color:var(--success)">✓ Valid JSON</span>';
+    inputStats.textContent = formatBytes(byteSize(formatted));
+
+    if (saveHistory && db) {
+      try {
+        const entry = await saveToHistory(formatted, result.data);
+        if (entry) {
+          activeHistoryId = entry.id;
+          await refreshHistory();
+        }
+      } catch (err) {
+        console.error('History save failed:', err);
+        toast('Failed to save history', 'error');
+      }
+    }
+  }
+
+  function minifyJson() {
+    const text = jsonInput.value.trim();
+    if (!text) return;
+    const result = parseJson(text);
+    if (!result.ok) {
+      toast('Invalid JSON: ' + result.error, 'error');
+      return;
+    }
+    jsonInput.value = JSON.stringify(result.data);
+    toast('Minified', 'success');
+    parseAndRender(false);
+  }
+
+  async function copyJson() {
+    try {
+      await navigator.clipboard.writeText(jsonInput.value);
+      toast('Copied to clipboard', 'success');
+    } catch {
+      toast('Copy failed', 'error');
+    }
+  }
+
+  async function loadFromHistory(id) {
+    const entry = historyEntries.find((e) => e.id === id);
+    if (!entry) return;
+
+    const content = await readEntryContent(id);
+    if (!content) {
+      await deleteHistoryEntry(id);
+      toast('Entry was missing and has been removed', 'info');
+      return;
+    }
+
+    activeHistoryId = id;
+    jsonInput.value = content;
+    parseAndRender(false);
+    renderHistoryList(historySearch.value.trim().toLowerCase());
+  }
+
+  function handleFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      jsonInput.value = e.target.result;
+      parseAndRender(true);
+    };
+    reader.onerror = () => toast('Failed to read file', 'error');
+    reader.readAsText(file);
+  }
+
+  /* ── Event bindings ──────────────────────────────────────────── */
+  $('#btn-parse').addEventListener('click', () => parseAndRender(true));
+  $('#btn-minify').addEventListener('click', minifyJson);
+  $('#btn-copy').addEventListener('click', copyJson);
+  $('#btn-upload').addEventListener('click', () => $('#file-input').click());
+  $('#file-input').addEventListener('change', (e) => handleFile(e.target.files[0]));
+  $('#btn-clear-history').addEventListener('click', () => {
+    if (confirm('Clear all parse history?')) clearAllHistory();
+  });
+  $('#btn-history-toggle').addEventListener('click', () => $('#sidebar').classList.toggle('open'));
+
+  historySearch.addEventListener('input', () => {
+    renderHistoryList(historySearch.value.trim().toLowerCase());
+  });
+
+  historyList.addEventListener('click', async (e) => {
+    const downloadBtn = e.target.closest('[data-download]');
+    if (downloadBtn) {
+      e.stopPropagation();
+      await downloadHistoryEntry(downloadBtn.dataset.download);
+      return;
+    }
+    const delBtn = e.target.closest('[data-delete]');
+    if (delBtn) {
+      e.stopPropagation();
+      deleteHistoryEntry(delBtn.dataset.delete);
+      toast('Entry removed', 'info');
+      return;
+    }
+    const item = e.target.closest('[data-id]');
+    if (item) loadFromHistory(item.dataset.id);
+  });
+
+  document.querySelectorAll('.options-bar input').forEach((el) => {
+    el.addEventListener('change', () => {
+      if (jsonInput.value.trim()) parseAndRender(false);
+    });
+  });
+
+  /* Drag & drop */
+  ['dragenter', 'dragover'].forEach((evt) => {
+    document.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropOverlay.classList.add('visible');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach((evt) => {
+    document.addEventListener(evt, (e) => {
+      e.preventDefault();
+      if (evt === 'dragleave' && e.relatedTarget) return;
+      dropOverlay.classList.remove('visible');
+    });
+  });
+
+  document.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  });
+
+  /* Keyboard shortcut */
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      parseAndRender(true);
+    }
+  });
+
+  /* ── Init ────────────────────────────────────────────────────── */
+  async function init() {
+    try {
+      db = await openDB();
+    } catch (err) {
+      console.error('[JSON Studio] IndexedDB unavailable:', err);
+      toast('Local storage unavailable', 'error');
+    }
+
+    jsonInput.value = SAMPLE_JSON;
+    await refreshHistory();
+    await parseAndRender(false);
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>

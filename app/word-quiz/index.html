@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>多牛单词 — 支持</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-page-title="page.support.title">
+  <main>
+    <nav class="site-nav">
+      <div class="site-nav-links">
+        <a href="index.html" data-i18n="nav.support">支持</a>
+        <span>·</span>
+        <a href="privacy-policy.html" data-i18n="nav.privacy">隐私政策</a>
+      </div>
+      <select class="lang-select" id="lang-select" aria-label="Language">
+        <option value="zh">中文</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="ko">한국어</option>
+        <option value="ru">Русский</option>
+        <option value="fr">Français</option>
+        <option value="de">Deutsch</option>
+      </select>
+    </nav>
+
+    <div class="hero">
+      <img class="app-icon" src="app-icon.png" alt="多牛单词" width="72" height="72">
+      <h1 data-i18n="app.name">多牛单词</h1>
+      <p class="meta" data-i18n="hero.subtitle">看图选词，轻松学习七种语言的 iOS 词汇测验 App</p>
+    </div>
+
+    <section class="card">
+      <h2 data-i18n="contact.title">联系我们</h2>
+      <p data-i18n="contact.body">如有使用问题、功能建议或隐私相关疑问，欢迎邮件联系：</p>
+      <p>
+        <a data-i18n-mailto="support" href="mailto:MichaelLedger@163.com?subject=%E5%A4%9A%E7%89%9B%E5%8D%95%E8%AF%8D%20%E6%94%AF%E6%8C%81">MichaelLedger@163.com</a>
+      </p>
+    </section>
+
+    <h2 data-i18n="faq.title">常见问题</h2>
+    <dl class="faq">
+      <dt data-i18n="faq.q1">学习数据保存在哪里？</dt>
+      <dd data-i18n="faq.a1">语言设置、学习进度、测验成绩、已学单词记录等均保存在你的 iPhone 或 iPad 本地，不会上传到我们的服务器。</dd>
+
+      <dt data-i18n="faq.q2">为什么测验图片需要联网？</dt>
+      <dd data-i18n="faq.a2">App 会按题目搜索并从 Pexels、Pixabay 等已明确允许商用的图库下载配图，缓存在设备上以便重复使用。配图著作权归原作者或相应平台所有，App 会在配图处标注来源。首次加载题目时建议保持网络畅通。</dd>
+
+      <dt data-i18n="faq.q3">如何清除学习进度？</dt>
+      <dd data-i18n="faq.a3">在 App 的语言设置中可选择词库级别并清除对应学习进度；卸载 App 将清除全部本地数据。</dd>
+
+      <dt data-i18n="faq.q4">App 会收集个人信息吗？</dt>
+      <dd data-i18n-html="faq.a4">不会。我们不创建账号，也不收集可识别个人身份的信息。详情请参阅<a href="privacy-policy.html">隐私政策</a>。</dd>
+    </dl>
+
+    <footer>
+      <p>
+        <a href="privacy-policy.html" data-i18n="footer.privacy">隐私政策</a>
+      </p>
+      <p data-i18n="footer.copyright">© 2026 多牛单词</p>
+    </footer>
+  </main>
+  <script src="i18n.js"></script>
+</body>
+</html>

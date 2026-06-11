@@ -2,18 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>JSON Studio</title>
+  <script>
+    (function () {
+      var key = 'json-studio-theme';
+      var theme = localStorage.getItem(key);
+      if (theme !== 'light' && theme !== 'dark') {
+        theme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
   <style>
     :root {
+      --sidebar-width: 300px;
+      --header-height: 56px;
+      --radius: 10px;
+      --font-mono: "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
       --bg: #0f1117;
       --bg-elevated: #161b22;
       --bg-hover: #1c2333;
       --border: #2d333b;
+      --border-hover: #444c56;
       --text: #e6edf3;
       --text-muted: #8b949e;
       --accent: #58a6ff;
+      --accent-hover: #79b8ff;
       --accent-soft: rgba(88, 166, 255, 0.12);
+      --accent-border-soft: rgba(88, 166, 255, 0.25);
+      --history-active-border: rgba(88, 166, 255, 0.3);
       --success: #3fb950;
       --warning: #d29922;
       --danger: #f85149;
@@ -22,12 +45,36 @@
       --json-number: #79c0ff;
       --json-bool: #ff7b72;
       --json-null: #ff7b72;
-      --sidebar-width: 300px;
-      --header-height: 56px;
-      --radius: 10px;
       --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-      --font-mono: "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
-      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --overlay-bg: rgba(15, 17, 23, 0.85);
+      --btn-primary-text: #0d1117;
+    }
+
+    [data-theme="light"] {
+      color-scheme: light;
+      --bg: #ffffff;
+      --bg-elevated: #f6f8fa;
+      --bg-hover: #eaeef2;
+      --border: #d0d7de;
+      --border-hover: #8c959f;
+      --text: #1f2328;
+      --text-muted: #656d76;
+      --accent: #0969da;
+      --accent-hover: #0550ae;
+      --accent-soft: rgba(9, 105, 218, 0.1);
+      --accent-border-soft: rgba(9, 105, 218, 0.25);
+      --history-active-border: rgba(9, 105, 218, 0.35);
+      --success: #1a7f37;
+      --warning: #9a6700;
+      --danger: #cf222e;
+      --json-key: #0550ae;
+      --json-string: #0a3069;
+      --json-number: #0550ae;
+      --json-bool: #cf222e;
+      --json-null: #cf222e;
+      --shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
+      --overlay-bg: rgba(255, 255, 255, 0.88);
+      --btn-primary-text: #ffffff;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -43,8 +90,9 @@
 
     .app {
       display: grid;
-      grid-template-rows: var(--header-height) 1fr;
+      grid-template-rows: auto 1fr;
       height: 100vh;
+      height: 100dvh;
     }
 
     /* Header */
@@ -52,10 +100,30 @@
       display: flex;
       align-items: center;
       gap: 16px;
+      min-height: var(--header-height);
       padding: 0 20px;
+      padding-left: max(20px, env(safe-area-inset-left));
+      padding-right: max(20px, env(safe-area-inset-right));
+      padding-top: max(0px, env(safe-area-inset-top));
       border-bottom: 1px solid var(--border);
       background: var(--bg-elevated);
-      z-index: 10;
+      z-index: 30;
+      position: relative;
+      flex-wrap: wrap;
+    }
+
+    .header-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    @media (min-width: 769px) {
+      .logo { order: 1; }
+      .header-actions { order: 2; flex: 1; min-width: 0; }
+      .header-tools { order: 3; }
+      .options-bar { order: 4; }
     }
 
     .logo {
@@ -104,14 +172,14 @@
       white-space: nowrap;
     }
 
-    .btn:hover { background: var(--bg-hover); border-color: #444c56; }
+    .btn:hover { background: var(--bg-hover); border-color: var(--border-hover); }
     .btn:active { transform: scale(0.98); }
     .btn-primary {
       background: var(--accent);
       border-color: var(--accent);
-      color: #0d1117;
+      color: var(--btn-primary-text);
     }
-    .btn-primary:hover { background: #79b8ff; border-color: #79b8ff; }
+    .btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
     .btn-danger { color: var(--danger); }
     .btn-danger:hover { background: rgba(248, 81, 73, 0.12); border-color: var(--danger); }
     .btn:disabled { opacity: 0.45; cursor: not-allowed; }
@@ -152,6 +220,9 @@
     }
 
     .icon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       width: 28px;
       height: 28px;
       padding: 0;
@@ -169,7 +240,7 @@
     .icon-btn:hover {
       background: var(--bg-hover);
       color: var(--accent);
-      border-color: #444c56;
+      border-color: var(--border-hover);
     }
 
     .options-bar {
@@ -334,7 +405,7 @@
     .history-item:hover { background: var(--bg-hover); }
     .history-item.active {
       background: var(--accent-soft);
-      border-color: rgba(88, 166, 255, 0.3);
+      border-color: var(--history-active-border);
     }
 
     .history-date {
@@ -449,6 +520,27 @@
       background: var(--accent);
     }
 
+    .workspace.layout-tree-only .panel-tree,
+    .workspace.layout-tree-only .workspace-resizer {
+      display: none;
+    }
+
+    .workspace.layout-tree-only .panel-input {
+      flex: 1 1 100%;
+      max-width: none;
+      min-width: 0;
+    }
+
+    .workspace.layout-input-only .panel-input,
+    .workspace.layout-input-only .workspace-resizer {
+      display: none;
+    }
+
+    .workspace.layout-input-only .panel-tree {
+      flex: 1 1 100%;
+      min-width: 0;
+    }
+
     body.is-resizing-panes {
       user-select: none;
       cursor: col-resize;
@@ -462,6 +554,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       padding: 10px 16px;
       border-bottom: 1px solid var(--border);
       background: var(--bg-elevated);
@@ -470,6 +563,17 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .panel-header > span:last-child {
+      max-width: 58%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0;
     }
 
     .panel-body {
@@ -502,19 +606,131 @@
       font-family: var(--font-mono);
       font-size: 13px;
       line-height: 1.6;
+      tab-size: 2;
     }
 
     #json-renderer::-webkit-scrollbar { width: 8px; height: 8px; }
     #json-renderer::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-    /* JSON tree styles */
-    .json-document { padding: 0; }
+    /* JSON tree — compact layout aligned with 2-space formatted JSON */
+    .json-document {
+      padding: 0;
+      --json-indent: 2ch;
+    }
 
     ul.json-dict, ol.json-array {
-      list-style-type: none;
-      margin: 0 0 0 1px;
-      border-left: 1px solid var(--border);
-      padding-left: 1.5em;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+
+    ul.json-dict > li,
+    ol.json-array > li {
+      display: block;
+      padding-left: var(--json-indent);
+    }
+
+    .json-value-block {
+      display: block;
+    }
+
+    .json-trailing-comma {
+      display: inline;
+    }
+
+    .json-collection {
+      display: inline;
+      white-space: normal;
+    }
+
+    /* Array items & block collections: must not be inline (block kids inside inline reorder wrongly) */
+    .json-collection.is-expanded:not(.json-inline-open) {
+      display: block;
+    }
+
+    /* Root / array-item: opening bracket on its own line */
+    .json-collection.is-expanded > .json-bracket-open {
+      display: block;
+    }
+
+    .json-collection.is-expanded > .json-bracket-close {
+      display: block;
+    }
+
+    .json-collection.is-expanded > .json-close-line {
+      display: block;
+    }
+
+    .json-collection.is-expanded > .json-close-line > .json-bracket-close,
+    .json-collection.is-expanded > .json-close-line > .json-trailing-comma {
+      display: inline;
+    }
+
+    /* Root: caret + { inline; body indented under { */
+    .json-root > .json-toggle.json-root-toggle,
+    .json-root-inner > .json-toggle.json-root-toggle {
+      margin-left: 0;
+      margin-right: 0.35em;
+      vertical-align: baseline;
+    }
+
+    .json-root > .json-toggle.json-root-toggle + .json-collection:not(.is-expanded),
+    .json-root-inner > .json-toggle.json-root-toggle + .json-collection:not(.is-expanded) {
+      display: inline;
+      vertical-align: baseline;
+    }
+
+    .json-root.json-root-flat > .json-bracket-open,
+    .json-root-inner.json-root-flat > .json-bracket-open {
+      display: inline;
+    }
+
+    .json-root.json-root-flat > ul.json-dict,
+    .json-root.json-root-flat > ol.json-array,
+    .json-root-inner.json-root-flat > ul.json-dict,
+    .json-root-inner.json-root-flat > ol.json-array {
+      display: block;
+      padding-left: calc(1.45em + 0.35em);
+    }
+
+    .json-root.json-root-flat > .json-close-line,
+    .json-root.json-root-flat > .json-bracket-close,
+    .json-root-inner.json-root-flat > .json-close-line,
+    .json-root-inner.json-root-flat > .json-bracket-close {
+      display: block;
+      padding-left: calc(1.45em + 0.35em);
+    }
+
+    /* Nested flat nodes: header block on one line, body/close on lines below */
+    li.json-flat-value {
+      display: block;
+    }
+
+    .json-flat-head {
+      display: block;
+    }
+
+    .json-flat-prefix {
+      display: inline-flex;
+      align-items: baseline;
+      min-width: 0;
+    }
+
+    .json-flat-head > .json-collection,
+    .json-flat-head > .json-bracket-open {
+      display: inline;
+      vertical-align: baseline;
+    }
+
+    li.json-flat-value > ul.json-dict,
+    li.json-flat-value > ol.json-array {
+      display: block;
+    }
+
+    li.json-flat-value > .json-close-line,
+    li.json-flat-value > .json-bracket-close {
+      display: block;
     }
 
     .json-string { color: var(--json-string); }
@@ -524,16 +740,31 @@
 
     button.json-toggle,
     a.json-toggle {
+      display: inline-flex;
+      align-items: baseline;
+      vertical-align: baseline;
       position: relative;
       color: inherit;
       text-decoration: none;
       border: none;
       background: none;
       padding: 0;
-      margin: 0;
+      margin: 0 0 0 calc(-1 * var(--json-indent, 2ch));
       font: inherit;
+      line-height: 1.6;
       cursor: pointer;
       text-align: left;
+      gap: 0.5em;
+    }
+
+    button.json-toggle:has(.json-key),
+    a.json-toggle:has(.json-key) {
+      gap: 0.3em;
+    }
+
+    button.json-toggle .json-key,
+    a.json-toggle .json-key {
+      margin-left: 0;
     }
 
     button.json-toggle:focus,
@@ -541,17 +772,16 @@
 
     button.json-toggle::before,
     a.json-toggle::before {
-      font-size: 0.85em;
+      flex: 0 0 1.45em;
+      width: 1.45em;
+      font-size: 0.75em;
       color: var(--text-muted);
       content: "\25BC";
-      position: absolute;
       display: inline-block;
-      width: 1em;
       text-align: center;
-      line-height: 1em;
-      left: -1.3em;
+      line-height: 1.6;
       transition: transform 0.15s;
-      pointer-events: none;
+      transform-origin: center center;
     }
 
     button.json-toggle:hover::before,
@@ -596,7 +826,7 @@
       margin-bottom: 12px;
       border-radius: 8px;
       background: var(--accent-soft);
-      border: 1px solid rgba(88, 166, 255, 0.25);
+      border: 1px solid var(--accent-border-soft);
       color: var(--text-muted);
       font-size: 12px;
       line-height: 1.5;
@@ -638,7 +868,7 @@
     .drop-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 17, 23, 0.85);
+      background: var(--overlay-bg);
       backdrop-filter: blur(4px);
       display: none;
       place-items: center;
@@ -657,35 +887,207 @@
       background: var(--accent-soft);
     }
 
-    /* Responsive */
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      top: var(--header-offset, var(--header-height));
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 25;
+      border: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .sidebar-backdrop.visible { display: block; }
+
+    /* Responsive — tablet / narrow desktop */
     @media (max-width: 1100px) {
+      .header {
+        gap: 10px;
+        padding: 8px 14px;
+        padding-left: max(14px, env(safe-area-inset-left));
+        padding-right: max(14px, env(safe-area-inset-right));
+      }
+
+      .options-bar {
+        order: 10;
+        width: 100%;
+        margin-left: 0;
+        padding-top: 6px;
+        border-top: 1px solid var(--border);
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .options-bar::-webkit-scrollbar { display: none; }
+
       .workspace { flex-direction: column; }
       .panel-input {
+        flex: 0 0 var(--input-pane-size);
         min-width: 0;
         max-width: none;
-        min-height: 120px;
-        max-height: calc(100% - 126px);
+        min-height: 96px;
+        max-height: 80%;
       }
-      .panel-tree { min-height: 120px; }
+      .panel-tree { min-height: 96px; }
       .workspace-resizer {
         cursor: row-resize;
-        flex: 0 0 6px;
+        flex: 0 0 10px;
         width: 100%;
       }
     }
 
+    /* Responsive — phone */
     @media (max-width: 768px) {
-      .main { grid-template-columns: 1fr; }
-      .sidebar { display: none; }
-      .sidebar.open {
-        display: flex;
-        position: fixed;
-        inset: var(--header-height) 0 0 0;
-        z-index: 20;
-        width: 100%;
-        max-width: 360px;
+      .header {
+        gap: 8px;
+        padding: 8px 12px;
+        padding-left: max(12px, env(safe-area-inset-left));
+        padding-right: max(12px, env(safe-area-inset-right));
       }
-      .options-bar { display: none; }
+
+      .logo {
+        flex: 1;
+        min-width: 0;
+        font-size: 0.98rem;
+      }
+
+      .header-actions {
+        order: 2;
+        flex: 1 1 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        gap: 6px;
+        padding-bottom: 2px;
+      }
+
+      .header-actions::-webkit-scrollbar { display: none; }
+
+      .header-tools {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: auto;
+        flex: 1 1 auto;
+        min-width: 0;
+        justify-content: flex-end;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .header-tools::-webkit-scrollbar { display: none; }
+
+      .layout-quick {
+        flex-shrink: 0;
+        gap: 1px;
+        padding: 1px;
+      }
+
+      .layout-quick .btn-layout {
+        padding: 0;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        font-size: 13px;
+        line-height: 1;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        min-height: 40px;
+      }
+
+      .icon-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 14px;
+      }
+
+      .options-bar {
+        order: 4;
+        flex: 1 1 100%;
+        width: 100%;
+        margin-left: 0;
+        padding-top: 6px;
+        border-top: 1px solid var(--border);
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+
+      .options-bar::-webkit-scrollbar { display: none; }
+
+      .main { grid-template-columns: 1fr; }
+
+      .sidebar {
+        display: none;
+        position: fixed;
+        top: var(--header-offset, var(--header-height));
+        bottom: 0;
+        left: 0;
+        width: min(100%, 360px);
+        max-width: 100%;
+        z-index: 35;
+        padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: var(--shadow);
+      }
+
+      .sidebar.open { display: flex; }
+
+      .main.sidebar-collapsed { --sidebar-width: 0; }
+
+      .panel-header {
+        padding: 8px 12px;
+        font-size: 11px;
+      }
+
+      #json-input {
+        padding: 12px;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+
+      #json-renderer {
+        padding: 12px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .toast-container {
+        left: 12px;
+        right: 12px;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        align-items: stretch;
+      }
+
+      .toast { max-width: none; }
+
+      .drop-message {
+        margin: 0 20px;
+        padding: 24px 28px;
+        font-size: 16px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .logo-text { display: none; }
+      .btn-hide-xs { display: none; }
+    }
+
+    @media (hover: none) {
+      .history-actions { opacity: 1; }
+      .history-item { padding-right: 56px; }
     }
 
     .hidden-input { display: none; }
@@ -696,22 +1098,27 @@
     <header class="header">
       <div class="logo">
         <div class="logo-icon">{ }</div>
-        JSON Studio
+        <span class="logo-text">JSON Studio</span>
+      </div>
+      <div class="header-tools">
+        <div class="layout-quick" role="group" aria-label="Panel layout">
+          <button type="button" class="btn btn-layout" id="btn-layout-tree-only" title="Tree only — hide input">◩</button>
+          <button type="button" class="btn btn-layout" id="btn-layout-tree" title="More tree view">◧</button>
+          <button type="button" class="btn btn-layout active" id="btn-layout-balanced" title="Balanced split">◫</button>
+          <button type="button" class="btn btn-layout" id="btn-layout-input" title="More input">◨</button>
+          <button type="button" class="btn btn-layout" id="btn-layout-input-only" title="Input only — hide tree">◪</button>
+        </div>
+        <button type="button" class="icon-btn" id="btn-theme-toggle" title="Switch theme" aria-label="Switch theme">☀</button>
+        <button type="button" class="icon-btn" id="btn-history-toggle" title="Toggle history panel" aria-label="Toggle history panel">☰</button>
       </div>
       <div class="header-actions">
         <button class="btn btn-primary" id="btn-parse" title="Parse &amp; format JSON">Parse</button>
-        <button class="btn" id="btn-minify" title="Minify JSON">Minify</button>
+        <button class="btn btn-hide-xs" id="btn-minify" title="Minify JSON">Minify</button>
         <button class="btn" id="btn-copy" title="Copy formatted JSON">Copy</button>
         <button class="btn" id="btn-upload" title="Upload JSON file">Upload</button>
-        <div class="layout-quick" role="group" aria-label="Quick panel size">
-          <button type="button" class="btn btn-layout" id="btn-layout-tree" title="Shrink input — more tree view">◧</button>
-          <button type="button" class="btn btn-layout active" id="btn-layout-balanced" title="Balanced split">◫</button>
-          <button type="button" class="btn btn-layout" id="btn-layout-input" title="Shrink tree — more input">◨</button>
-        </div>
-        <button class="btn btn-icon" id="btn-history-toggle" title="Toggle history panel">☰</button>
         <input type="file" id="file-input" class="hidden-input" accept=".json,.txt,application/json">
       </div>
-      <div class="options-bar">
+      <div class="options-bar" id="options-bar">
         <label class="option-label" title="Collapse all nodes by default">
           <input type="checkbox" id="opt-collapsed" checked> Collapse
         </label>
@@ -719,19 +1126,20 @@
           <input type="checkbox" id="opt-root-collapsable"> Root collapse
         </label>
         <label class="option-label" title="Surround keys with quotes">
-          <input type="checkbox" id="opt-with-quotes"> Key quotes
+          <input type="checkbox" id="opt-with-quotes" checked> Key quotes
         </label>
         <label class="option-label" title="Linkify URL values">
           <input type="checkbox" id="opt-with-links" checked> Links
         </label>
-        <div class="cache-badge" title="Local cache usage (.json-studio)">
-          <span id="cache-label">0 B / 1 GB</span>
+        <div class="cache-badge" id="cache-badge" title="Local cache vs browser storage quota">
+          <span id="cache-label">0 B / …</span>
           <div class="cache-bar"><div class="cache-bar-fill" id="cache-bar-fill" style="width:0%"></div></div>
         </div>
       </div>
     </header>
 
     <div class="main">
+      <button type="button" class="sidebar-backdrop" id="sidebar-backdrop" hidden aria-label="Close history panel"></button>
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-expanded-only">
           <div class="sidebar-header">
@@ -792,12 +1200,10 @@
   const DB_VERSION = 4;
   const STORE_HISTORY = 'history';
   const STORE_CONTENT = 'content';
-  const CACHE_LIMIT = 1024 * 1024 * 1024; // 1 GB
+  const STORAGE_FALLBACK_QUOTA = 10 * 1024 * 1024 * 1024; // if Storage API unavailable
 
-  /* VS Code / Cursor-aligned performance thresholds */
-  const LARGE_FILE_FORMAT_THRESHOLD = 2 * 1024 * 1024; // skip auto-format above 2 MB
   const PARSE_WORKER_THRESHOLD = 64 * 1024; // offload parse to worker above 64 KB
-  const MAX_TREE_NODES = 5000; // json.maxItemsComputed
+  const AUTO_EXPAND_MAX_CHILDREN = 1000; // auto-expand only when a collection has at most this many children
   const MAX_STRING_DISPLAY = 500;
   const MAX_LINKIFY_LENGTH = 20000; // maxTokenizationLineLength
   const DOM_BATCH_SIZE = 250; // nodes per animation frame when expanding large lists
@@ -827,6 +1233,7 @@
   const historySearch = $('#history-search');
   const cacheLabel = $('#cache-label');
   const cacheBarFill = $('#cache-bar-fill');
+  const cacheBadge = $('#cache-badge');
   const parseStatus = $('#parse-status');
   const inputStats = $('#input-stats');
   const dropOverlay = $('#drop-overlay');
@@ -835,8 +1242,6 @@
   let activeHistoryId = null;
   let historyEntries = [];
   let parsedData = null;
-  let treeNodeCount = 0;
-  let treeLimitReached = false;
   let parseGeneration = 0;
   let parseWorker = null;
 
@@ -984,9 +1389,39 @@
     return entries.reduce((sum, e) => sum + (e.size || 0), 0);
   }
 
+  async function getStorageInfo() {
+    const ourUsage = db ? await getTotalCacheSize() : 0;
+    let quota = null;
+    let originUsage = ourUsage;
+
+    try {
+      if (navigator.storage?.estimate) {
+        const est = await navigator.storage.estimate();
+        if (est.quota && est.quota > 0) quota = est.quota;
+        if (typeof est.usage === 'number') originUsage = est.usage;
+      }
+    } catch (_) { /* ignore */ }
+
+    const effectiveQuota = quota ?? STORAGE_FALLBACK_QUOTA;
+    const otherUsage = Math.max(0, originUsage - ourUsage);
+    const remaining = Math.max(0, effectiveQuota - originUsage);
+    const appBudget = Math.max(0, effectiveQuota - otherUsage);
+
+    return {
+      quota: effectiveQuota,
+      originUsage,
+      ourUsage,
+      remaining,
+      appBudget,
+    };
+  }
+
   async function enforceCacheLimit(excludeId) {
-    let total = await getTotalCacheSize();
-    if (total <= CACHE_LIMIT) return;
+    const info = await getStorageInfo();
+    let total = info.ourUsage;
+    const limit = info.appBudget;
+
+    if (total <= limit) return;
 
     const all = await dbGetAllHistory();
     const sorted = all
@@ -994,7 +1429,7 @@
       .sort((a, b) => a.createdAt - b.createdAt);
 
     for (const entry of sorted) {
-      if (total <= CACHE_LIMIT) break;
+      if (total <= limit) break;
       await dbDeleteHistory(entry.id);
       total -= entry.size;
     }
@@ -1090,10 +1525,17 @@
   }
 
   async function updateCacheUI() {
-    const total = await getTotalCacheSize();
-    const pct = Math.min(100, (total / CACHE_LIMIT) * 100);
-    cacheLabel.textContent = formatBytes(total) + ' / 1 GB';
+    const info = await getStorageInfo();
+    const pct = info.quota > 0
+      ? Math.min(100, (info.originUsage / info.quota) * 100)
+      : 0;
+    cacheLabel.textContent = formatBytes(info.ourUsage) + ' / ' + formatBytes(info.quota);
     cacheBarFill.style.width = pct.toFixed(1) + '%';
+    if (cacheBadge) {
+      cacheBadge.title = 'JSON Studio cache: ' + formatBytes(info.ourUsage)
+        + ' · Site storage: ' + formatBytes(info.originUsage) + ' / ' + formatBytes(info.quota)
+        + ' (' + formatBytes(info.remaining) + ' left)';
+    }
   }
 
   async function refreshHistory() {
@@ -1198,10 +1640,6 @@
     };
   }
 
-  function getExpandDepth(options) {
-    return options.collapsed ? 0 : 1;
-  }
-
   /* ── Lazy JSON tree (Cursor / VS Code style) ─────────────────── */
   const lazyNodeData = new WeakMap();
 
@@ -1222,26 +1660,31 @@
     return count === 1 ? '1 key' : count + ' keys';
   }
 
+  function shouldAutoExpand(value, options) {
+    if (options.collapsed || !isCollapsable(value)) return false;
+    return countChildren(value) <= AUTO_EXPAND_MAX_CHILDREN;
+  }
+
+  function populateCollectionOutline(list, value, depth, options, onDone) {
+    const total = countChildren(value);
+    if (total > DOM_BATCH_SIZE) {
+      parseStatus.innerHTML = '<span style="color:var(--accent)">Building outline…</span>';
+      populateCollectionListBatched(list, value, depth, options, 0, onDone || updateParseStatusAfterTree);
+    } else {
+      populateCollectionList(list, value, depth, options);
+      if (onDone) onDone();
+    }
+  }
+
   function isUrl(string) {
     return string.length <= MAX_LINKIFY_LENGTH
       && /^(https?:\/\/|ftps?:\/\/)[^\s/$.?#][^\s]*$/i.test(string);
   }
 
-  function canRenderMoreNodes() {
-    return treeNodeCount < MAX_TREE_NODES;
-  }
-
-  function trackNode() {
-    treeNodeCount += 1;
-    if (treeNodeCount >= MAX_TREE_NODES) treeLimitReached = true;
-  }
-
-  function appendTruncatedNotice(list, remaining) {
-    const li = document.createElement('li');
-    li.className = 'json-truncated';
-    li.textContent = '… +' + remaining + ' more (outline limit ' + MAX_TREE_NODES + ')';
-    list.appendChild(li);
-    trackNode();
+  function renderEmptyCollection(value) {
+    const span = document.createElement('span');
+    span.textContent = Array.isArray(value) ? '[]' : '{}';
+    return span;
   }
 
   function renderPrimitive(value, options) {
@@ -1283,10 +1726,10 @@
     return btn;
   }
 
-  function createKeyElement(key, options, collapsable) {
+  function createKeyElement(key, options, collapsable, collapsed = true) {
     const label = options.withQuotes ? '"' + key + '"' : key;
     if (collapsable) {
-      const toggle = createToggleButton(true);
+      const toggle = createToggleButton(collapsed);
       const keySpan = document.createElement('span');
       keySpan.className = 'json-key';
       keySpan.textContent = label;
@@ -1307,36 +1750,162 @@
     return ph;
   }
 
-  function populateCollectionList(list, value, depth, options, enforceCap) {
+  function createCollectionShell(value) {
+    const shell = document.createElement('span');
+    shell.className = 'json-collection';
+    const isArray = Array.isArray(value);
+    const open = document.createElement('span');
+    open.className = 'json-bracket-open';
+    open.textContent = isArray ? '[' : '{';
+    const close = document.createElement('span');
+    close.className = 'json-bracket-close';
+    close.textContent = isArray ? ']' : '}';
+    shell.appendChild(open);
+    shell.appendChild(close);
+    return shell;
+  }
+
+  function setCollectionExpanded(shell, expanded) {
+    if (!shell) return;
+    shell.classList.toggle('is-expanded', expanded);
+  }
+
+  function insertIntoCollectionShell(shell, node) {
+    shell.insertBefore(node, shell.lastChild);
+  }
+
+  function appendListToShell(shell, list) {
+    const wrap = document.createElement('span');
+    wrap.className = 'json-value-block';
+    wrap.appendChild(list);
+    insertIntoCollectionShell(shell, wrap);
+    return wrap;
+  }
+
+  function removeLiTrailingComma(li) {
+    li?.querySelectorAll(':scope > .json-trailing-comma').forEach((el) => el.remove());
+  }
+
+  function setShellTrailingComma(shell, expanded, addComma) {
+    if (!shell) return;
+    removeLiTrailingComma(shell.parentElement);
+
+    const closeLine = shell.querySelector(':scope > .json-close-line');
+    let close = shell.querySelector(':scope > .json-bracket-close');
+    if (closeLine) {
+      close = closeLine.querySelector('.json-bracket-close');
+      if (close) closeLine.replaceWith(close);
+    }
+    shell.querySelectorAll(':scope > .json-trailing-comma').forEach((el) => el.remove());
+
+    if (!close || !addComma) return;
+
+    if (expanded) {
+      const wrap = document.createElement('span');
+      wrap.className = 'json-close-line';
+      close.replaceWith(wrap);
+      wrap.appendChild(close);
+      const comma = document.createElement('span');
+      comma.className = 'json-trailing-comma';
+      comma.textContent = ',';
+      wrap.appendChild(comma);
+    } else {
+      const comma = document.createElement('span');
+      comma.className = 'json-trailing-comma';
+      comma.textContent = ',';
+      shell.appendChild(comma);
+    }
+  }
+
+  function getCollectionShell(holder) {
+    return holder.querySelector(':scope > .json-collection');
+  }
+
+  function collectionBracketChars(value) {
+    return Array.isArray(value) ? ['[', ']'] : ['{', '}'];
+  }
+
+  function appendCloseSuffix(parent, value, addComma) {
+    const closeCh = collectionBracketChars(value)[1];
+    if (addComma) {
+      const closeLine = document.createElement('span');
+      closeLine.className = 'json-close-line';
+      const close = document.createElement('span');
+      close.className = 'json-bracket-close';
+      close.textContent = closeCh;
+      closeLine.appendChild(close);
+      const comma = document.createElement('span');
+      comma.className = 'json-trailing-comma';
+      comma.textContent = ',';
+      closeLine.appendChild(comma);
+      parent.appendChild(closeLine);
+      return closeLine;
+    }
+    const close = document.createElement('span');
+    close.className = 'json-bracket-close';
+    close.textContent = closeCh;
+    parent.appendChild(close);
+    return close;
+  }
+
+  function mountFlatCollection(li, value, depth, options, addComma, shouldExpand, toggle) {
+    const openCh = collectionBracketChars(value)[0];
+    const isArray = Array.isArray(value);
+
+    if (shouldExpand) {
+      const head = ensureFlatHead(li);
+      const open = document.createElement('span');
+      open.className = 'json-bracket-open';
+      open.textContent = openCh;
+      getListInsertPoint(li, toggle).after(open);
+
+      const list = document.createElement(isArray ? 'ol' : 'ul');
+      list.className = isArray ? 'json-array' : 'json-dict';
+      head.after(list);
+      appendCloseSuffix(li, value, addComma);
+      populateCollectionList(list, value, depth + 1, options);
+
+      lazyNodeData.set(li, {
+        value, depth, options, built: true, list, addComma, flatLayout: true,
+        toggle: toggle || null, openBracket: open,
+      });
+    } else {
+      ensureFlatHead(li);
+      const shell = createCollectionShell(value);
+      insertIntoCollectionShell(shell, createPlaceholder(countChildren(value), value));
+      getListInsertPoint(li, toggle).after(shell);
+      if (addComma) setShellTrailingComma(shell, false, true);
+      lazyNodeData.set(li, {
+        value, depth, options, built: false, list: null, addComma, flatLayout: true,
+        collectionShell: shell, toggle: toggle || null,
+      });
+    }
+  }
+
+  function getValueBlock(list) {
+    return list.closest('.json-value-block') || list;
+  }
+
+  function populateCollectionList(list, value, depth, options) {
     if (Array.isArray(value)) {
       for (let i = 0; i < value.length; i++) {
-        if (enforceCap && !canRenderMoreNodes()) {
-          appendTruncatedNotice(list, value.length - i);
-          break;
-        }
         const li = document.createElement('li');
-        appendValueToLi(li, value[i], depth, options, i < value.length - 1, enforceCap);
+        appendValueToLi(li, value[i], depth, options, i < value.length - 1);
         list.appendChild(li);
-        if (enforceCap) trackNode();
       }
       return;
     }
 
     const keys = Object.keys(value);
     for (let i = 0; i < keys.length; i++) {
-      if (enforceCap && !canRenderMoreNodes()) {
-        appendTruncatedNotice(list, keys.length - i);
-        break;
-      }
       const key = keys[i];
       const li = document.createElement('li');
-      appendKeyedValueToLi(li, key, value[key], depth, options, i < keys.length - 1, enforceCap);
+      appendKeyedValueToLi(li, key, value[key], depth, options, i < keys.length - 1);
       list.appendChild(li);
-      if (enforceCap) trackNode();
     }
   }
 
-  function populateCollectionListBatched(list, value, depth, options, startIndex, onDone, enforceCap) {
+  function populateCollectionListBatched(list, value, depth, options, startIndex, onDone) {
     const isArray = Array.isArray(value);
     const keys = isArray ? null : Object.keys(value);
     const total = countChildren(value);
@@ -1345,19 +1914,13 @@
     function batch() {
       const end = Math.min(index + DOM_BATCH_SIZE, total);
       for (; index < end; index++) {
-        if (enforceCap && !canRenderMoreNodes()) {
-          appendTruncatedNotice(list, total - index);
-          onDone();
-          return;
-        }
         const li = document.createElement('li');
         if (isArray) {
-          appendValueToLi(li, value[index], depth, options, index < total - 1, enforceCap);
+          appendValueToLi(li, value[index], depth, options, index < total - 1);
         } else {
-          appendKeyedValueToLi(li, keys[index], value[keys[index]], depth, options, index < total - 1, enforceCap);
+          appendKeyedValueToLi(li, keys[index], value[keys[index]], depth, options, index < total - 1);
         }
         list.appendChild(li);
-        if (enforceCap) trackNode();
       }
       if (index < total) {
         requestAnimationFrame(batch);
@@ -1368,83 +1931,141 @@
     requestAnimationFrame(batch);
   }
 
-  function appendValueToLi(li, value, depth, options, addComma, enforceCap) {
-    const expandDepth = getExpandDepth(options);
-    if (isCollapsable(value)) {
-      const toggle = createToggleButton(false);
-      li.appendChild(toggle);
-
-      const shouldExpand = enforceCap && depth < expandDepth;
-      if (shouldExpand) {
-        const list = document.createElement(Array.isArray(value) ? 'ol' : 'ul');
-        list.className = Array.isArray(value) ? 'json-array' : 'json-dict';
-        populateCollectionList(list, value, depth + 1, options, enforceCap);
-        li.appendChild(list);
-        lazyNodeData.set(li, { value, depth, options, built: true, list });
+  function appendValueToLi(li, value, depth, options, addComma) {
+    if (value !== null && typeof value === 'object') {
+      if (isCollapsable(value)) {
+        const shouldExpand = shouldAutoExpand(value, options);
+        li.classList.add('json-flat-value');
+        const toggle = createToggleButton(!shouldExpand);
+        const prefix = document.createElement('span');
+        prefix.className = 'json-flat-prefix';
+        prefix.appendChild(toggle);
+        li.appendChild(prefix);
+        mountFlatCollection(li, value, depth, options, addComma, shouldExpand, toggle);
       } else {
-        toggle.classList.add('collapsed');
-        li.appendChild(createPlaceholder(countChildren(value), value));
-        lazyNodeData.set(li, { value, depth, options, built: false, list: null });
+        li.appendChild(renderEmptyCollection(value));
+        if (addComma) li.appendChild(document.createTextNode(','));
       }
     } else {
       li.appendChild(renderPrimitive(value, options));
+      if (addComma) li.appendChild(document.createTextNode(','));
     }
-    if (addComma) li.appendChild(document.createTextNode(','));
   }
 
-  function appendKeyedValueToLi(li, key, value, depth, options, addComma, enforceCap) {
-    const collapsable = isCollapsable(value);
-    li.appendChild(createKeyElement(key, options, collapsable));
-    li.appendChild(document.createTextNode(': '));
+  function appendKeyedValueToLi(li, key, value, depth, options, addComma) {
+    const isObject = value !== null && typeof value === 'object';
+    const collapsable = isObject && isCollapsable(value);
+    const shouldExpand = collapsable && shouldAutoExpand(value, options);
+    if (collapsable) li.classList.add('json-flat-value');
+    const toggle = createKeyElement(key, options, collapsable, !shouldExpand);
+    const prefix = document.createElement('span');
+    prefix.className = 'json-flat-prefix';
+    prefix.appendChild(toggle);
+    prefix.appendChild(document.createTextNode(': '));
+    li.appendChild(prefix);
 
     if (collapsable) {
-      const expandDepth = getExpandDepth(options);
-      const toggle = li.querySelector(':scope > .json-toggle');
-      const shouldExpand = enforceCap && depth < expandDepth;
-
-      if (shouldExpand) {
-        const list = document.createElement(Array.isArray(value) ? 'ol' : 'ul');
-        list.className = Array.isArray(value) ? 'json-array' : 'json-dict';
-        populateCollectionList(list, value, depth + 1, options, enforceCap);
-        li.appendChild(list);
-        lazyNodeData.set(li, { value, depth, options, built: true, list });
-      } else {
-        toggle.classList.add('collapsed');
-        li.appendChild(createPlaceholder(countChildren(value), value));
-        lazyNodeData.set(li, { value, depth, options, built: false, list: null });
-      }
+      mountFlatCollection(li, value, depth, options, addComma, shouldExpand, toggle);
+    } else if (isObject) {
+      li.appendChild(renderEmptyCollection(value));
+      if (addComma) li.appendChild(document.createTextNode(','));
     } else {
       li.appendChild(renderPrimitive(value, options));
+      if (addComma) li.appendChild(document.createTextNode(','));
     }
-    if (addComma) li.appendChild(document.createTextNode(','));
   }
 
   function buildRootCollectionShell(container, value, options) {
     const isArray = Array.isArray(value);
     const count = countChildren(value);
-    const open = document.createTextNode(isArray ? '[' : '{');
-    const close = document.createTextNode(isArray ? ']' : '}');
-    container.appendChild(open);
+    const shouldExpand = shouldAutoExpand(value, options);
+    const toggle = createToggleButton(!shouldExpand);
+    toggle.classList.add('json-root-toggle');
+    container.classList.add('json-root-flat');
+    container.appendChild(toggle);
 
-    const expandDepth = getExpandDepth(options);
-    const shouldExpand = expandDepth > 0;
-
-    const enforceCap = shouldExpand;
     if (shouldExpand) {
+      const open = document.createElement('span');
+      open.className = 'json-bracket-open';
+      open.textContent = collectionBracketChars(value)[0];
+      container.appendChild(open);
+
       const list = document.createElement(isArray ? 'ol' : 'ul');
       list.className = isArray ? 'json-array' : 'json-dict';
-      populateCollectionList(list, value, 1, options, enforceCap);
       container.appendChild(list);
-      lazyNodeData.set(container, { value, depth: 0, options, built: true, list, isRoot: true });
+      appendCloseSuffix(container, value, false);
+
+      populateCollectionOutline(list, value, 1, options, updateParseStatusAfterTree);
+      lazyNodeData.set(container, {
+        value, depth: 0, options, built: true, list, isRoot: true, toggle, openBracket: open,
+        flatLayout: true,
+      });
     } else {
-      const toggle = createToggleButton(true);
-      container.appendChild(toggle);
-      container.appendChild(createPlaceholder(count, value));
+      const shell = createCollectionShell(value);
+      insertIntoCollectionShell(shell, createPlaceholder(count, value));
+      container.appendChild(shell);
       lazyNodeData.set(container, {
         value, depth: 0, options, built: false, list: null, isRoot: true, toggle,
+        collectionShell: shell, flatLayout: true,
       });
     }
-    container.appendChild(close);
+  }
+
+  function resolveHolderToggle(holder) {
+    if (!holder) return null;
+    const meta = lazyNodeData.get(holder);
+    return meta?.toggle
+      || holder.querySelector(':scope > .json-flat-prefix .json-toggle, :scope > .json-flat-head .json-toggle')
+      || holder.querySelector(':scope > .json-toggle');
+  }
+
+  function ensureFlatHead(holder) {
+    if (isRootContentHolder(holder)) return null;
+    let head = holder.querySelector(':scope > .json-flat-head');
+    if (!head) {
+      head = document.createElement('div');
+      head.className = 'json-flat-head';
+      const prefix = holder.querySelector(':scope > .json-flat-prefix');
+      if (prefix) {
+        prefix.before(head);
+        head.appendChild(prefix);
+      } else {
+        holder.prepend(head);
+      }
+    }
+    return head;
+  }
+
+  function repairRootFlatDom(holder, meta, toggle) {
+    holder.querySelector(':scope > .json-flat-head')?.remove();
+
+    const activeToggle = meta.toggle || toggle || resolveHolderToggle(holder);
+    const list = meta.list;
+    const open = meta.openBracket;
+
+    if (activeToggle && holder.firstElementChild !== activeToggle) {
+      holder.prepend(activeToggle);
+    }
+
+    if (open?.parentNode && activeToggle && open.previousElementSibling !== activeToggle) {
+      activeToggle.after(open);
+    }
+
+    if (list && open && (list.previousElementSibling !== open || !list.isConnected)) {
+      open.after(list);
+    }
+  }
+
+  function getListInsertPoint(holder, toggle) {
+    const activeToggle = toggle || resolveHolderToggle(holder);
+    if (!activeToggle) return ensureFlatHead(holder);
+    const prefix = activeToggle.closest('.json-flat-prefix');
+    if (prefix && holder.contains(prefix)) return prefix;
+    const next = activeToggle.nextSibling;
+    if (next && next.nodeType === Node.TEXT_NODE && next.textContent === ': ') {
+      return next;
+    }
+    return activeToggle;
   }
 
   function expandLazyNode(holder, toggle) {
@@ -1458,73 +2079,199 @@
     meta.list = list;
 
     const activeToggle = meta.toggle || toggle;
-    const placeholder = holder.querySelector(':scope > .json-placeholder');
+    const shell = meta.collectionShell || getCollectionShell(holder);
+    const placeholder = shell?.querySelector('.json-placeholder')
+      || holder.querySelector(':scope > .json-placeholder');
     const total = countChildren(meta.value);
 
     if (activeToggle) activeToggle.classList.remove('collapsed');
-    if (activeToggle) activeToggle.after(list);
-    else holder.appendChild(list);
 
-    if (placeholder) placeholder.remove();
+    if (meta.flatLayout) {
+      showFlatExpanded(holder, meta, activeToggle);
+    } else if (shell) {
+      if (placeholder) placeholder.remove();
+      appendListToShell(shell, list);
+      setCollectionExpanded(shell, true);
+      if (meta.addComma) setShellTrailingComma(shell, true, true);
+      if (!shell.parentNode) {
+        getListInsertPoint(holder, activeToggle).after(shell);
+      }
+    } else {
+      getListInsertPoint(holder, activeToggle).after(list);
+      if (placeholder) placeholder.remove();
+    }
+
+    const liveOptions = getViewerOptions();
+    meta.options = liveOptions;
 
     if (total > DOM_BATCH_SIZE) {
       parseStatus.innerHTML = '<span style="color:var(--accent)">Expanding ' + total + ' items…</span>';
-      populateCollectionListBatched(list, meta.value, meta.depth + 1, meta.options, 0, updateParseStatusAfterTree, false);
+      populateCollectionListBatched(list, meta.value, meta.depth + 1, liveOptions, 0, updateParseStatusAfterTree);
     } else {
-      populateCollectionList(list, meta.value, meta.depth + 1, meta.options, false);
+      populateCollectionList(list, meta.value, meta.depth + 1, liveOptions);
     }
     return true;
+  }
+
+  function removeFlatExpandedChrome(holder, meta) {
+    meta?.openBracket?.remove();
+    if (meta) meta.openBracket = null;
+    holder.querySelectorAll(':scope > .json-close-line, :scope > .json-bracket-close').forEach((el) => el.remove());
+    if (meta?.list) meta.list.style.display = 'none';
+  }
+
+  function showFlatExpanded(holder, meta, toggle) {
+    meta.collectionShell?.remove();
+    meta.collectionShell = null;
+
+    const list = meta.list;
+    if (!list) return;
+
+    list.style.display = '';
+
+    if (isRootContentHolder(holder)) {
+      const activeToggle = meta.toggle || toggle || resolveHolderToggle(holder);
+      let open = meta.openBracket;
+      if (!open?.parentNode) {
+        open = document.createElement('span');
+        open.className = 'json-bracket-open';
+        open.textContent = collectionBracketChars(meta.value)[0];
+        meta.openBracket = open;
+        if (activeToggle) activeToggle.after(open);
+        else holder.prepend(open);
+      }
+      repairRootFlatDom(holder, meta, toggle);
+      if (list && open && !list.isConnected) open.after(list);
+      holder.querySelectorAll(':scope > .json-close-line, :scope > .json-bracket-close').forEach((el) => el.remove());
+      appendCloseSuffix(holder, meta.value, meta.addComma);
+      return;
+    }
+
+    const head = ensureFlatHead(holder);
+    let open = meta.openBracket;
+    if (!open?.parentNode) {
+      open = document.createElement('span');
+      open.className = 'json-bracket-open';
+      open.textContent = collectionBracketChars(meta.value)[0];
+      meta.openBracket = open;
+      getListInsertPoint(holder, toggle).after(open);
+    } else if (head && !head.contains(open)) {
+      getListInsertPoint(holder, toggle).after(open);
+    }
+
+    if (head) {
+      if (!list.isConnected || list.parentNode !== holder || list.previousElementSibling !== head) {
+        head.after(list);
+      }
+    } else {
+      const anchor = getListInsertPoint(holder, toggle);
+      if (!list.isConnected || list.parentNode !== holder || list.previousElementSibling !== anchor) {
+        anchor.after(list);
+      }
+    }
+
+    holder.querySelectorAll(':scope > .json-close-line, :scope > .json-bracket-close').forEach((el) => el.remove());
+    appendCloseSuffix(holder, meta.value, meta.addComma);
+  }
+
+  function collapseFlatLayout(holder, meta, toggle) {
+    const count = countChildren(meta.value);
+
+    removeFlatExpandedChrome(holder, meta);
+
+    meta.collectionShell?.remove();
+    const shell = createCollectionShell(meta.value);
+    insertIntoCollectionShell(shell, createPlaceholder(count, meta.value));
+
+    if (isRootContentHolder(holder)) {
+      holder.querySelector(':scope > .json-flat-head')?.remove();
+      const activeToggle = meta.toggle || toggle || resolveHolderToggle(holder);
+      if (activeToggle) activeToggle.after(shell);
+      else holder.appendChild(shell);
+    } else {
+      ensureFlatHead(holder);
+      getListInsertPoint(holder, toggle).after(shell);
+    }
+
+    if (meta.addComma) setShellTrailingComma(shell, false, true);
+    meta.collectionShell = shell;
   }
 
   function showBuiltNode(holder, toggle) {
     const meta = lazyNodeData.get(holder);
     const list = meta?.list || holder.querySelector(':scope > ul.json-dict, :scope > ol.json-array');
     if (!list) return;
-    list.style.display = '';
-    toggle.classList.remove('collapsed');
+    const activeToggle = (toggle?.isConnected ? toggle : null) || resolveHolderToggle(holder);
+    activeToggle?.classList.remove('collapsed');
+    holder.querySelector(':scope > .json-suffix')?.remove();
+
+    if (meta?.flatLayout) {
+      showFlatExpanded(holder, meta, activeToggle);
+      if (list.childElementCount === 0 && meta.value != null && isCollapsable(meta.value)) {
+        const liveOptions = getViewerOptions();
+        meta.options = liveOptions;
+        populateCollectionList(list, meta.value, meta.depth + 1, liveOptions);
+      }
+      return;
+    }
+
+    const block = getValueBlock(list);
+    block.style.display = '';
+    const shell = meta?.collectionShell || getCollectionShell(holder);
+    setCollectionExpanded(shell, true);
+    if (meta?.addComma) setShellTrailingComma(shell, true, true);
+    shell?.querySelector('.json-placeholder')?.remove();
     const placeholder = holder.querySelector(':scope > .json-placeholder');
-    if (placeholder) placeholder.remove();
+    if (placeholder) {
+      const next = placeholder.nextSibling;
+      if (next?.nodeType === Node.TEXT_NODE && next.textContent === ',') {
+        next.remove();
+      }
+      placeholder.remove();
+    }
   }
 
   function collapseNode(holder, toggle) {
     const meta = lazyNodeData.get(holder);
     const list = meta?.list || holder.querySelector(':scope > ul.json-dict, :scope > ol.json-array');
-    if (!list) return;
-    list.style.display = 'none';
+    if (!list && !meta?.flatLayout) return;
     toggle.classList.add('collapsed');
+    holder.querySelector(':scope > .json-suffix')?.remove();
 
     const count = meta ? countChildren(meta.value) : countChildren([]);
     const val = meta ? meta.value : [];
-    let placeholder = holder.querySelector(':scope > .json-placeholder');
+
+    if (meta?.flatLayout) {
+      collapseFlatLayout(holder, meta, toggle);
+      return;
+    }
+
+    if (!list) return;
+
+    const block = getValueBlock(list);
+    block.style.display = 'none';
+    const shell = meta?.collectionShell || getCollectionShell(holder);
+    setCollectionExpanded(shell, false);
+    let placeholder = shell?.querySelector('.json-placeholder')
+      || holder.querySelector(':scope > .json-placeholder');
     if (placeholder) {
       placeholder.textContent = childLabel(val, count);
+    } else if (shell) {
+      insertIntoCollectionShell(shell, createPlaceholder(count, val));
     } else {
       placeholder = createPlaceholder(count, val);
-      list.after(placeholder);
+      block.after(placeholder);
     }
+    if (shell && meta?.addComma) setShellTrailingComma(shell, false, true);
   }
 
   function updateParseStatusAfterTree() {
-    let status = '<span style="color:var(--success)">✓ Valid JSON</span>';
-    if (treeLimitReached) {
-      status += ' <span style="color:var(--warning)">· tree capped at ' + MAX_TREE_NODES + '</span>';
-    }
-    parseStatus.innerHTML = status;
+    parseStatus.innerHTML = '<span style="color:var(--success)">✓ Valid JSON</span>';
   }
 
-  function renderTreeLazy(json, options, fileSize) {
-    treeNodeCount = 0;
-    treeLimitReached = false;
+  function renderTreeLazy(json, options) {
     jsonRenderer.innerHTML = '';
     jsonRenderer.classList.add('json-document');
-
-    if (fileSize > LARGE_FILE_FORMAT_THRESHOLD) {
-      const notice = document.createElement('div');
-      notice.className = 'json-large-notice';
-      notice.textContent = 'Large file mode: tree loads on expand only (like VS Code). Auto-format skipped above '
-        + formatBytes(LARGE_FILE_FORMAT_THRESHOLD) + '. Outline capped at ' + MAX_TREE_NODES + ' nodes.';
-      jsonRenderer.appendChild(notice);
-    }
 
     const root = document.createElement('div');
     root.className = 'json-root';
@@ -1558,7 +2305,6 @@
     }
 
     jsonRenderer.appendChild(root);
-    trackNode();
   }
 
   function eventFind(e, selector) {
@@ -1566,21 +2312,39 @@
     return path.find((el) => el instanceof Element && el.matches(selector)) || null;
   }
 
-  function handleTreeClick(e) {
-    const placeholder = eventFind(e, '.json-placeholder');
-    if (placeholder) {
-      e.preventDefault();
-      const holder = placeholder.parentElement;
-      const toggle = holder.querySelector(':scope > .json-toggle');
-      if (toggle) toggle.click();
-      return;
+  const TREE_GUTTER_PX = 28;
+
+  function resolveLazyHolder(fromEl) {
+    let el = fromEl;
+    while (el && el !== jsonRenderer) {
+      if (lazyNodeData.has(el)) return el;
+      el = el.parentElement;
     }
+    return fromEl.parentElement;
+  }
 
-    const toggle = eventFind(e, '.json-toggle');
-    if (!toggle) return;
-    e.preventDefault();
+  function isRootContentHolder(holder) {
+    if (!holder) return false;
+    const meta = lazyNodeData.get(holder);
+    if (meta?.isRoot && !meta?.isOuterRoot) return true;
+    return holder.classList.contains('json-root') || holder.classList.contains('json-root-inner');
+  }
 
-    const holder = toggle.parentElement;
+  function isRootCollectionList(list) {
+    const shell = list.closest('.json-collection');
+    if (!shell) return false;
+    return isRootContentHolder(shell.parentElement);
+  }
+
+  function resolveRootTreeToggle(fromEl) {
+    const holder = resolveLazyHolder(fromEl);
+    if (!isRootContentHolder(holder)) return null;
+    const meta = lazyNodeData.get(holder);
+    const toggle = meta?.toggle || holder.querySelector(':scope > .json-toggle.json-root-toggle');
+    return toggle ? { holder, toggle } : null;
+  }
+
+  function applyTreeToggle(holder, toggle) {
     const meta = lazyNodeData.get(holder);
     const isCollapsed = toggle.classList.contains('collapsed');
 
@@ -1603,6 +2367,66 @@
     }
   }
 
+  function findLiToggleInListGutter(list, clientY) {
+    const items = list.querySelectorAll(':scope > li');
+    for (const li of items) {
+      const rect = li.getBoundingClientRect();
+      if (clientY >= rect.top && clientY <= rect.bottom) {
+        const toggle = resolveHolderToggle(li);
+        if (toggle) return { holder: li, toggle };
+      }
+    }
+    return null;
+  }
+
+  function resolveTreeToggleTarget(e) {
+    if (eventFind(e, 'a.json-link')) return null;
+
+    const toggle = eventFind(e, '.json-toggle');
+    if (toggle) {
+      return { holder: resolveLazyHolder(toggle), toggle };
+    }
+
+    const placeholder = eventFind(e, '.json-placeholder');
+    if (placeholder) {
+      const rootTarget = resolveRootTreeToggle(placeholder);
+      if (rootTarget) return rootTarget;
+      const holder = resolveLazyHolder(placeholder);
+      const phToggle = resolveHolderToggle(holder);
+      return phToggle ? { holder, toggle: phToggle } : null;
+    }
+
+    if (e.clientX == null || e.clientY == null) return null;
+
+    const list = eventFind(e, 'ul.json-dict, ol.json-array');
+    if (list) {
+      if (isRootCollectionList(list)) return null;
+      const listRect = list.getBoundingClientRect();
+      if (e.clientX - listRect.left <= TREE_GUTTER_PX) {
+        return findLiToggleInListGutter(list, e.clientY);
+      }
+    }
+
+    const li = eventFind(e, 'li');
+    if (li) {
+      if (isRootCollectionList(li.parentElement)) return null;
+      const liRect = li.getBoundingClientRect();
+      if (e.clientX - liRect.left <= TREE_GUTTER_PX) {
+        const liToggle = resolveHolderToggle(li);
+        if (liToggle) return { holder: li, toggle: liToggle };
+      }
+    }
+
+    return null;
+  }
+
+  function handleTreeClick(e) {
+    const target = resolveTreeToggleTarget(e);
+    if (!target?.toggle) return;
+    e.preventDefault();
+    applyTreeToggle(target.holder, target.toggle);
+  }
+
   jsonRenderer.addEventListener('click', handleTreeClick);
 
   async function parseAndRender(saveHistory = true) {
@@ -1617,21 +2441,19 @@
 
     const size = byteSize(text);
     const generation = ++parseGeneration;
-    const shouldFormat = size <= LARGE_FILE_FORMAT_THRESHOLD;
-
     parseStatus.innerHTML = '<span style="color:var(--accent)">Parsing…</span>';
     inputStats.textContent = formatBytes(size);
 
     let result;
     if (size >= PARSE_WORKER_THRESHOLD) {
-      result = await parseInWorker(text, shouldFormat, generation);
+      result = await parseInWorker(text, true, generation);
       if (!result.ok) {
         result = parseJsonSync(text);
-        if (result.ok && shouldFormat) result.formatted = JSON.stringify(result.data, null, 2);
+        if (result.ok) result.formatted = JSON.stringify(result.data, null, 2);
       }
     } else {
       result = parseJsonSync(text);
-      if (result.ok && shouldFormat) result.formatted = JSON.stringify(result.data, null, 2);
+      if (result.ok) result.formatted = JSON.stringify(result.data, null, 2);
     }
 
     if (generation !== parseGeneration) return;
@@ -1651,12 +2473,9 @@
     }
 
     const options = getViewerOptions();
-    renderTreeLazy(result.data, options, size);
+    renderTreeLazy(result.data, options);
 
-    let status = '<span style="color:var(--success)">✓ Valid JSON</span>';
-    if (!shouldFormat) status += ' <span style="color:var(--text-muted)">· format skipped</span>';
-    if (treeLimitReached) status += ' <span style="color:var(--warning)">· tree capped</span>';
-    parseStatus.innerHTML = status;
+    parseStatus.innerHTML = '<span style="color:var(--success)">✓ Valid JSON</span>';
     inputStats.textContent = formatBytes(byteSize(jsonInput.value));
 
     if (saveHistory && db) {
@@ -1693,7 +2512,7 @@
     parsedData = result.data;
     jsonInput.value = JSON.stringify(result.data);
     toast('Minified', 'success');
-    renderTreeLazy(result.data, getViewerOptions(), byteSize(jsonInput.value));
+    renderTreeLazy(result.data, getViewerOptions());
     updateParseStatusAfterTree();
   }
 
@@ -1743,9 +2562,47 @@
   $('#btn-clear-history').addEventListener('click', () => {
     if (confirm('Clear all parse history?')) clearAllHistory();
   });
+  const MOBILE_MQ = window.matchMedia('(max-width: 768px)');
+
+  function isMobileLayout() {
+    return MOBILE_MQ.matches;
+  }
+
+  function setMobileSidebarOpen(open) {
+    const sidebar = $('#sidebar');
+    const backdrop = $('#sidebar-backdrop');
+    if (!sidebar) return;
+    sidebar.classList.toggle('open', open);
+    if (backdrop) {
+      backdrop.classList.toggle('visible', open);
+      backdrop.toggleAttribute('hidden', !open);
+    }
+  }
+
+  function updateHeaderOffset() {
+    const header = document.querySelector('.header');
+    if (!header) return;
+    document.documentElement.style.setProperty('--header-offset', header.offsetHeight + 'px');
+  }
+
+  function initMobileLayout() {
+    updateHeaderOffset();
+    window.addEventListener('resize', updateHeaderOffset);
+    if (typeof ResizeObserver !== 'undefined') {
+      const header = document.querySelector('.header');
+      if (header) new ResizeObserver(updateHeaderOffset).observe(header);
+    }
+    $('#sidebar-backdrop')?.addEventListener('click', () => setMobileSidebarOpen(false));
+
+    MOBILE_MQ.addEventListener('change', () => {
+      if (!isMobileLayout()) setMobileSidebarOpen(false);
+    });
+  }
+
   $('#btn-history-toggle').addEventListener('click', () => {
-    if (window.matchMedia('(max-width: 768px)').matches) {
-      $('#sidebar').classList.toggle('open');
+    if (isMobileLayout()) {
+      const sidebar = $('#sidebar');
+      setMobileSidebarOpen(!sidebar?.classList.contains('open'));
     } else {
       toggleSidebarCollapsed();
     }
@@ -1770,14 +2627,23 @@
       return;
     }
     const item = e.target.closest('[data-id]');
-    if (item) loadFromHistory(item.dataset.id);
+    if (item) {
+      loadFromHistory(item.dataset.id);
+      if (isMobileLayout()) setMobileSidebarOpen(false);
+    }
   });
 
   document.querySelectorAll('.options-bar input').forEach((el) => {
     el.addEventListener('change', () => {
       if (parsedData) {
-        renderTreeLazy(parsedData, getViewerOptions(), byteSize(jsonInput.value));
-        updateParseStatusAfterTree();
+        const options = getViewerOptions();
+        if (!options.collapsed && countChildren(parsedData) > DOM_BATCH_SIZE) {
+          parseStatus.innerHTML = '<span style="color:var(--accent)">Building outline…</span>';
+        }
+        renderTreeLazy(parsedData, options);
+        if (options.collapsed || countChildren(parsedData) <= DOM_BATCH_SIZE) {
+          updateParseStatusAfterTree();
+        }
       } else if (jsonInput.value.trim()) {
         parseAndRender(false);
       }
@@ -1815,14 +2681,20 @@
   });
 
   /* ── Resizable input / tree split ────────────────────────────── */
-  const PANE_RATIO_KEY = 'json-studio-input-pane-ratio';
+  const LAYOUT_KEY = 'json-studio-layout';
+  const PANE_RATIO_KEY = 'json-studio-input-pane-ratio'; // legacy
   const SIDEBAR_COLLAPSED_KEY = 'json-studio-sidebar-collapsed';
+  const THEME_KEY = 'json-studio-theme';
   const PANE_MIN_PX = 160;
+  const PANE_MIN_PX_STACKED = 80;
   const LAYOUT_PRESETS = {
     tree: 0.15,
     balanced: 0.5,
     input: 0.85,
   };
+
+  let workspaceLayoutMode = 'split';
+  let workspaceSplitRatio = LAYOUT_PRESETS.balanced;
 
   function workspaceIsStacked() {
     return window.matchMedia('(max-width: 1100px)').matches;
@@ -1830,33 +2702,79 @@
 
   function getInputPaneRatio() {
     const workspace = $('#workspace');
-    if (!workspace) return 0.5;
+    if (!workspace) return workspaceSplitRatio;
     const raw = getComputedStyle(workspace).getPropertyValue('--input-pane-size').trim();
     const pct = parseFloat(raw);
-    return Number.isNaN(pct) ? 0.5 : pct / 100;
+    return Number.isNaN(pct) ? workspaceSplitRatio : pct / 100;
   }
 
-  function updateLayoutQuickActive(ratio) {
-    const r = ratio ?? getInputPaneRatio();
+  function saveWorkspaceLayout() {
+    try {
+      const value = workspaceLayoutMode === 'split'
+        ? String(workspaceSplitRatio)
+        : workspaceLayoutMode;
+      localStorage.setItem(LAYOUT_KEY, value);
+    } catch (_) { /* ignore */ }
+  }
+
+  function loadWorkspaceLayout() {
+    try {
+      const saved = localStorage.getItem(LAYOUT_KEY);
+      if (saved === 'input-only' || saved === 'tree-only') {
+        return { mode: saved, ratio: workspaceSplitRatio };
+      }
+      const ratio = parseFloat(saved);
+      if (!Number.isNaN(ratio)) {
+        return { mode: 'split', ratio };
+      }
+      const legacy = parseFloat(localStorage.getItem(PANE_RATIO_KEY));
+      if (!Number.isNaN(legacy)) {
+        return { mode: 'split', ratio: legacy };
+      }
+    } catch (_) { /* ignore */ }
+    return { mode: 'split', ratio: LAYOUT_PRESETS.balanced };
+  }
+
+  function updateLayoutQuickActive() {
+    const r = workspaceSplitRatio;
+    const mode = workspaceLayoutMode;
     [
-      { id: 'btn-layout-tree', value: LAYOUT_PRESETS.tree },
-      { id: 'btn-layout-balanced', value: LAYOUT_PRESETS.balanced },
-      { id: 'btn-layout-input', value: LAYOUT_PRESETS.input },
-    ].forEach(({ id, value }) => {
-      const btn = $('#' + id);
-      if (btn) btn.classList.toggle('active', Math.abs(r - value) < 0.02);
+      { id: 'btn-layout-tree-only', active: mode === 'tree-only' },
+      { id: 'btn-layout-tree', active: mode === 'split' && Math.abs(r - LAYOUT_PRESETS.tree) < 0.02 },
+      { id: 'btn-layout-balanced', active: mode === 'split' && Math.abs(r - LAYOUT_PRESETS.balanced) < 0.02 },
+      { id: 'btn-layout-input', active: mode === 'split' && Math.abs(r - LAYOUT_PRESETS.input) < 0.02 },
+      { id: 'btn-layout-input-only', active: mode === 'input-only' },
+    ].forEach(({ id, active }) => {
+      $('#' + id)?.classList.toggle('active', active);
     });
   }
 
-  function setInputPaneRatio(ratio) {
+  function applyWorkspaceLayout(mode, ratio) {
     const workspace = $('#workspace');
     if (!workspace) return;
-    const r = Math.min(0.85, Math.max(0.15, ratio));
-    workspace.style.setProperty('--input-pane-size', (r * 100).toFixed(2) + '%');
-    try {
-      localStorage.setItem(PANE_RATIO_KEY, String(r));
-    } catch (_) { /* ignore */ }
-    updateLayoutQuickActive(r);
+
+    workspaceLayoutMode = mode;
+    workspace.classList.remove('layout-input-only', 'layout-tree-only');
+
+    if (mode === 'input-only') {
+      workspace.classList.add('layout-tree-only');
+    } else if (mode === 'tree-only') {
+      workspace.classList.add('layout-input-only');
+    } else {
+      workspaceSplitRatio = Math.min(0.85, Math.max(0.15, ratio ?? workspaceSplitRatio));
+      workspace.style.setProperty('--input-pane-size', (workspaceSplitRatio * 100).toFixed(2) + '%');
+    }
+
+    saveWorkspaceLayout();
+    updateLayoutQuickActive();
+  }
+
+  function setInputPaneRatio(ratio) {
+    applyWorkspaceLayout('split', ratio);
+  }
+
+  function setWorkspaceLayoutMode(mode) {
+    applyWorkspaceLayout(mode, workspaceSplitRatio);
   }
 
   function isSidebarCollapsed() {
@@ -1878,11 +2796,46 @@
     setSidebarCollapsed(!isSidebarCollapsed());
   }
 
+  function getTheme() {
+    return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  }
+
+  function updateThemeToggleButton(theme) {
+    const btn = $('#btn-theme-toggle');
+    if (!btn) return;
+    const isLight = theme === 'light';
+    btn.textContent = isLight ? '☾' : '☀';
+    const label = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+    btn.title = label;
+    btn.setAttribute('aria-label', label);
+  }
+
+  function setTheme(theme) {
+    const next = theme === 'light' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem(THEME_KEY, next);
+    } catch (_) { /* ignore */ }
+    updateThemeToggleButton(next);
+  }
+
+  function initThemeToggle() {
+    updateThemeToggleButton(getTheme());
+    $('#btn-theme-toggle')?.addEventListener('click', () => {
+      setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+    });
+  }
+
   function initLayoutQuickButtons() {
+    $('#btn-layout-tree-only')?.addEventListener('click', () => setWorkspaceLayoutMode('tree-only'));
     $('#btn-layout-tree')?.addEventListener('click', () => setInputPaneRatio(LAYOUT_PRESETS.tree));
     $('#btn-layout-balanced')?.addEventListener('click', () => setInputPaneRatio(LAYOUT_PRESETS.balanced));
     $('#btn-layout-input')?.addEventListener('click', () => setInputPaneRatio(LAYOUT_PRESETS.input));
-    $('#btn-sidebar-collapse')?.addEventListener('click', () => setSidebarCollapsed(true));
+    $('#btn-layout-input-only')?.addEventListener('click', () => setWorkspaceLayoutMode('input-only'));
+    $('#btn-sidebar-collapse')?.addEventListener('click', () => {
+      if (isMobileLayout()) setMobileSidebarOpen(false);
+      else setSidebarCollapsed(true);
+    });
     $('#btn-sidebar-expand')?.addEventListener('click', () => setSidebarCollapsed(false));
 
     if (localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === '1') {
@@ -1895,9 +2848,9 @@
     const resizer = $('#workspace-resizer');
     if (!workspace || !resizer) return;
 
-    const saved = parseFloat(localStorage.getItem(PANE_RATIO_KEY));
-    if (!Number.isNaN(saved)) setInputPaneRatio(saved);
-    else updateLayoutQuickActive(LAYOUT_PRESETS.balanced);
+    const savedLayout = loadWorkspaceLayout();
+    workspaceSplitRatio = savedLayout.ratio;
+    applyWorkspaceLayout(savedLayout.mode, savedLayout.ratio);
 
     function updateResizerAria() {
       const stacked = workspaceIsStacked();
@@ -1909,7 +2862,8 @@
       const stacked = workspaceIsStacked();
       const total = stacked ? rect.height : rect.width;
       const pos = stacked ? clientY - rect.top : clientX - rect.left;
-      const minRatio = PANE_MIN_PX / total;
+      const minPx = stacked ? PANE_MIN_PX_STACKED : PANE_MIN_PX;
+      const minRatio = minPx / total;
       const maxRatio = 1 - minRatio;
       setInputPaneRatio(Math.min(maxRatio, Math.max(minRatio, pos / total)));
     }
@@ -1946,7 +2900,7 @@
 
     resizer.addEventListener('keydown', (e) => {
       const step = e.shiftKey ? 0.1 : 0.05;
-      const current = parseFloat(localStorage.getItem(PANE_RATIO_KEY) || '0.5');
+      const current = workspaceLayoutMode === 'split' ? workspaceSplitRatio : LAYOUT_PRESETS.balanced;
       if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
         e.preventDefault();
         setInputPaneRatio(current - step);
@@ -1962,6 +2916,8 @@
 
   /* ── Init ────────────────────────────────────────────────────── */
   async function init() {
+    initThemeToggle();
+    initMobileLayout();
     initLayoutQuickButtons();
     initPaneResizer();
     try {

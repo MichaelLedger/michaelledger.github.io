@@ -17,6 +17,14 @@
             border-left: 1px dotted #ccc;
             padding-left: 2em;
         }
+        .json-value-block {
+            display: inline-block;
+            vertical-align: top;
+        }
+        .json-trailing-comma {
+            display: inline-block;
+            vertical-align: bottom;
+        }
         .json-string {
             color: #0B7500;
         }
@@ -27,29 +35,38 @@
  
         /* Toggle button */
         a.json-toggle {
+            display: inline-flex;
+            align-items: baseline;
+            vertical-align: baseline;
             position: relative;
             color: inherit;
             text-decoration: none;
+            margin-left: -1.2em;
+            line-height: 1.6;
+            gap: 0.4em;
+        }
+        a.json-toggle .json-string,
+        a.json-toggle .json-key {
+            margin-left: 0.05em;
         }
         a.json-toggle:focus {
             outline: none;
         }
         a.json-toggle:before {
-            font-size: 1.1em;
+            flex: 0 0 1.2em;
+            width: 1.2em;
+            font-size: 0.75em;
             color: #c0c0c0;
-            content: "\25BC"; /* down arrow */
-            position: absolute;
+            content: "\25BC";
             display: inline-block;
-            width: 1em;
             text-align: center;
-            line-height: 1em;
-            left: -1.2em;
+            line-height: 1.6;
+            transform-origin: center center;
         }
         a.json-toggle:hover:before {
             color: #aaa;
         }
         a.json-toggle.collapsed:before {
-            /* Use rotated down arrow, prevents right arrow appearing smaller than down arrow in some browsers */
             transform: rotate(-90deg);
         }
  
@@ -397,6 +414,7 @@
             LARGE_FILE_FORMAT_THRESHOLD: 2 * 1024 * 1024,
             PARSE_WORKER_THRESHOLD: 64 * 1024,
             MAX_TREE_NODES: 5000,
+            AUTO_EXPAND_MAX_CHILDREN: 100,
             MAX_STRING_DISPLAY: 500,
             MAX_LINKIFY_LENGTH: 20000,
             DOM_BATCH_SIZE: 250,
@@ -431,8 +449,21 @@
             return count + (count > 1 ? ' keys' : ' key');
         }
 
-        function getExpandDepth(options) {
-            return options.collapsed ? 0 : 1;
+        function shouldAutoExpand(value, options, depth) {
+            if (options.collapsed || !isCollapsable(value)) return false;
+            if (depth === 0) return true;
+            return countChildren(value) <= $.jsonViewer.AUTO_EXPAND_MAX_CHILDREN;
+        }
+
+        function populateCollectionOutline(list, value, depth, options, onDone) {
+            var enforceCap = !options.collapsed;
+            var total = countChildren(value);
+            if (total > $.jsonViewer.DOM_BATCH_SIZE) {
+                populateCollectionListBatched(list, value, depth, options, 0, onDone || function() {}, enforceCap);
+            } else {
+                populateCollectionList(list, value, depth, options, enforceCap);
+                if (onDone) onDone();
+            }
         }
 
         function isUrl(string) {
@@ -523,6 +554,25 @@
             return ph;
         }
 
+        function appendListToLi(li, list, addComma) {
+            if (!addComma) {
+                li.appendChild(list);
+                return;
+            }
+            var wrap = document.createElement('span');
+            wrap.className = 'json-value-block';
+            wrap.appendChild(list);
+            var comma = document.createElement('span');
+            comma.className = 'json-trailing-comma';
+            comma.textContent = ',';
+            wrap.appendChild(comma);
+            li.appendChild(wrap);
+        }
+
+        function getValueBlock(list) {
+            return list.closest('.json-value-block') || list;
+        }
+
         function populateCollectionList(list, value, depth, options, enforceCap) {
             if (Array.isArray(value)) {
                 for (var i = 0; i < value.length; i++) {
@@ -583,9 +633,8 @@
         }
 
         function appendValueToLi(li, value, depth, options, addComma, enforceCap) {
-            var expandDepth = getExpandDepth(options);
             if (isCollapsable(value)) {
-                var shouldExpand = enforceCap && depth < expandDepth;
+                var shouldExpand = shouldAutoExpand(value, options, depth);
                 var toggle = document.createElement('a');
                 toggle.href = '#';
                 toggle.className = 'json-toggle' + (shouldExpand ? '' : ' collapsed');
@@ -595,23 +644,23 @@
                     var list = document.createElement(Array.isArray(value) ? 'ol' : 'ul');
                     list.className = Array.isArray(value) ? 'json-array' : 'json-dict';
                     populateCollectionList(list, value, depth + 1, options, enforceCap);
-                    li.appendChild(list);
-                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: true, list: list });
+                    appendListToLi(li, list, addComma);
+                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: true, list: list, addComma: addComma });
                 } else {
                     toggle.classList.add('collapsed');
                     li.appendChild(createPlaceholder(countChildren(value), value));
-                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: false, list: null });
+                    if (addComma) li.appendChild(document.createTextNode(','));
+                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: false, list: null, addComma: addComma });
                 }
             } else {
                 li.appendChild(renderPrimitive(value, options));
+                if (addComma) li.appendChild(document.createTextNode(','));
             }
-            if (addComma) li.appendChild(document.createTextNode(','));
         }
 
         function appendKeyedValueToLi(li, key, value, depth, options, addComma, enforceCap) {
             var collapsable = isCollapsable(value);
-            var expandDepth = getExpandDepth(options);
-            var shouldExpand = collapsable && enforceCap && depth < expandDepth;
+            var shouldExpand = collapsable && shouldAutoExpand(value, options, depth);
 
             if (collapsable) {
                 li.appendChild(createKeyElement(key, options, !shouldExpand));
@@ -627,17 +676,18 @@
                     var list = document.createElement(Array.isArray(value) ? 'ol' : 'ul');
                     list.className = Array.isArray(value) ? 'json-array' : 'json-dict';
                     populateCollectionList(list, value, depth + 1, options, enforceCap);
-                    li.appendChild(list);
-                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: true, list: list });
+                    appendListToLi(li, list, addComma);
+                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: true, list: list, addComma: addComma });
                 } else {
                     toggle.classList.add('collapsed');
                     li.appendChild(createPlaceholder(countChildren(value), value));
-                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: false, list: null });
+                    if (addComma) li.appendChild(document.createTextNode(','));
+                    lazyNodeData.set(li, { value: value, depth: depth, options: options, built: false, list: null, addComma: addComma });
                 }
             } else {
                 li.appendChild(renderPrimitive(value, options));
+                if (addComma) li.appendChild(document.createTextNode(','));
             }
-            if (addComma) li.appendChild(document.createTextNode(','));
         }
 
         function buildRootCollectionShell(container, value, options) {
@@ -645,14 +695,13 @@
             var count = countChildren(value);
             container.appendChild(document.createTextNode(isArray ? '[' : '{'));
 
-            var shouldExpand = getExpandDepth(options) > 0;
-            var enforceCap = shouldExpand;
+            var shouldExpand = shouldAutoExpand(value, options, 0);
 
             if (shouldExpand) {
                 var list = document.createElement(isArray ? 'ol' : 'ul');
                 list.className = isArray ? 'json-array' : 'json-dict';
-                populateCollectionList(list, value, 1, options, enforceCap);
                 container.appendChild(list);
+                populateCollectionOutline(list, value, 1, options);
                 lazyNodeData.set(container, { value: value, depth: 0, options: options, built: true, list: list, isRoot: true });
             } else {
                 var toggle = document.createElement('a');
@@ -665,6 +714,16 @@
                 });
             }
             container.appendChild(document.createTextNode(isArray ? ']' : '}'));
+        }
+
+        function getListInsertPoint(holder, toggle) {
+            var activeToggle = toggle || holder.querySelector(':scope > a.json-toggle');
+            if (!activeToggle) return holder;
+            var next = activeToggle.nextSibling;
+            if (next && next.nodeType === Node.TEXT_NODE && next.textContent === ': ') {
+                return next;
+            }
+            return activeToggle;
         }
 
         function expandLazyNode(holder, toggle, $status) {
@@ -682,21 +741,28 @@
             var total = countChildren(meta.value);
 
             if (activeToggle) activeToggle.classList.remove('collapsed');
-            if (activeToggle) activeToggle.after(list);
-            else holder.appendChild(list);
+            getListInsertPoint(holder, activeToggle).after(list);
             if (placeholder) placeholder.remove();
+
+            var liveOptions = {
+                collapsed: $('#collapsed').length ? $('#collapsed').is(':checked') : meta.options.collapsed,
+                rootCollapsable: $('#root-collapsable').length ? $('#root-collapsable').is(':checked') : meta.options.rootCollapsable,
+                withQuotes: $('#with-quotes').length ? $('#with-quotes').is(':checked') : meta.options.withQuotes,
+                withLinks: $('#with-links').length ? $('#with-links').is(':checked') : meta.options.withLinks
+            };
+            meta.options = liveOptions;
 
             if (total > $.jsonViewer.DOM_BATCH_SIZE) {
                 if ($status && $status.length) {
                     $status.removeClass('is-ok is-warn is-error').addClass('is-parsing').text('Expanding ' + total + ' items…');
                 }
-                populateCollectionListBatched(list, meta.value, meta.depth + 1, meta.options, 0, function() {
+                populateCollectionListBatched(list, meta.value, meta.depth + 1, liveOptions, 0, function() {
                     if ($status && $status.length) {
                         $status.removeClass('is-parsing is-error').addClass('is-ok').text('✓ Valid JSON');
                     }
                 }, false);
             } else {
-                populateCollectionList(list, meta.value, meta.depth + 1, meta.options, false);
+                populateCollectionList(list, meta.value, meta.depth + 1, liveOptions, false);
             }
             return true;
         }
@@ -705,18 +771,28 @@
             var meta = lazyNodeData.get(holder);
             var list = (meta && meta.list) || holder.querySelector(':scope > ul.json-dict, :scope > ol.json-array');
             if (!list) return;
-            list.style.display = '';
+            var block = getValueBlock(list);
+            block.style.display = '';
             toggle.classList.remove('collapsed');
+            holder.querySelector(':scope > .json-suffix')?.remove();
             var placeholder = holder.querySelector(':scope > a.json-placeholder');
-            if (placeholder) placeholder.remove();
+            if (placeholder) {
+                var next = placeholder.nextSibling;
+                if (next && next.nodeType === Node.TEXT_NODE && next.textContent === ',') {
+                    next.remove();
+                }
+                placeholder.remove();
+            }
         }
 
         function collapseNode(holder, toggle) {
             var meta = lazyNodeData.get(holder);
             var list = (meta && meta.list) || holder.querySelector(':scope > ul.json-dict, :scope > ol.json-array');
             if (!list) return;
-            list.style.display = 'none';
+            var block = getValueBlock(list);
+            block.style.display = 'none';
             toggle.classList.add('collapsed');
+            holder.querySelector(':scope > .json-suffix')?.remove();
 
             var count = meta ? countChildren(meta.value) : 0;
             var val = meta ? meta.value : [];
@@ -724,7 +800,11 @@
             if (placeholder) {
                 placeholder.textContent = childLabel(val, count);
             } else {
-                list.after(createPlaceholder(count, val));
+                var ph = createPlaceholder(count, val);
+                block.after(ph);
+                if (meta && meta.addComma) {
+                    ph.after(document.createTextNode(','));
+                }
             }
         }
 

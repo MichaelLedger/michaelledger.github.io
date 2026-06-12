@@ -98,10 +98,14 @@
     .tool-body {
       display: flex;
       flex-direction: column;
+      flex: 1;
       min-height: 0;
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
+      overflow: hidden;
+    }
+
+    body.is-embed .tool-body {
+      flex: 1;
+      min-height: 0;
     }
 
     .page-intro {
@@ -729,6 +733,7 @@
 
     #json-input {
       width: 100%;
+      max-width: 100%;
       height: 100%;
       padding: 16px;
       border: none;
@@ -740,6 +745,9 @@
       font-size: 13px;
       line-height: 1.6;
       tab-size: 2;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
 
     #json-renderer {
@@ -752,6 +760,8 @@
       font-size: 13px;
       line-height: 1.6;
       tab-size: 2;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
 
     #json-renderer::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -878,10 +888,10 @@
       display: block;
     }
 
-    .json-string { color: var(--json-string); }
-    .json-key { color: var(--json-key); }
-    .json-literal { color: var(--json-bool); font-weight: 600; }
-    .json-number { color: var(--json-number); }
+    .json-string { color: var(--json-string); font-size: inherit; }
+    .json-key { color: var(--json-key); font-size: inherit; }
+    .json-literal { color: var(--json-bool); font-weight: 600; font-size: inherit; }
+    .json-number { color: var(--json-number); font-size: inherit; }
 
     button.json-toggle,
     a.json-toggle {
@@ -896,7 +906,10 @@
       padding: 0;
       margin: 0 0 0 calc(-1 * var(--json-indent, 2ch));
       font: inherit;
-      line-height: 1.6;
+      font-size: inherit;
+      line-height: inherit;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
       cursor: pointer;
       text-align: left;
       gap: 0.5em;
@@ -1083,21 +1096,58 @@
 
       .options-bar::-webkit-scrollbar { display: none; }
 
+      .tool-body {
+        flex: 1;
+        min-height: 0;
+        max-width: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+
+      .main {
+        flex: none;
+        min-height: auto;
+        min-width: 0;
+        max-width: 100%;
+        overflow: visible;
+        grid-template-columns: minmax(0, 1fr);
+      }
+
       .workspace {
         flex-direction: column;
         width: 100%;
+        max-width: 100%;
         min-width: 0;
+        height: auto;
+        min-height: 0;
+        overflow-x: hidden;
+      }
+
+      .panel {
+        flex: none;
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: hidden;
       }
 
       .panel-input,
       .panel-tree {
         width: 100%;
-        max-width: none;
+        max-width: 100%;
         min-width: 0;
+        flex: none;
+        min-height: 0;
+        max-height: none;
       }
 
       .panel-body {
+        flex: none;
+        overflow-x: hidden;
+        height: auto;
         width: 100%;
+        max-width: 100%;
         min-width: 0;
       }
 
@@ -1108,79 +1158,33 @@
         box-sizing: border-box;
       }
 
-      .workspace-resizer {
-        cursor: row-resize;
-        flex: 0 0 10px;
-        width: 100%;
-        flex-shrink: 0;
-      }
-    }
-
-    /* Portrait stacked — main scrolls; panels grow with content */
-    @media (max-width: 1100px) and (orientation: portrait) {
-      .tool-body {
-        overflow: hidden;
-      }
-
-      .main {
-        flex: 1;
-        min-height: 0;
-        overflow: auto;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
-        align-content: start;
-      }
-
-      .workspace {
-        flex-direction: column;
-        overflow: visible;
-        height: auto;
-        min-height: 0;
-      }
-
-      .panel {
-        flex: none;
-        overflow: visible;
-        min-height: 0;
-      }
-
-      .panel-input,
-      .panel-tree {
-        flex: none;
-        width: 100%;
-        min-height: 0;
-        max-height: none;
-      }
-
-      .workspace.layout-tree-only .panel-input,
-      .workspace.layout-input-only .panel-tree {
-        flex: none;
-        width: 100%;
-      }
-
-      .panel-body {
-        flex: none;
-        overflow: visible;
-        height: auto;
-      }
-
       #json-input {
         display: block;
-        width: 100%;
-        max-width: 100%;
         height: auto;
         min-height: 6em;
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: hidden;
         resize: none;
+        field-sizing: fixed;
       }
 
       #json-renderer {
         height: auto;
-        overflow: visible;
+        overflow-x: hidden;
+        overflow-y: visible;
+        overflow-wrap: anywhere;
+        word-break: break-word;
       }
 
       .workspace-resizer {
         display: none;
+      }
+    }
+
+    /* Portrait stacked — alias; scroll lives on .tool-body above */
+    @media (max-width: 1100px) and (orientation: portrait) {
+      .page-intro {
+        flex-shrink: 0;
       }
     }
 
@@ -1200,6 +1204,12 @@
         flex-direction: column;
         overflow: hidden;
         min-height: 100%;
+        height: auto;
+      }
+
+      .panel {
+        flex: initial;
+        overflow: hidden;
       }
 
       .panel-input {
@@ -1214,8 +1224,47 @@
       }
 
       .panel-body {
+        flex: 1;
+        min-height: 0;
         overflow: auto;
         -webkit-overflow-scrolling: touch;
+      }
+
+      #json-input {
+        display: block;
+        height: 100%;
+        min-height: 0;
+        overflow: auto;
+        field-sizing: initial;
+      }
+
+      #json-renderer {
+        height: 100%;
+        overflow: auto;
+        font-size: 13px;
+        line-height: 1.6;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      #json-renderer .json-string,
+      #json-renderer .json-number,
+      #json-renderer .json-literal,
+      #json-renderer .json-key,
+      #json-renderer button.json-toggle,
+      #json-renderer a.json-toggle {
+        font-size: inherit;
+        line-height: inherit;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+      }
+
+      .workspace-resizer {
+        display: block;
+        cursor: row-resize;
+        flex: 0 0 10px;
+        width: 100%;
+        flex-shrink: 0;
       }
     }
 
@@ -1332,7 +1381,12 @@
 
       .options-bar::-webkit-scrollbar { display: none; }
 
-      .main { grid-template-columns: 1fr; }
+      .main { grid-template-columns: minmax(0, 1fr); }
+
+      .workspace {
+        min-width: 0;
+        max-width: 100%;
+      }
 
       .sidebar {
         display: none;
@@ -1369,8 +1423,10 @@
 
       #json-renderer {
         padding: 12px;
-        font-size: 14px;
-        line-height: 1.5;
+        font-size: 13px;
+        line-height: 1.6;
+        -webkit-text-size-adjust: 100%;
+        text-size-adjust: 100%;
       }
 
       .toast-container {
@@ -3149,25 +3205,27 @@
     return window.matchMedia('(max-width: 1100px)').matches;
   }
 
-  const PORTRAIT_SCROLL_MQ = window.matchMedia('(max-width: 1100px) and (orientation: portrait)');
+  const STACKED_MQ = window.matchMedia('(max-width: 1100px)');
+  const LANDSCAPE_STACKED_MQ = window.matchMedia('(max-width: 1100px) and (orientation: landscape)');
 
-  function isPortraitContentScroll() {
-    return PORTRAIT_SCROLL_MQ.matches;
+  function isContentScrollLayout() {
+    return STACKED_MQ.matches && !LANDSCAPE_STACKED_MQ.matches;
   }
 
   function syncPortraitInputHeight() {
     if (!jsonInput) return;
-    if (!isPortraitContentScroll()) {
+    if (!isContentScrollLayout()) {
       jsonInput.style.height = '';
       return;
     }
-    jsonInput.style.height = '0';
+    jsonInput.style.height = 'auto';
     jsonInput.style.height = jsonInput.scrollHeight + 'px';
   }
 
   function initPortraitContentScroll() {
     const onChange = () => syncPortraitInputHeight();
-    PORTRAIT_SCROLL_MQ.addEventListener('change', onChange);
+    STACKED_MQ.addEventListener('change', onChange);
+    LANDSCAPE_STACKED_MQ.addEventListener('change', onChange);
     jsonInput?.addEventListener('input', onChange);
     onChange();
   }
@@ -3343,7 +3401,7 @@
     let dragging = false;
 
     function startDrag(e) {
-      if (isPortraitContentScroll()) return;
+      if (isContentScrollLayout()) return;
       if (e.button !== undefined && e.button !== 0) return;
       e.preventDefault();
       dragging = true;

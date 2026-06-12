@@ -82,6 +82,9 @@
     html, body {
       margin: 0;
       height: 100%;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
       background: var(--bg);
       color: var(--text);
       font-family: var(--font-sans);
@@ -93,6 +96,10 @@
       grid-template-rows: auto minmax(0, 1fr);
       height: 100vh;
       height: 100dvh;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .tool-body {
@@ -100,6 +107,8 @@
       flex-direction: column;
       flex: 1;
       min-height: 0;
+      min-width: 0;
+      max-width: 100%;
       overflow: hidden;
     }
 
@@ -226,7 +235,10 @@
     body.is-embed,
     body.is-embed .app {
       height: 100%;
+      width: 100%;
       min-height: 0;
+      min-width: 0;
+      max-width: 100%;
       overflow: hidden;
     }
 
@@ -771,6 +783,8 @@
     .json-document {
       padding: 0;
       --json-indent: 2ch;
+      max-width: 100%;
+      overflow-x: hidden;
     }
 
     ul.json-dict, ol.json-array {
@@ -888,10 +902,10 @@
       display: block;
     }
 
-    .json-string { color: var(--json-string); font-size: inherit; }
+    .json-string { color: var(--json-string); font-size: inherit; overflow-wrap: anywhere; word-break: break-word; }
     .json-key { color: var(--json-key); font-size: inherit; }
-    .json-literal { color: var(--json-bool); font-weight: 600; font-size: inherit; }
-    .json-number { color: var(--json-number); font-size: inherit; }
+    .json-literal { color: var(--json-bool); font-weight: 600; font-size: inherit; overflow-wrap: anywhere; word-break: break-word; }
+    .json-number { color: var(--json-number); font-size: inherit; overflow-wrap: anywhere; word-break: break-word; }
 
     button.json-toggle,
     a.json-toggle {
@@ -1017,6 +1031,54 @@
     .toast.error { border-color: var(--danger); }
     .toast.info { border-color: var(--accent); }
 
+    .toast.toast-confirm {
+      position: fixed;
+      left: 50%;
+      bottom: max(20px, env(safe-area-inset-bottom));
+      transform: translateX(-50%) translateY(12px);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      max-width: min(92vw, 360px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 1001;
+      box-shadow: none;
+      animation: none;
+    }
+
+    .toast.toast-confirm.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast-confirm-msg {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .toast-confirm-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .toast-confirm-actions .btn {
+      padding: 5px 10px;
+      font-size: 12px;
+    }
+
+    .toast-confirm-actions .btn-danger {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    .toast-confirm-actions .btn-danger:hover {
+      background: rgba(248, 81, 73, 0.12);
+    }
+
     @keyframes slideIn {
       from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
@@ -1064,11 +1126,20 @@
 
     /* Responsive — tablet / narrow desktop */
     @media (max-width: 1100px) {
+      html, body {
+        overflow-x: clip;
+      }
+
       .header {
         gap: 10px;
         padding: 8px 14px;
         padding-left: max(14px, env(safe-area-inset-left));
         padding-right: max(14px, env(safe-area-inset-right));
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        overflow-x: clip;
       }
 
       .header-tools {
@@ -1099,37 +1170,69 @@
       .tool-body {
         flex: 1;
         min-height: 0;
+        min-width: 0;
+        width: 100%;
         max-width: 100%;
-        overflow-x: hidden;
+        overflow-x: clip;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
+        contain: inline-size;
       }
 
       .main {
         flex: none;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
         min-height: auto;
         min-width: 0;
         max-width: 100%;
-        overflow: visible;
-        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+        overflow-x: clip;
+        overflow-y: visible;
+        contain: inline-size;
+      }
+
+      .sidebar {
+        position: fixed;
+        display: none;
+        z-index: 40;
+      }
+
+      .sidebar.open {
+        display: flex;
       }
 
       .workspace {
+        flex: 1 1 auto;
         flex-direction: column;
+        align-self: stretch;
         width: 100%;
         max-width: 100%;
         min-width: 0;
         height: auto;
         min-height: 0;
-        overflow-x: hidden;
+        overflow-x: clip;
+        contain: inline-size;
       }
 
       .panel {
         flex: none;
+        align-self: stretch;
+        width: 100%;
         max-width: 100%;
         min-width: 0;
-        overflow-x: hidden;
+        overflow-x: clip;
+        contain: inline-size;
+      }
+
+      .panel-header {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        overflow-x: clip;
       }
 
       .panel-input,
@@ -1144,11 +1247,12 @@
 
       .panel-body {
         flex: none;
-        overflow-x: hidden;
+        overflow-x: clip;
         height: auto;
         width: 100%;
         max-width: 100%;
         min-width: 0;
+        box-sizing: border-box;
       }
 
       #json-input,
@@ -1166,6 +1270,9 @@
         overflow-y: hidden;
         resize: none;
         field-sizing: fixed;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        word-break: break-word;
       }
 
       #json-renderer {
@@ -1176,96 +1283,156 @@
         word-break: break-word;
       }
 
+      #json-renderer .json-string,
+      #json-renderer .json-number,
+      #json-renderer .json-literal,
+      #json-renderer a.json-link {
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      ul.json-dict,
+      ol.json-array,
+      ul.json-dict > li,
+      ol.json-array > li {
+        max-width: 100%;
+      }
+
+      button.json-toggle,
+      a.json-toggle {
+        margin-left: 0;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
       .workspace-resizer {
         display: none;
       }
     }
 
-    /* Portrait stacked — alias; scroll lives on .tool-body above */
+    /* Portrait stacked — scroll + left history drawer */
     @media (max-width: 1100px) and (orientation: portrait) {
       .page-intro {
         flex-shrink: 0;
       }
+
+      .sidebar {
+        top: var(--header-offset, var(--header-height));
+        bottom: 0;
+        left: 0;
+        right: auto;
+        width: min(100%, 360px);
+        max-width: 100%;
+        padding-bottom: env(safe-area-inset-bottom);
+        box-shadow: var(--shadow);
+        border-right: 1px solid var(--border);
+        border-radius: 0;
+        animation: none;
+      }
     }
 
-    /* Landscape stacked — split panes with internal scroll */
+    /* Landscape — history toast sheet; panels use stacked content scroll from ≤1100px */
     @media (max-width: 1100px) and (orientation: landscape) {
-      .tool-body {
-        overflow: hidden;
+      /* Parse history — bottom toast sheet (not left/top sidebar) */
+      .sidebar {
+        display: none;
+        position: fixed;
+        top: auto;
+        left: max(12px, env(safe-area-inset-left));
+        right: max(12px, env(safe-area-inset-right));
+        bottom: max(12px, env(safe-area-inset-bottom));
+        width: auto;
+        max-width: none;
+        max-height: min(52vh, 360px);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        z-index: 40;
+        background: var(--bg-elevated);
+        animation: historyToastIn 0.22s ease;
       }
 
-      .main {
+      .sidebar.open {
+        display: flex;
+      }
+
+      .sidebar.collapsed .sidebar-collapsed-only {
+        display: none;
+      }
+
+      .sidebar.collapsed .sidebar-expanded-only,
+      .sidebar .sidebar-expanded-only {
+        display: flex;
+      }
+
+      .sidebar-header-row #btn-sidebar-collapse {
+        display: none;
+      }
+
+      .sidebar-header {
+        padding: 10px 12px 8px;
+        flex-shrink: 0;
+      }
+
+      .sidebar-title {
+        font-size: 11px;
+        margin-bottom: 8px;
+      }
+
+      .search-input {
+        padding: 7px 10px;
+        font-size: 12px;
+      }
+
+      .cache-path {
+        display: none;
+      }
+
+      .history-list {
         flex: 1;
         min-height: 0;
-        overflow: hidden;
-      }
-
-      .workspace {
-        flex-direction: column;
-        overflow: hidden;
-        min-height: 100%;
-        height: auto;
-      }
-
-      .panel {
-        flex: initial;
-        overflow: hidden;
-      }
-
-      .panel-input {
-        flex: 0 0 var(--input-pane-size);
-        min-height: 120px;
-        max-height: none;
-      }
-
-      .panel-tree {
-        flex: 1 1 auto;
-        min-height: 120px;
-      }
-
-      .panel-body {
-        flex: 1;
-        min-height: 0;
-        overflow: auto;
+        overflow-y: auto;
+        padding: 6px 8px;
         -webkit-overflow-scrolling: touch;
       }
 
-      #json-input {
-        display: block;
-        height: 100%;
-        min-height: 0;
-        overflow: auto;
-        field-sizing: initial;
+      .history-item {
+        padding: 8px 10px;
+        padding-right: 52px;
+        margin-bottom: 4px;
       }
 
-      #json-renderer {
-        height: 100%;
-        overflow: auto;
-        font-size: 13px;
-        line-height: 1.6;
-        -webkit-text-size-adjust: 100%;
-        text-size-adjust: 100%;
+      .history-summary {
+        font-size: 12px;
+        -webkit-line-clamp: 1;
       }
 
-      #json-renderer .json-string,
-      #json-renderer .json-number,
-      #json-renderer .json-literal,
-      #json-renderer .json-key,
-      #json-renderer button.json-toggle,
-      #json-renderer a.json-toggle {
-        font-size: inherit;
-        line-height: inherit;
-        -webkit-text-size-adjust: 100%;
-        text-size-adjust: 100%;
+      .history-date {
+        font-size: 10px;
       }
 
-      .workspace-resizer {
-        display: block;
-        cursor: row-resize;
-        flex: 0 0 10px;
-        width: 100%;
+      .history-meta span:last-child {
+        display: none;
+      }
+
+      .history-actions {
+        opacity: 1;
+      }
+
+      .sidebar-footer {
         flex-shrink: 0;
+        padding: 8px 10px;
       }
+
+      .sidebar-backdrop {
+        z-index: 35;
+      }
+    }
+
+    @keyframes historyToastIn {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     /* Responsive — phone */
@@ -1381,27 +1548,12 @@
 
       .options-bar::-webkit-scrollbar { display: none; }
 
-      .main { grid-template-columns: minmax(0, 1fr); }
+      .main { min-width: 0; max-width: 100%; }
 
       .workspace {
         min-width: 0;
         max-width: 100%;
       }
-
-      .sidebar {
-        display: none;
-        position: fixed;
-        top: var(--header-offset, var(--header-height));
-        bottom: 0;
-        left: 0;
-        width: min(100%, 360px);
-        max-width: 100%;
-        z-index: 35;
-        padding-bottom: env(safe-area-inset-bottom);
-        box-shadow: var(--shadow);
-      }
-
-      .sidebar.open { display: flex; }
 
       .main.sidebar-collapsed { --sidebar-width: 0; }
 
@@ -1419,12 +1571,24 @@
         padding: 12px;
         font-size: 16px;
         line-height: 1.5;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        field-sizing: fixed;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        overflow-x: hidden;
       }
 
       #json-renderer {
         padding: 12px;
         font-size: 13px;
         line-height: 1.6;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
         -webkit-text-size-adjust: 100%;
         text-size-adjust: 100%;
       }
@@ -1437,6 +1601,10 @@
       }
 
       .toast { max-width: none; }
+
+      .toast.toast-confirm {
+        bottom: max(12px, env(safe-area-inset-bottom));
+      }
 
       .drop-message {
         margin: 0 20px;
@@ -1465,8 +1633,8 @@
       .history-item { padding-right: 56px; }
     }
 
-    /* Compact history list — landscape mobile & short viewports */
-    @media (max-height: 560px), (max-width: 768px) and (max-height: 520px) {
+    /* Compact history list — short viewports (not landscape toast sheet) */
+    @media (max-height: 560px), (max-width: 768px) and (max-height: 520px) and (orientation: portrait) {
       .page-intro { display: none; }
 
       .sidebar-header {
@@ -1547,12 +1715,6 @@
       .sidebar-footer .btn {
         padding: 4px 8px;
         font-size: 11px;
-      }
-    }
-
-    @media (max-width: 768px) and (orientation: landscape) {
-      .sidebar {
-        width: min(72vw, 400px);
       }
     }
 
@@ -1668,6 +1830,13 @@
     <div class="drop-message">Drop JSON file here</div>
   </div>
   <div class="toast-container" id="toast-container"></div>
+  <div class="toast toast-confirm" id="toast-confirm" role="alertdialog" aria-labelledby="toast-confirm-msg" hidden>
+    <span class="toast-confirm-msg" id="toast-confirm-msg">Clear all parse history?</span>
+    <div class="toast-confirm-actions">
+      <button type="button" class="btn" id="toast-confirm-cancel">Cancel</button>
+      <button type="button" class="btn btn-danger" id="toast-confirm-ok">Clear</button>
+    </div>
+  </div>
 
 <script>
 (function () {
@@ -1750,7 +1919,22 @@
     return d.toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' }) + ' ' + time;
   }
 
+  function hideClearConfirm() {
+    const confirm = $('#toast-confirm');
+    if (!confirm) return;
+    confirm.classList.remove('visible');
+    confirm.hidden = true;
+  }
+
+  function showClearConfirm() {
+    const confirm = $('#toast-confirm');
+    if (!confirm) return;
+    confirm.hidden = false;
+    confirm.classList.add('visible');
+  }
+
   function toast(msg, type = 'info') {
+    hideClearConfirm();
     const el = document.createElement('div');
     el.className = 'toast ' + type;
     el.textContent = msg;
@@ -3064,13 +3248,26 @@
   $('#btn-copy').addEventListener('click', copyJson);
   $('#btn-upload').addEventListener('click', () => $('#file-input').click());
   $('#file-input').addEventListener('change', (e) => handleFile(e.target.files[0]));
-  $('#btn-clear-history').addEventListener('click', () => {
-    if (confirm('Clear all parse history?')) clearAllHistory();
+  $('#btn-clear-history').addEventListener('click', showClearConfirm);
+  $('#toast-confirm-cancel')?.addEventListener('click', hideClearConfirm);
+  $('#toast-confirm-ok')?.addEventListener('click', () => {
+    hideClearConfirm();
+    clearAllHistory();
   });
   const MOBILE_MQ = window.matchMedia('(max-width: 768px)');
+  const STACKED_MQ = window.matchMedia('(max-width: 1100px)');
+  const LANDSCAPE_STACKED_MQ = window.matchMedia('(max-width: 1100px) and (orientation: landscape)');
 
   function isMobileLayout() {
     return MOBILE_MQ.matches;
+  }
+
+  function isHistoryToastLayout() {
+    return LANDSCAPE_STACKED_MQ.matches;
+  }
+
+  function isHistoryOverlayLayout() {
+    return STACKED_MQ.matches;
   }
 
   function setMobileSidebarOpen(open) {
@@ -3100,12 +3297,15 @@
     $('#sidebar-backdrop')?.addEventListener('click', () => setMobileSidebarOpen(false));
 
     MOBILE_MQ.addEventListener('change', () => {
-      if (!isMobileLayout()) setMobileSidebarOpen(false);
+      if (!isHistoryOverlayLayout()) setMobileSidebarOpen(false);
+    });
+    LANDSCAPE_STACKED_MQ.addEventListener('change', () => {
+      if (!isHistoryOverlayLayout()) setMobileSidebarOpen(false);
     });
   }
 
   $('#btn-history-toggle').addEventListener('click', () => {
-    if (isMobileLayout()) {
+    if (isHistoryOverlayLayout()) {
       const sidebar = $('#sidebar');
       setMobileSidebarOpen(!sidebar?.classList.contains('open'));
     } else {
@@ -3134,7 +3334,7 @@
     const item = e.target.closest('[data-id]');
     if (item) {
       loadFromHistory(item.dataset.id);
-      if (isMobileLayout()) setMobileSidebarOpen(false);
+      if (isHistoryOverlayLayout()) setMobileSidebarOpen(false);
     }
   });
 
@@ -3202,14 +3402,11 @@
   let workspaceSplitRatio = LAYOUT_PRESETS.balanced;
 
   function workspaceIsStacked() {
-    return window.matchMedia('(max-width: 1100px)').matches;
+    return STACKED_MQ.matches;
   }
 
-  const STACKED_MQ = window.matchMedia('(max-width: 1100px)');
-  const LANDSCAPE_STACKED_MQ = window.matchMedia('(max-width: 1100px) and (orientation: landscape)');
-
   function isContentScrollLayout() {
-    return STACKED_MQ.matches && !LANDSCAPE_STACKED_MQ.matches;
+    return STACKED_MQ.matches;
   }
 
   function syncPortraitInputHeight() {
@@ -3363,7 +3560,7 @@
     $('#btn-layout-input')?.addEventListener('click', () => setInputPaneRatio(LAYOUT_PRESETS.input));
     $('#btn-layout-input-only')?.addEventListener('click', () => setWorkspaceLayoutMode('input-only'));
     $('#btn-sidebar-collapse')?.addEventListener('click', () => {
-      if (isMobileLayout()) setMobileSidebarOpen(false);
+      if (isHistoryOverlayLayout()) setMobileSidebarOpen(false);
       else setSidebarCollapsed(true);
     });
     $('#btn-sidebar-expand')?.addEventListener('click', () => setSidebarCollapsed(false));

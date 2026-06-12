@@ -60,23 +60,32 @@
 
     html, body {
       margin: 0;
-      min-height: 100%;
+      height: 100%;
+      min-height: 0;
+      width: 100%;
+      max-width: 100%;
       background: var(--bg);
       color: var(--text);
       font-family: var(--font-sans);
+      overflow: hidden;
     }
 
     .app {
-      display: grid;
-      grid-template-rows: auto 1fr;
-      min-height: 100vh;
-      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     .header {
       display: flex;
       align-items: center;
       gap: 16px;
+      flex-shrink: 0;
       min-height: var(--header-height);
       padding: 0 20px;
       padding-left: max(20px, env(safe-area-inset-left));
@@ -161,23 +170,24 @@
     body.is-embed .header { display: none; }
 
     html.is-embed,
-    body.is-embed {
+    body.is-embed,
+    body.is-embed .app {
       height: 100%;
+      width: 100%;
+      min-height: 0;
+      min-width: 0;
+      max-width: 100%;
       overflow: hidden;
     }
 
-    body.is-embed .app {
-      height: 100%;
-      min-height: 0;
-      overflow: hidden;
-      grid-template-rows: minmax(0, 1fr);
+    body.is-embed .page-title,
+    body.is-embed .page-desc {
+      display: none;
     }
 
     body.is-embed .main {
-      min-height: 0;
-      overflow: auto;
-      -webkit-overflow-scrolling: touch;
-      overscroll-behavior: contain;
+      padding-top: 12px;
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
     }
 
     .header-spacer { flex: 1; }
@@ -207,10 +217,18 @@
     }
 
     .main {
+      flex: 1 1 0;
+      min-height: 0;
+      min-width: 0;
+      max-width: 100%;
       padding: 24px 20px 40px;
       padding-left: max(20px, env(safe-area-inset-left));
       padding-right: max(20px, env(safe-area-inset-right));
-      overflow: auto;
+      padding-bottom: max(40px, env(safe-area-inset-bottom));
+      overflow-x: clip;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
     }
 
     .converter {
@@ -272,6 +290,8 @@
       background: var(--bg);
       color: var(--text-muted);
       cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
       transition: color 0.15s, border-color 0.15s, background 0.15s;
     }
 
@@ -304,16 +324,15 @@
 
     .color-picker-popover {
       display: none;
-      position: absolute;
-      top: calc(100% + 8px);
-      left: 0;
-      z-index: 100;
+      position: fixed;
+      z-index: 200;
       width: 260px;
       padding: 12px;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 6px;
       box-shadow: var(--shadow);
+      touch-action: none;
     }
 
     .color-picker-popover.is-open {
@@ -398,6 +417,7 @@
       inset: 0;
       z-index: 199;
       background: rgba(0, 0, 0, 0.35);
+      touch-action: none;
     }
 
     @media (max-width: 768px) {
@@ -405,14 +425,11 @@
         display: block;
       }
 
-      .color-picker-popover {
-        position: fixed;
+      .color-picker-popover.is-open {
         top: 50%;
         left: 50%;
-        bottom: auto;
         transform: translate(-50%, -50%);
         width: min(280px, calc(100vw - 32px));
-        z-index: 200;
       }
 
       .color-picker-btn {
@@ -895,7 +912,12 @@
       }
       .tool-switch-link { padding: 5px 8px; font-size: 11px; }
       .icon-btn { width: 36px; height: 36px; font-size: 14px; }
-      .main { padding: 16px 12px 32px; }
+      .main {
+        padding: 16px 12px 32px;
+        padding-left: max(12px, env(safe-area-inset-left));
+        padding-right: max(12px, env(safe-area-inset-right));
+        padding-bottom: max(32px, env(safe-area-inset-bottom));
+      }
       .page-title {
         font-size: 1.125rem;
         margin-bottom: 4px;
@@ -908,6 +930,15 @@
       .rgb-fields { grid-template-columns: 1fr; }
       .palette-grid { grid-template-columns: 1fr; }
       .palette-browser { margin-top: 28px; }
+    }
+
+    @media (max-width: 1100px) and (orientation: landscape) {
+      .main {
+        flex: 1 1 0;
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+      }
     }
 
   </style>
@@ -950,16 +981,6 @@
                     <path d="M222,67.34a33.81,33.81,0,0,0-10.64-24.25C198.12,30.56,176.68,31,163.54,44.18L142.82,65l-.63-.63a22,22,0,0,0-31.11,0l-9,9a14,14,0,0,0,0,19.81l3.47,3.47L53.14,149.1a37.81,37.81,0,0,0-9.84,36.73l-8.31,19a11.68,11.68,0,0,0,2.46,13A13.91,13.91,0,0,0,47.32,222,14.15,14.15,0,0,0,53,220.82L71,212.92a37.92,37.92,0,0,0,35.84-10.07l52.44-52.46,3.47,3.48a14,14,0,0,0,19.8,0l9-9a22.06,22.06,0,0,0,0-31.13l-.66-.65L212,91.85A33.76,33.76,0,0,0,222,67.34Zm-123.61,127a26,26,0,0,1-26,6.47,6,6,0,0,0-4.17.24l-20,8.75a2,2,0,0,1-2.09-.31l9.12-20.9a5.94,5.94,0,0,0,.19-4.31A25.91,25.91,0,0,1,56,166h70.78ZM138.78,154H65.24l48.83-48.84,36.76,36.78Zm64.77-70.59L178.17,108.9a6,6,0,0,0,0,8.47l4.88,4.89a10,10,0,0,1,0,14.15l-9,9a2,2,0,0,1-2.82,0l-60.69-60.7a2,2,0,0,1,0-2.83l9-9a10,10,0,0,1,14.14,0l4.89,4.89a6,6,0,0,0,4.24,1.75h0a6,6,0,0,0,4.25-1.77L172,52.66c8.57-8.58,22.51-9,31.07-.85a22,22,0,0,1,.44,31.57Z"></path>
                   </svg>
                 </button>
-                <div class="color-picker-popover" id="color-picker-popover" role="dialog" aria-label="Color picker">
-                  <div class="picker-sv" id="picker-sv">
-                    <div class="picker-sv-bg" id="picker-sv-bg"></div>
-                    <div class="picker-sv-thumb" id="picker-sv-thumb"></div>
-                  </div>
-                  <div class="picker-hue" id="picker-hue">
-                    <div class="picker-hue-track"></div>
-                    <div class="picker-hue-thumb" id="picker-hue-thumb"></div>
-                  </div>
-                </div>
               </div>
               <input type="text" id="input-hex" value="808080" placeholder="808080 or #808080" spellcheck="false" autocomplete="off" maxlength="7">
             </div>
@@ -1035,6 +1056,16 @@
   </div>
 
   <div class="color-picker-backdrop" id="color-picker-backdrop" aria-hidden="true"></div>
+  <div class="color-picker-popover" id="color-picker-popover" role="dialog" aria-label="Color picker" aria-modal="true">
+    <div class="picker-sv" id="picker-sv">
+      <div class="picker-sv-bg" id="picker-sv-bg"></div>
+      <div class="picker-sv-thumb" id="picker-sv-thumb"></div>
+    </div>
+    <div class="picker-hue" id="picker-hue">
+      <div class="picker-hue-track"></div>
+      <div class="picker-hue-thumb" id="picker-hue-thumb"></div>
+    </div>
+  </div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="toast toast-confirm" id="toast-confirm" role="alertdialog" aria-labelledby="toast-confirm-msg" hidden>
     <span class="toast-confirm-msg" id="toast-confirm-msg">Clear all convert history?</span>
@@ -1241,6 +1272,8 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
     let toastTimer;
     let syncing = false;
     let pickerOpen = false;
+    let pickerIgnoreOutsideUntil = 0;
+    const PICKER_MOBILE_MQ = window.matchMedia('(max-width: 768px)');
     const pickerState = { h: 0, s: 0, v: 50 };
 
     function showToast(msg) {
@@ -1332,6 +1365,28 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       convert('picker');
     }
 
+    function positionColorPickerPopover() {
+      const popover = $('#color-picker-popover');
+      const btn = $('#btn-color-picker');
+      if (!popover || !btn) return;
+
+      if (PICKER_MOBILE_MQ.matches) {
+        popover.style.top = '';
+        popover.style.left = '';
+        popover.style.transform = '';
+        return;
+      }
+
+      const rect = btn.getBoundingClientRect();
+      popover.style.transform = 'none';
+      const width = popover.offsetWidth || 260;
+      const height = popover.offsetHeight || 200;
+      const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
+      const top = Math.max(8, Math.min(rect.bottom + 8, window.innerHeight - height - 8));
+      popover.style.left = left + 'px';
+      popover.style.top = top + 'px';
+    }
+
     function setPickerOpen(open) {
       pickerOpen = open;
       const popover = $('#color-picker-popover');
@@ -1342,6 +1397,8 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       if (backdrop) backdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
       if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
       if (open) {
+        pickerIgnoreOutsideUntil = Date.now() + 350;
+        positionColorPickerPopover();
         const { r, g, b, valid } = readRgb();
         if (valid) syncPickerFromRgb(r, g, b);
       }
@@ -1356,6 +1413,9 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       const handlePointer = (e) => {
         if (e.pointerType === 'mouse' && e.button !== 0) return;
         e.preventDefault();
+        e.stopPropagation();
+        pickerIgnoreOutsideUntil = Date.now() + 350;
+        try { el.setPointerCapture(e.pointerId); } catch (_) { /* ignore */ }
         const rect = el.getBoundingClientRect();
         const update = (ev) => {
           const x = Math.max(0, Math.min(1, (ev.clientX - rect.left) / rect.width));
@@ -1363,15 +1423,19 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
           onPoint(x, y);
         };
         update(e);
-        const onMove = (ev) => update(ev);
-        const onUp = () => {
-          document.removeEventListener('pointermove', onMove);
-          document.removeEventListener('pointerup', onUp);
-          document.removeEventListener('pointercancel', onUp);
+        const onMove = (ev) => {
+          ev.preventDefault();
+          update(ev);
         };
-        document.addEventListener('pointermove', onMove);
-        document.addEventListener('pointerup', onUp);
-        document.addEventListener('pointercancel', onUp);
+        const onUp = (ev) => {
+          try { el.releasePointerCapture(ev.pointerId); } catch (_) { /* ignore */ }
+          el.removeEventListener('pointermove', onMove);
+          el.removeEventListener('pointerup', onUp);
+          el.removeEventListener('pointercancel', onUp);
+        };
+        el.addEventListener('pointermove', onMove);
+        el.addEventListener('pointerup', onUp);
+        el.addEventListener('pointercancel', onUp);
       };
       el.addEventListener('pointerdown', handlePointer);
     }
@@ -1391,19 +1455,30 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       });
 
       $('#btn-color-picker')?.addEventListener('click', (e) => {
+        e.preventDefault();
         e.stopPropagation();
         toggleColorPicker();
       });
 
-      document.addEventListener('click', (e) => {
-        if (!pickerOpen) return;
-        const wrap = $('.color-picker-wrap');
-        const backdrop = $('#color-picker-backdrop');
-        if ((wrap && wrap.contains(e.target)) || (backdrop && e.target === backdrop)) {
-          if (backdrop && e.target === backdrop) setPickerOpen(false);
-          return;
-        }
+      $('#color-picker-backdrop')?.addEventListener('click', () => {
         setPickerOpen(false);
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!pickerOpen || Date.now() < pickerIgnoreOutsideUntil) return;
+        const popover = $('#color-picker-popover');
+        const btn = $('#btn-color-picker');
+        const backdrop = $('#color-picker-backdrop');
+        if (popover?.contains(e.target) || btn?.contains(e.target)) return;
+        if (backdrop && e.target === backdrop) return;
+        setPickerOpen(false);
+      });
+
+      window.addEventListener('resize', () => {
+        if (pickerOpen) positionColorPickerPopover();
+      });
+      PICKER_MOBILE_MQ.addEventListener('change', () => {
+        if (pickerOpen) positionColorPickerPopover();
       });
 
       document.addEventListener('keydown', (e) => {

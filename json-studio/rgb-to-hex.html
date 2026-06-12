@@ -698,6 +698,7 @@
     .palette-toolbar {
       display: flex;
       flex-wrap: wrap;
+      align-items: center;
       gap: 10px;
       margin-bottom: 20px;
     }
@@ -720,13 +721,34 @@
     }
 
     .palette-group-filter {
-      padding: 9px 12px;
+      flex: 0 1 auto;
+      min-width: 10.5rem;
+      max-width: 100%;
+      padding: 9px 36px 9px 12px;
       border: 1px solid var(--border);
       border-radius: 8px;
-      background: var(--bg);
+      background-color: var(--bg);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23656d76' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 16px 16px;
       color: var(--text);
+      font-family: inherit;
       font-size: 14px;
+      line-height: 1.4;
       cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    [data-theme="dark"] .palette-group-filter {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    }
+
+    .palette-group-filter:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
     }
 
     .palette-group {
@@ -767,31 +789,53 @@
 
     .palette-swatches {
       display: flex;
-      gap: 4px;
       border-radius: 6px;
       overflow: hidden;
       border: 1px solid var(--border);
     }
 
     .palette-swatch {
+      position: relative;
       flex: 1;
       min-width: 0;
-      height: 36px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      height: 44px;
       padding: 0;
       border: none;
+      border-right: 1px solid var(--border);
       cursor: pointer;
       transition: transform 0.12s, box-shadow 0.12s;
     }
 
+    .palette-swatch:last-child {
+      border-right: none;
+    }
+
     .palette-swatch:hover {
-      transform: scaleY(1.08);
+      transform: scaleY(1.06);
       z-index: 1;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .palette-swatch:focus-visible {
       outline: 2px solid var(--accent);
-      outline-offset: 2px;
+      outline-offset: -2px;
+      z-index: 2;
+    }
+
+    .palette-swatch-hex {
+      width: 100%;
+      padding: 2px 1px;
+      background: rgba(0, 0, 0, 0.42);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 8px;
+      line-height: 1.1;
+      text-align: center;
+      word-break: break-all;
+      pointer-events: none;
     }
 
     .palette-empty {
@@ -1043,7 +1087,7 @@
 
       <section class="palette-browser" aria-labelledby="palette-heading">
         <h2 class="palette-title" id="palette-heading">100 inspiring color combinations</h2>
-        <p class="palette-desc">Browse palettes from <a href="https://www.figma.com/resource-library/color-combinations/" target="_blank" rel="noopener noreferrer">Figma's color combinations guide</a>. Click any swatch to load it in the converter above.</p>
+        <p class="palette-desc">Browse palettes from <a href="https://www.figma.com/resource-library/color-combinations/" target="_blank" rel="noopener noreferrer">Figma's color combinations guide</a>. Click a swatch to copy and load it in the converter above.</p>
         <div class="palette-toolbar">
           <input type="search" class="palette-search" id="palette-search" placeholder="Search by name, group, or hex…" autocomplete="off" spellcheck="false">
           <select class="palette-group-filter" id="palette-group-filter" aria-label="Filter by group">
@@ -1549,10 +1593,10 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       renderColorHistory();
     }
 
-    async function copyText(text) {
+    async function copyText(text, toastMsg) {
       try {
         await navigator.clipboard.writeText(text);
-        showToast('Copied to clipboard');
+        showToast(toastMsg || 'Copied to clipboard');
       } catch (_) {
         showToast('Copy failed');
       }
@@ -1573,12 +1617,12 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
     }
 
     function applyPaletteColor(hex) {
-      setHexField(hex);
+      const normalized = hex.startsWith('#') ? hex : '#' + hex;
+      setHexField(normalized);
       setFieldValidity(true, true);
       activeColorHistoryId = null;
       convert('hex');
-      showToast('Loaded ' + hex.toUpperCase());
-      scrollToConverter();
+      copyText(normalized, 'Copied to clipboard · ' + normalized.toUpperCase());
       renderColorHistory();
     }
 
@@ -1702,10 +1746,21 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       list.innerHTML = groups.map((group) => {
         const items = group ? palettes.filter((p) => p.group === group) : palettes;
         const cards = items.map((p) => {
-          const swatches = p.colors.map((hex) =>
-            '<button type="button" class="palette-swatch" style="background:' + hex + '" title="' + hex + '" data-hex="' + hex + '" aria-label="' + p.name + ' ' + hex + '"></button>'
-          ).join('');
-          return '<article class="palette-card"><h3 class="palette-card-name">' + p.num + '. ' + escapeHtml(p.name) + '</h3><div class="palette-swatches">' + swatches + '</div></article>';
+          const swatches = p.colors.map((hex) => {
+            const safeHex = escapeHtml(hex);
+            const label = escapeHtml(p.name + ' ' + hex);
+            return (
+              '<button type="button" class="palette-swatch" style="background:' + safeHex + '" title="' + safeHex + '" data-hex="' + safeHex + '" aria-label="' + label + '">' +
+                '<span class="palette-swatch-hex">' + safeHex + '</span>' +
+              '</button>'
+            );
+          }).join('');
+          return (
+            '<article class="palette-card">' +
+              '<h3 class="palette-card-name">' + p.num + '. ' + escapeHtml(p.name) + '</h3>' +
+              '<div class="palette-swatches">' + swatches + '</div>' +
+            '</article>'
+          );
         }).join('');
         const heading = group ? '<h3 class="palette-group-heading">' + escapeHtml(group) + '</h3>' : '';
         return '<div class="palette-group">' + heading + '<div class="palette-grid">' + cards + '</div></div>';

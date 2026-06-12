@@ -1177,7 +1177,6 @@
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
-        contain: inline-size;
       }
 
       .main {
@@ -1191,7 +1190,6 @@
         width: 100%;
         overflow-x: clip;
         overflow-y: visible;
-        contain: inline-size;
       }
 
       .sidebar {
@@ -1205,14 +1203,13 @@
       }
 
       .workspace {
-        flex: 1 1 auto;
+        flex: none;
         flex-direction: column;
         align-self: stretch;
         width: 100%;
         max-width: 100%;
         min-width: 0;
         height: auto;
-        min-height: 0;
         overflow-x: clip;
         contain: inline-size;
       }
@@ -1236,12 +1233,14 @@
       }
 
       .panel-input,
-      .panel-tree {
+      .panel-tree,
+      .workspace.layout-tree-only .panel-input,
+      .workspace.layout-input-only .panel-tree {
         width: 100%;
         max-width: 100%;
         min-width: 0;
         flex: none;
-        min-height: 0;
+        min-height: auto;
         max-height: none;
       }
 
@@ -1266,10 +1265,11 @@
         display: block;
         height: auto;
         min-height: 6em;
+        max-height: none;
         overflow-x: hidden;
-        overflow-y: hidden;
+        overflow-y: visible;
         resize: none;
-        field-sizing: fixed;
+        field-sizing: content;
         white-space: pre-wrap;
         overflow-wrap: anywhere;
         word-break: break-word;
@@ -1574,11 +1574,12 @@
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
-        field-sizing: fixed;
+        field-sizing: content;
         white-space: pre-wrap;
         overflow-wrap: anywhere;
         word-break: break-word;
         overflow-x: hidden;
+        overflow-y: visible;
       }
 
       #json-renderer {
@@ -2953,6 +2954,7 @@
 
   function updateParseStatusAfterTree() {
     parseStatus.innerHTML = '<span style="color:var(--success)">✓ Valid JSON</span>';
+    syncPortraitInputHeight();
   }
 
   function renderTreeLazy(json, options) {
@@ -3409,9 +3411,19 @@
     return STACKED_MQ.matches;
   }
 
+  function isInputPanelVisible() {
+    const panel = document.querySelector('.panel-input');
+    return panel ? getComputedStyle(panel).display !== 'none' : true;
+  }
+
   function syncPortraitInputHeight() {
     if (!jsonInput) return;
     if (!isContentScrollLayout()) {
+      jsonInput.style.height = '';
+      return;
+    }
+    if (!isInputPanelVisible()) return;
+    if (CSS.supports('field-sizing', 'content')) {
       jsonInput.style.height = '';
       return;
     }
@@ -3424,7 +3436,6 @@
     STACKED_MQ.addEventListener('change', onChange);
     LANDSCAPE_STACKED_MQ.addEventListener('change', onChange);
     jsonInput?.addEventListener('input', onChange);
-    onChange();
   }
 
   function getInputPaneRatio() {
@@ -3494,6 +3505,9 @@
 
     saveWorkspaceLayout();
     updateLayoutQuickActive();
+    if (isContentScrollLayout()) {
+      requestAnimationFrame(() => syncPortraitInputHeight());
+    }
   }
 
   function setInputPaneRatio(ratio) {
@@ -3687,6 +3701,7 @@
     jsonInput.value = SAMPLE_JSON;
     await refreshHistory();
     await parseAndRender(false);
+    syncPortraitInputHeight();
   }
 
   init();

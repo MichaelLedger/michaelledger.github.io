@@ -109,7 +109,9 @@
       min-height: 0;
       min-width: 0;
       max-width: 100%;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
     body.is-embed .tool-body {
@@ -244,6 +246,20 @@
 
     body.is-embed .app {
       grid-template-rows: auto minmax(0, 1fr);
+    }
+
+    body.is-embed .tool-body > .main {
+      min-height: auto;
+    }
+
+    body.is-embed .workspace {
+      min-height: 100%;
+    }
+
+    @media (max-width: 1100px) {
+      body.is-embed .workspace {
+        min-height: auto;
+      }
     }
 
     body.is-embed .page-intro { display: none; }
@@ -440,14 +456,16 @@
 
     /* Main layout */
     .main {
-      flex: 1;
-      min-height: 100%;
       display: grid;
       grid-template-columns: var(--sidebar-width) 1fr;
+      grid-template-rows: auto auto;
       overflow: hidden;
+      min-height: auto;
     }
 
     .sidebar {
+      grid-column: 1;
+      grid-row: 1;
       border-right: 1px solid var(--border);
       background: var(--bg-elevated);
       display: flex;
@@ -630,10 +648,13 @@
 
     /* Editor / Viewer split */
     .workspace {
+      grid-column: 2;
+      grid-row: 1;
       display: flex;
       flex-direction: row;
       overflow: hidden;
-      min-height: 100%;
+      min-height: calc(100vh - var(--header-height));
+      min-height: calc(100dvh - var(--header-height));
       --input-pane-size: 50%;
     }
 
@@ -1190,9 +1211,13 @@
         width: 100%;
         overflow-x: clip;
         overflow-y: visible;
+        grid-template-columns: none;
+        grid-template-rows: none;
       }
 
       .sidebar {
+        grid-column: auto;
+        grid-row: auto;
         position: fixed;
         display: none;
         z-index: 40;
@@ -1203,12 +1228,15 @@
       }
 
       .workspace {
+        grid-column: auto;
+        grid-row: auto;
         flex: none;
         flex-direction: column;
         align-self: stretch;
         width: 100%;
         max-width: 100%;
         min-width: 0;
+        min-height: auto;
         height: auto;
         overflow-x: clip;
         contain: inline-size;
@@ -1308,6 +1336,11 @@
 
       .workspace-resizer {
         display: none;
+      }
+
+      .main > .site-footer {
+        grid-column: auto;
+        grid-row: auto;
       }
     }
 
@@ -1720,6 +1753,32 @@
     }
 
     .hidden-input { display: none; }
+
+    .site-footer {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      flex-shrink: 0;
+      margin-top: 0;
+      padding: 16px 20px 24px;
+      padding-left: max(20px, env(safe-area-inset-left));
+      padding-right: max(20px, env(safe-area-inset-right));
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .site-footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .site-footer a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -1823,6 +1882,10 @@
           </div>
         </section>
       </div>
+
+      <footer class="site-footer">
+        Copyright &copy; 2018-2026 MTX Software Technology Co.,Ltd. All rights reserved. Designed by <a href="../blog/developer.html" target="_blank" rel="noopener noreferrer">MichaelLedger</a>.
+      </footer>
     </div>
     </div>
   </div>

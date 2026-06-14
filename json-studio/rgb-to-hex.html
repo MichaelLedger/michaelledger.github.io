@@ -939,6 +939,25 @@
       border-radius: 8px;
     }
 
+    .site-footer {
+      margin-top: 32px;
+      padding: 16px 0 8px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .site-footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .site-footer a:hover {
+      text-decoration: underline;
+    }
+
     @media (max-width: 768px) {
       .header { gap: 8px; padding: 8px 12px; }
       .logo-block {
@@ -1096,6 +1115,10 @@
         </div>
         <div id="palette-list" aria-live="polite"></div>
       </section>
+
+      <footer class="site-footer">
+        Copyright &copy; 2018-2026 MTX Software Technology Co.,Ltd. All rights reserved. Designed by <a href="../blog/developer.html" target="_blank" rel="noopener noreferrer">MichaelLedger</a>.
+      </footer>
     </main>
   </div>
 

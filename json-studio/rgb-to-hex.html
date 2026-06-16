@@ -420,6 +420,25 @@
       touch-action: none;
     }
 
+    .color-picker-fab {
+      position: fixed;
+      right: max(20px, env(safe-area-inset-right));
+      bottom: max(20px, env(safe-area-inset-bottom));
+      z-index: 150;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+    }
+
+    .color-picker-fab.is-visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
     @media (max-width: 768px) {
       .color-picker-backdrop.is-open {
         display: block;
@@ -1004,6 +1023,42 @@
       }
     }
 
+    @media (min-width: 769px) {
+      .palette-browser {
+        max-width: 1280px;
+      }
+
+      .palette-grid {
+        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      }
+
+      .palette-swatch {
+        min-width: 3rem;
+        flex: 1 1 3rem;
+      }
+
+      .palette-swatch-hex {
+        font-size: 9px;
+        white-space: nowrap;
+        word-break: normal;
+        padding: 2px 3px;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .palette-browser {
+        max-width: 1440px;
+      }
+
+      .palette-grid {
+        grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      }
+
+      .palette-swatch-hex {
+        font-size: 10px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1133,6 +1188,12 @@
       <div class="picker-hue-thumb" id="picker-hue-thumb"></div>
     </div>
   </div>
+  <button type="button" class="color-picker-btn color-picker-fab" id="btn-color-picker-fab" title="Pick a color" aria-label="Pick a color" aria-haspopup="dialog" aria-expanded="false" aria-controls="color-picker-popover">
+    <span class="color-picker-dot" id="color-preview-fab" aria-hidden="true"></span>
+    <svg class="color-picker-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256" aria-hidden="true">
+      <path d="M222,67.34a33.81,33.81,0,0,0-10.64-24.25C198.12,30.56,176.68,31,163.54,44.18L142.82,65l-.63-.63a22,22,0,0,0-31.11,0l-9,9a14,14,0,0,0,0,19.81l3.47,3.47L53.14,149.1a37.81,37.81,0,0,0-9.84,36.73l-8.31,19a11.68,11.68,0,0,0,2.46,13A13.91,13.91,0,0,0,47.32,222,14.15,14.15,0,0,0,53,220.82L71,212.92a37.92,37.92,0,0,0,35.84-10.07l52.44-52.46,3.47,3.48a14,14,0,0,0,19.8,0l9-9a22.06,22.06,0,0,0,0-31.13l-.66-.65L212,91.85A33.76,33.76,0,0,0,222,67.34Zm-123.61,127a26,26,0,0,1-26,6.47,6,6,0,0,0-4.17.24l-20,8.75a2,2,0,0,1-2.09-.31l9.12-20.9a5.94,5.94,0,0,0,.19-4.31A25.91,25.91,0,0,1,56,166h70.78ZM138.78,154H65.24l48.83-48.84,36.76,36.78Zm64.77-70.59L178.17,108.9a6,6,0,0,0,0,8.47l4.88,4.89a10,10,0,0,1,0,14.15l-9,9a2,2,0,0,1-2.82,0l-60.69-60.7a2,2,0,0,1,0-2.83l9-9a10,10,0,0,1,14.14,0l4.89,4.89a6,6,0,0,0,4.24,1.75h0a6,6,0,0,0,4.25-1.77L172,52.66c8.57-8.58,22.51-9,31.07-.85a22,22,0,0,1,.44,31.57Z"></path>
+    </svg>
+  </button>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <div class="toast toast-confirm" id="toast-confirm" role="alertdialog" aria-labelledby="toast-confirm-msg" hidden>
     <span class="toast-confirm-msg" id="toast-confirm-msg">Clear all convert history?</span>
@@ -1340,6 +1401,7 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
     let syncing = false;
     let pickerOpen = false;
     let pickerIgnoreOutsideUntil = 0;
+    let pickerAnchorBtn = null;
     const PICKER_MOBILE_MQ = window.matchMedia('(max-width: 768px)');
     const pickerState = { h: 0, s: 0, v: 50 };
 
@@ -1432,9 +1494,16 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       convert('picker');
     }
 
+    function getPickerAnchorBtn() {
+      if (pickerAnchorBtn) return pickerAnchorBtn;
+      const fab = $('#btn-color-picker-fab');
+      if (fab?.classList.contains('is-visible')) return fab;
+      return $('#btn-color-picker');
+    }
+
     function positionColorPickerPopover() {
       const popover = $('#color-picker-popover');
-      const btn = $('#btn-color-picker');
+      const btn = getPickerAnchorBtn();
       if (!popover || !btn) return;
 
       if (PICKER_MOBILE_MQ.matches) {
@@ -1448,10 +1517,76 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       popover.style.transform = 'none';
       const width = popover.offsetWidth || 260;
       const height = popover.offsetHeight || 200;
-      const left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
-      const top = Math.max(8, Math.min(rect.bottom + 8, window.innerHeight - height - 8));
+      let left;
+      let top;
+
+      if (btn.id === 'btn-color-picker-fab') {
+        left = Math.max(8, rect.right - width);
+        top = Math.max(8, rect.top - height - 8);
+      } else {
+        left = Math.max(8, Math.min(rect.left, window.innerWidth - width - 8));
+        top = Math.max(8, Math.min(rect.bottom + 8, window.innerHeight - height - 8));
+      }
+
       popover.style.left = left + 'px';
       popover.style.top = top + 'px';
+    }
+
+    function setFloatingPickerVisible(visible) {
+      $('#btn-color-picker-fab')?.classList.toggle('is-visible', visible);
+      if (pickerOpen && !visible) {
+        pickerAnchorBtn = $('#btn-color-picker');
+        positionColorPickerPopover();
+      }
+    }
+
+    function updateFloatingPickerVisibility() {
+      const mainBtn = $('#btn-color-picker');
+      const mainEl = document.querySelector('.main');
+      if (!mainBtn || !mainEl) return;
+
+      const mainRect = mainEl.getBoundingClientRect();
+      const btnRect = mainBtn.getBoundingClientRect();
+      const visible =
+        btnRect.bottom > mainRect.top &&
+        btnRect.top < mainRect.bottom &&
+        btnRect.right > mainRect.left &&
+        btnRect.left < mainRect.right;
+
+      setFloatingPickerVisible(!visible);
+    }
+
+    function initFloatingColorPicker() {
+      const mainBtn = $('#btn-color-picker');
+      const fab = $('#btn-color-picker-fab');
+      const mainEl = document.querySelector('.main');
+      if (!mainBtn || !fab || !mainEl) return;
+
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            const entry = entries[0];
+            setFloatingPickerVisible(!entry.isIntersecting);
+          },
+          { root: mainEl, threshold: 0.15 }
+        );
+        observer.observe(mainBtn);
+      } else {
+        mainEl.addEventListener('scroll', updateFloatingPickerVisibility, { passive: true });
+        window.addEventListener('resize', updateFloatingPickerVisibility);
+        updateFloatingPickerVisibility();
+      }
+
+      mainEl.addEventListener('scroll', () => {
+        if (pickerOpen) positionColorPickerPopover();
+      }, { passive: true });
+
+      fab.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        pickerAnchorBtn = fab;
+        toggleColorPicker();
+      });
     }
 
     function setPickerOpen(open) {
@@ -1459,15 +1594,20 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       const popover = $('#color-picker-popover');
       const backdrop = $('#color-picker-backdrop');
       const btn = $('#btn-color-picker');
+      const fab = $('#btn-color-picker-fab');
       popover?.classList.toggle('is-open', open);
       backdrop?.classList.toggle('is-open', open);
       if (backdrop) backdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
-      if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      const expanded = open ? 'true' : 'false';
+      if (btn) btn.setAttribute('aria-expanded', expanded);
+      if (fab) fab.setAttribute('aria-expanded', expanded);
       if (open) {
         pickerIgnoreOutsideUntil = Date.now() + 350;
         positionColorPickerPopover();
         const { r, g, b, valid } = readRgb();
         if (valid) syncPickerFromRgb(r, g, b);
+      } else {
+        pickerAnchorBtn = null;
       }
     }
 
@@ -1524,6 +1664,7 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       $('#btn-color-picker')?.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
+        pickerAnchorBtn = $('#btn-color-picker');
         toggleColorPicker();
       });
 
@@ -1535,8 +1676,9 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
         if (!pickerOpen || Date.now() < pickerIgnoreOutsideUntil) return;
         const popover = $('#color-picker-popover');
         const btn = $('#btn-color-picker');
+        const fab = $('#btn-color-picker-fab');
         const backdrop = $('#color-picker-backdrop');
-        if (popover?.contains(e.target) || btn?.contains(e.target)) return;
+        if (popover?.contains(e.target) || btn?.contains(e.target) || fab?.contains(e.target)) return;
         if (backdrop && e.target === backdrop) return;
         setPickerOpen(false);
       });
@@ -1551,6 +1693,8 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && pickerOpen) setPickerOpen(false);
       });
+
+      initFloatingColorPicker();
     }
 
     function convert(source) {
@@ -1588,6 +1732,8 @@ const FIGMA_COLOR_PALETTES=[{"num":1,"group":"Monochromatic","name":"Stormy morn
       const cmykStr = formatCmyk(cmyk);
 
       $('#color-preview').style.backgroundColor = hex;
+      const fabPreview = $('#color-preview-fab');
+      if (fabPreview) fabPreview.style.backgroundColor = hex;
       if (source !== 'picker') syncPickerFromRgb(r, g, b);
       $('#preview-hex').textContent = hex;
       $('#preview-rgb').textContent = rgbStr;

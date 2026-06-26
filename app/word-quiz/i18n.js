@@ -586,6 +586,10 @@
   };
 
   function detectLang() {
+    if (window.__NATIVE_LANG__ && SUPPORTED_LANGS.indexOf(window.__NATIVE_LANG__) !== -1) {
+      return window.__NATIVE_LANG__;
+    }
+
     const stored = localStorage.getItem(STORAGE_KEY);
     if (SUPPORTED_LANGS.indexOf(stored) !== -1) return stored;
 

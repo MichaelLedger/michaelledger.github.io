@@ -167,3 +167,14 @@ footer {
   color: var(--secondary);
   font-size: 0.9rem;
 }
+
+.license-block {
+  white-space: pre-wrap;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 96%, var(--secondary));
+  overflow-x: auto;
+}

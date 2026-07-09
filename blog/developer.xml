@@ -329,4 +329,20 @@
         </description>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_3.jpg</cover>
     </blog>
+    <blog location="developer-single.html">
+        <id>38</id>
+        <date>Jul 9, 2026</date>
+        <title>How to Choose the Right Architecture for Your App</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_8.jpg</cover>
+    </blog>
+    <blog location="developer-single.html">
+        <id>39</id>
+        <date>Jul 9, 2026</date>
+        <title>Self-Evaluation AI Question</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_18.jpg</cover>
+    </blog>
 </blogs>

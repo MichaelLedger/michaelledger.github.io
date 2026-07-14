@@ -4454,4 +4454,18 @@
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
         <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e15_b.mp3</audio>
     </blog>
+    <blog>
+        <id>535</id>
+        <date>Jul 14, 2026</date>
+        <title>Friends S09E16: The One With The Boob Job(Part One)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e16_a.mp3</audio>
+    </blog>
+    <blog>
+        <id>536</id>
+        <date>Jul 14, 2026</date>
+        <title>Friends S09E16: The One With The Boob Job(Part Two)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e16_b.mp3</audio>
+    </blog>
 </blogs>

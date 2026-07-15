@@ -4468,4 +4468,18 @@
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
         <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e16_b.mp3</audio>
     </blog>
+    <blog>
+        <id>537</id>
+        <date>Jul 15, 2026</date>
+        <title>Friends S09E17: The One With The Memorial Service(Part One)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e17_a.mp3</audio>
+    </blog>
+    <blog>
+        <id>538</id>
+        <date>Jul 15, 2026</date>
+        <title>Friends S09E17: The One With The Memorial Service(Part Two)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e17_b.mp3</audio>
+    </blog>
 </blogs>

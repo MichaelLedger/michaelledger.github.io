@@ -763,23 +763,24 @@
       position: relative;
     }
 
-    #json-input {
+    #json-editor {
       width: 100%;
       max-width: 100%;
       height: 100%;
-      padding: 16px;
-      border: none;
-      outline: none;
-      resize: none;
+      overflow: hidden;
       background: var(--bg);
-      color: var(--text);
+    }
+
+    #json-editor .cm-editor {
+      height: 100%;
+      max-width: 100%;
+    }
+
+    #json-editor .cm-scroller {
       font-family: var(--font-mono);
       font-size: 13px;
       line-height: 1.6;
       tab-size: 2;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      word-break: break-word;
     }
 
     #json-renderer {
@@ -1311,25 +1312,19 @@
         box-sizing: border-box;
       }
 
-      #json-input,
+      #json-editor,
       #json-renderer {
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
       }
 
-      #json-input {
+      #json-editor {
         display: block;
-        height: auto;
-        min-height: 6em;
+        height: min(50vh, 420px);
+        min-height: 12em;
         max-height: none;
-        overflow-x: hidden;
-        overflow-y: visible;
-        resize: none;
-        field-sizing: content;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-        word-break: break-word;
+        overflow: hidden;
       }
 
       #json-renderer {
@@ -1629,19 +1624,18 @@
         max-width: 70%;
       }
 
-      #json-input {
-        padding: 12px;
-        font-size: 16px;
-        line-height: 1.5;
+      #json-editor {
         width: 100%;
         max-width: 100%;
         box-sizing: border-box;
-        field-sizing: content;
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-        word-break: break-word;
-        overflow-x: hidden;
-        overflow-y: visible;
+        height: min(50vh, 420px);
+        min-height: 12em;
+        overflow: hidden;
+      }
+
+      #json-editor .cm-scroller {
+        font-size: 16px;
+        line-height: 1.5;
       }
 
       #json-renderer {
@@ -1897,7 +1891,7 @@
             <span id="input-stats"></span>
           </div>
           <div class="panel-body">
-            <textarea id="json-input" spellcheck="false" autocomplete="off" placeholder="Paste JSON here, or drop a .json file…"></textarea>
+            <div id="json-editor" role="textbox" aria-label="JSON input" aria-multiline="true"></div>
           </div>
         </section>
         <div class="workspace-resizer" id="workspace-resizer" role="separator" aria-orientation="vertical" aria-label="Resize input and tree panels" tabindex="0"></div>
@@ -1931,6 +1925,7 @@
     </div>
   </div>
 
+<script src="vendor/codemirror/editor.bundle.js"></script>
 <script>
 (function () {
   'use strict';
@@ -1943,6 +1938,7 @@
   const STORAGE_FALLBACK_QUOTA = 10 * 1024 * 1024 * 1024; // if Storage API unavailable
 
   const PARSE_WORKER_THRESHOLD = 64 * 1024; // offload parse to worker above 64 KB
+  const SKIP_FORMAT_REWRITE_BYTES = 2 * 1024 * 1024; // skip pretty-print rewrite into editor for large docs
   const AUTO_EXPAND_MAX_CHILDREN = 1000; // auto-expand only when a collection has at most this many children
   const MAX_STRING_DISPLAY = 500;
   const MAX_LINKIFY_LENGTH = 20000; // maxTokenizationLineLength
@@ -1967,7 +1963,7 @@
 
   /* ── DOM refs ────────────────────────────────────────────────── */
   const $ = (sel) => document.querySelector(sel);
-  const jsonInput = $('#json-input');
+  const jsonEditorMount = $('#json-editor');
   const jsonRenderer = $('#json-renderer');
   const historyList = $('#history-list');
   const historySearch = $('#history-search');
@@ -1978,6 +1974,7 @@
   const inputStats = $('#input-stats');
   const dropOverlay = $('#drop-overlay');
 
+  let jsonEditor = null;
   let db = null;
   let activeHistoryId = null;
   let historyEntries = [];
@@ -1985,6 +1982,14 @@
   let parsedData = null;
   let parseGeneration = 0;
   let parseWorker = null;
+
+  function getInputText() {
+    return jsonEditor ? jsonEditor.getValue() : '';
+  }
+
+  function setInputText(text) {
+    if (jsonEditor) jsonEditor.setValue(text == null ? '' : String(text));
+  }
 
   /* ── Utilities ───────────────────────────────────────────────── */
   function uuid() {
@@ -3210,7 +3215,7 @@
   jsonRenderer.addEventListener('click', handleTreeClick);
 
   async function parseAndRender(saveHistory = true) {
-    const text = jsonInput.value.trim();
+    const text = getInputText().trim();
     if (!text) {
       parsedData = null;
       jsonRenderer.innerHTML = '';
@@ -3225,15 +3230,16 @@
     inputStats.textContent = formatBytes(size);
 
     let result;
+    const shouldFormat = size < SKIP_FORMAT_REWRITE_BYTES;
     if (size >= PARSE_WORKER_THRESHOLD) {
-      result = await parseInWorker(text, true, generation);
+      result = await parseInWorker(text, shouldFormat, generation);
       if (!result.ok) {
         result = parseJsonSync(text);
-        if (result.ok) result.formatted = JSON.stringify(result.data, null, 2);
+        if (result.ok && shouldFormat) result.formatted = JSON.stringify(result.data, null, 2);
       }
     } else {
       result = parseJsonSync(text);
-      if (result.ok) result.formatted = JSON.stringify(result.data, null, 2);
+      if (result.ok && shouldFormat) result.formatted = JSON.stringify(result.data, null, 2);
     }
 
     if (generation !== parseGeneration) return;
@@ -3248,15 +3254,16 @@
     parsedData = result.data;
     const contentForHistory = result.formatted || text;
 
-    if (result.formatted) {
-      jsonInput.value = result.formatted;
+    // Skip rewriting huge pretty-printed text into the editor (main-thread hitch).
+    if (result.formatted && shouldFormat) {
+      setInputText(result.formatted);
     }
 
     const options = getViewerOptions();
     renderTreeLazy(result.data, options);
 
     parseStatus.innerHTML = '<span style="color:var(--success)">✓ Valid JSON</span>';
-    inputStats.textContent = formatBytes(byteSize(jsonInput.value));
+    inputStats.textContent = formatBytes(byteSize(getInputText()));
 
     if (saveHistory && db) {
       try {
@@ -3275,7 +3282,7 @@
   }
 
   async function minifyJson() {
-    const text = jsonInput.value.trim();
+    const text = getInputText().trim();
     if (!text) return;
 
     let result;
@@ -3292,7 +3299,7 @@
       return;
     }
     parsedData = result.data;
-    jsonInput.value = JSON.stringify(result.data);
+    setInputText(JSON.stringify(result.data));
     toast('Minified', 'success');
     renderTreeLazy(result.data, getViewerOptions());
     updateParseStatusAfterTree();
@@ -3301,7 +3308,7 @@
 
   async function copyJson() {
     try {
-      await navigator.clipboard.writeText(jsonInput.value);
+      await navigator.clipboard.writeText(getInputText());
       toast('Copied to clipboard', 'success');
     } catch {
       toast('Copy failed', 'error');
@@ -3320,7 +3327,7 @@
     }
 
     activeHistoryId = id;
-    jsonInput.value = content;
+    setInputText(content);
     await parseAndRender(false);
     renderHistoryList(historySearch.value.trim().toLowerCase());
   }
@@ -3329,7 +3336,7 @@
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
-      jsonInput.value = e.target.result;
+      setInputText(e.target.result);
       parseAndRender(true);
     };
     reader.onerror = () => toast('Failed to read file', 'error');
@@ -3443,7 +3450,7 @@
         if (options.collapsed || countChildren(parsedData) <= DOM_BATCH_SIZE) {
           updateParseStatusAfterTree();
         }
-      } else if (jsonInput.value.trim()) {
+      } else if (getInputText().trim()) {
         parseAndRender(false);
       }
     });
@@ -3509,25 +3516,13 @@
   }
 
   function syncPortraitInputHeight() {
-    if (!jsonInput) return;
-    if (!isContentScrollLayout()) {
-      jsonInput.style.height = '';
-      return;
-    }
-    if (!isInputPanelVisible()) return;
-    if (CSS.supports('field-sizing', 'content')) {
-      jsonInput.style.height = '';
-      return;
-    }
-    jsonInput.style.height = 'auto';
-    jsonInput.style.height = jsonInput.scrollHeight + 'px';
+    // CodeMirror fills a fixed-height panel; no textarea auto-grow.
   }
 
   function initPortraitContentScroll() {
     const onChange = () => syncPortraitInputHeight();
     STACKED_MQ.addEventListener('change', onChange);
     LANDSCAPE_STACKED_MQ.addEventListener('change', onChange);
-    jsonInput?.addEventListener('input', onChange);
   }
 
   function getInputPaneRatio() {
@@ -3650,6 +3645,7 @@
       localStorage.setItem(THEME_KEY, next);
     } catch (_) { /* ignore */ }
     updateThemeToggleButton(next);
+    if (jsonEditor) jsonEditor.setTheme(next);
   }
 
   function initThemeToggle() {
@@ -3783,6 +3779,22 @@
     initLayoutQuickButtons();
     initPaneResizer();
     initPortraitContentScroll();
+
+    if (window.JsonStudioEditor && typeof JsonStudioEditor.createEditor === 'function' && jsonEditorMount) {
+      try {
+        jsonEditor = JsonStudioEditor.createEditor(jsonEditorMount, {
+          theme: getTheme(),
+          placeholder: 'Paste JSON here, or drop a .json file…',
+        });
+      } catch (err) {
+        console.error('[JSON Studio] CodeMirror failed to init:', err);
+        toast('Editor failed to load', 'error');
+      }
+    } else {
+      console.error('[JSON Studio] CodeMirror bundle missing');
+      toast('Editor failed to load', 'error');
+    }
+
     try {
       db = await openDB();
     } catch (err) {
@@ -3790,7 +3802,7 @@
       toast('Local storage unavailable', 'error');
     }
 
-    jsonInput.value = SAMPLE_JSON;
+    setInputText(SAMPLE_JSON);
     await refreshHistory();
     await parseAndRender(false);
     syncPortraitInputHeight();

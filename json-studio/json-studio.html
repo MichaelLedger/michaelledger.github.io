@@ -40,11 +40,12 @@
       --success: #3fb950;
       --warning: #d29922;
       --danger: #f85149;
-      --json-key: #79c0ff;
+      --json-key: #7ee787;
       --json-string: #a5d6ff;
-      --json-number: #79c0ff;
+      --json-number: #ffa657;
       --json-bool: #ff7b72;
-      --json-null: #ff7b72;
+      --json-null: #8b949e;
+      --json-link: #3bc9db;
       --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
       --overlay-bg: rgba(15, 17, 23, 0.85);
       --btn-primary-text: #0d1117;
@@ -69,9 +70,10 @@
       --danger: #cf222e;
       --json-key: #0550ae;
       --json-string: #0a3069;
-      --json-number: #0550ae;
+      --json-number: #953800;
       --json-bool: #cf222e;
-      --json-null: #cf222e;
+      --json-null: #656d76;
+      --json-link: #0969da;
       --shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
       --overlay-bg: rgba(255, 255, 255, 0.88);
       --btn-primary-text: #ffffff;
@@ -769,11 +771,13 @@
       height: 100%;
       overflow: hidden;
       background: var(--bg);
+      min-height: 0;
     }
 
     #json-editor .cm-editor {
       height: 100%;
       max-width: 100%;
+      min-height: 0;
     }
 
     #json-editor .cm-scroller {
@@ -781,6 +785,12 @@
       font-size: 13px;
       line-height: 1.6;
       tab-size: 2;
+      overflow: auto !important;
+    }
+
+    #json-editor.cm-large-doc .cm-content {
+      /* Prefer horizontal scroll over wrapping for large / minified JSON */
+      white-space: pre;
     }
 
     #json-renderer {
@@ -998,13 +1008,21 @@
     button.json-placeholder:hover,
     a.json-placeholder:hover { color: var(--accent); text-decoration: underline; }
 
-    a.json-link {
+    a.json-link,
+    a.json-link.json-string {
       position: relative;
       z-index: 1;
+      color: var(--json-link);
+      text-decoration: underline;
+      text-decoration-color: color-mix(in srgb, var(--json-link) 50%, transparent);
+      text-underline-offset: 2px;
     }
 
-    a.json-link { color: var(--accent); text-decoration: none; }
-    a.json-link:hover { text-decoration: underline; }
+    a.json-link:hover,
+    a.json-link.json-string:hover {
+      color: var(--accent-hover);
+      text-decoration-color: currentColor;
+    }
 
     .json-truncated {
       color: var(--warning);
@@ -1987,8 +2005,29 @@
     return jsonEditor ? jsonEditor.getValue() : '';
   }
 
+  function syncEditorLargeDocClass(mode) {
+    if (!jsonEditorMount) return;
+    const large = !!(mode && mode.large);
+    jsonEditorMount.classList.toggle('cm-large-doc', large);
+  }
+
   function setInputText(text) {
-    if (jsonEditor) jsonEditor.setValue(text == null ? '' : String(text));
+    if (!jsonEditor) return;
+    const mode = jsonEditor.setValue(text == null ? '' : String(text));
+    syncEditorLargeDocClass(mode);
+  }
+
+  function updateInputStats(text) {
+    const raw = text == null ? getInputText() : text;
+    const size = byteSize(raw);
+    let label = formatBytes(size);
+    if (jsonEditor && typeof jsonEditor.getDocMode === 'function') {
+      const mode = jsonEditor.getDocMode();
+      if (mode.large) {
+        label += mode.longLine ? ' · fast view (long line)' : ' · fast view';
+      }
+    }
+    inputStats.textContent = label;
   }
 
   /* ── Utilities ───────────────────────────────────────────────── */
@@ -3227,7 +3266,7 @@
     const size = byteSize(text);
     const generation = ++parseGeneration;
     parseStatus.innerHTML = '<span style="color:var(--accent)">Parsing…</span>';
-    inputStats.textContent = formatBytes(size);
+    updateInputStats(text);
 
     let result;
     const shouldFormat = size < SKIP_FORMAT_REWRITE_BYTES;
@@ -3263,7 +3302,7 @@
     renderTreeLazy(result.data, options);
 
     parseStatus.innerHTML = '<span style="color:var(--success)">✓ Valid JSON</span>';
-    inputStats.textContent = formatBytes(byteSize(getInputText()));
+    updateInputStats();
 
     if (saveHistory && db) {
       try {
@@ -3303,6 +3342,7 @@
     toast('Minified', 'success');
     renderTreeLazy(result.data, getViewerOptions());
     updateParseStatusAfterTree();
+    updateInputStats();
     syncPortraitInputHeight();
   }
 

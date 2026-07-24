@@ -96,11 +96,27 @@ So:
 
 ---
 
+## Large-document display mode
+
+Above **512 KB**, or when any line is longer than **~20k characters** (typical minified JSON), the editor switches to a **fast view**:
+
+| Feature | Small docs | Large / long-line docs |
+|---------|------------|-------------------------|
+| Line wrapping | On | **Off** (horizontal scroll) |
+| Selection-match / active-line extras | On | **Off** |
+| JSON syntax highlighting | On | Off if a line is huge |
+| Undo for bulk `setValue` | On | **Off** (avoids duplicating MBs in history) |
+
+The input stats label shows `· fast view` when this mode is active.
+
+---
+
 ## Short version
 
 | Control | Strategy |
 |---------|----------|
 | `<textarea>` | Layout **everything** |
 | CodeMirror 6 | Layout **what’s on screen** |
+| Fast view (large docs) | Also skip wrap / heavy highlights / undo bloat |
 
-That viewport strategy is why large JSON text feels fluent in the input pane.
+That combination is why large JSON text feels fluent in the input pane.

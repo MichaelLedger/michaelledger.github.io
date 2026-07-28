@@ -4510,4 +4510,18 @@
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
         <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e19_b.mp3</audio>
     </blog>
+    <blog>
+        <id>543</id>
+        <date>Jul 28, 2026</date>
+        <title>Friends S09E20: The One With The Soap Opera Party(Part One)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e20_a.mp3</audio>
+    </blog>
+    <blog>
+        <id>544</id>
+        <date>Jul 28, 2026</date>
+        <title>Friends S09E20: The One With The Soap Opera Party(Part Two)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e20_b.mp3</audio>
+    </blog>
 </blogs>

@@ -4482,4 +4482,18 @@
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
         <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e17_b.mp3</audio>
     </blog>
+    <blog>
+        <id>539</id>
+        <date>Jul 28, 2026</date>
+        <title>Friends S09E18: The One With The Lottery(Part One)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e18_a.mp3</audio>
+    </blog>
+    <blog>
+        <id>540</id>
+        <date>Jul 28, 2026</date>
+        <title>Friends S09E18: The One With The Lottery(Part Two)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e18_b.mp3</audio>
+    </blog>
 </blogs>

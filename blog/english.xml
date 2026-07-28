@@ -4524,4 +4524,18 @@
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
         <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e20_b.mp3</audio>
     </blog>
+    <blog>
+        <id>545</id>
+        <date>Jul 28, 2026</date>
+        <title>Friends S09E21: The One With The Fertility Test(Part One)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e21_a.mp3</audio>
+    </blog>
+    <blog>
+        <id>546</id>
+        <date>Jul 28, 2026</date>
+        <title>Friends S09E21: The One With The Fertility Test(Part Two)</title>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/english/friends/cover/friends_season9_cover.jpg</cover>
+        <audio>https://raw.githubusercontent.com/michaelledger/media/refs/heads/audio/english/friends/season9/friends_s09e21_b.mp3</audio>
+    </blog>
 </blogs>

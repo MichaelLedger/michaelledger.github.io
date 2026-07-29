@@ -345,4 +345,12 @@
         </description>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_18.jpg</cover>
     </blog>
+    <blog location="developer-single.html">
+        <id>40</id>
+        <date>Jul 29, 2026</date>
+        <title>Moonshot AI published Kimi-K3: 2.8T-parameter model built on Kimi Delta Attention (KDA) and Attention Residuals (AttnRes)</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_15.jpg</cover>
+    </blog>
 </blogs>

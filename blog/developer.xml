@@ -353,4 +353,12 @@
         </description>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_15.jpg</cover>
     </blog>
+    <blog location="developer-single.html">
+        <id>41</id>
+        <date>Sep 2, 2026</date>
+        <title>Mac Calendar: Lunar dates &amp; festival holidays</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_1.jpg</cover>
+    </blog>
 </blogs>

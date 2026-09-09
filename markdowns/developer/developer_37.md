@@ -124,7 +124,7 @@ SPM **does not mirror submodules**. Only the main repo URL is redirected. If the
 2. **Use a proxy** (section 2) so all Git traffic, including submodule fetches, goes through a faster route.
 3. **Pre-fill the local clone with submodules** so the checkout is complete before SPM uses it:
    ```bash
-   cd /Users/gavinxiang/Downloads/swift-h3
+   cd /Users/user/Downloads/swift-h3
    git submodule update --init --recursive
    ```
    Then clear SPM caches, resolve again. (SPM may still re-fetch the submodule from the remote URL; combine with `insteadOf` or a proxy for reliability.)
@@ -142,12 +142,12 @@ Drag the local package folder into Xcode's project navigator. Xcode detects it m
 
 1. Clone the repo locally (with submodules):
    ```bash
-   git clone https://github.com/JeremyEspresso/swift-h3 /Users/gavinxiang/Downloads/swift-h3
-   cd /Users/gavinxiang/Downloads/swift-h3
+   git clone https://github.com/JeremyEspresso/swift-h3 /Users/user/Downloads/swift-h3
+   cd /Users/user/Downloads/swift-h3
    git submodule update --init --recursive
    ```
 
-2. In Xcode, **drag** the `/Users/gavinxiang/Downloads/swift-h3` folder from Finder into the project navigator (left sidebar). Xcode will show a small "local" badge next to the package and use the local version instead of fetching from GitHub.
+2. In Xcode, **drag** the `/Users/user/Downloads/swift-h3` folder from Finder into the project navigator (left sidebar). Xcode will show a small "local" badge next to the package and use the local version instead of fetching from GitHub.
 
 3. To revert to the remote: remove the local folder reference from the project navigator.
 
@@ -168,8 +168,8 @@ This redirects at the Git level, which is more reliable than `set-mirror` for lo
 **Step 1: Prepare the local clone (full clone with submodules and all tags):**
 
 ```bash
-git clone https://github.com/JeremyEspresso/swift-h3 /Users/gavinxiang/Downloads/swift-h3
-cd /Users/gavinxiang/Downloads/swift-h3
+git clone https://github.com/JeremyEspresso/swift-h3 /Users/user/Downloads/swift-h3
+cd /Users/user/Downloads/swift-h3
 git fetch --all --tags
 git submodule update --init --recursive
 ```
@@ -177,7 +177,7 @@ git submodule update --init --recursive
 **Step 2: Check what submodule URLs the package uses:**
 
 ```bash
-cat /Users/gavinxiang/Downloads/swift-h3/.gitmodules
+cat /Users/user/Downloads/swift-h3/.gitmodules
 ```
 
 Output:
@@ -191,19 +191,19 @@ Output:
 
 ```bash
 # Clean up any previous attempts
-git config --global --unset-all url."/Users/gavinxiang/Downloads/swift-h3".insteadOf 2>/dev/null
-git config --global --unset-all url."/Users/gavinxiang/Downloads/swift-h3/Sources/CH3/h3".insteadOf 2>/dev/null
+git config --global --unset-all url."/Users/user/Downloads/swift-h3".insteadOf 2>/dev/null
+git config --global --unset-all url."/Users/user/Downloads/swift-h3/Sources/CH3/h3".insteadOf 2>/dev/null
 
 # Allow the file:// transport protocol (required since Git 2.38.1+)
 git config --global protocol.file.allow always
 
 # Redirect swift-h3 main repo (use --add for the second URL form)
-git config --global url."/Users/gavinxiang/Downloads/swift-h3".insteadOf "https://github.com/JeremyEspresso/swift-h3"
-git config --global --add url."/Users/gavinxiang/Downloads/swift-h3".insteadOf "https://github.com/JeremyEspresso/swift-h3.git"
+git config --global url."/Users/user/Downloads/swift-h3".insteadOf "https://github.com/JeremyEspresso/swift-h3"
+git config --global --add url."/Users/user/Downloads/swift-h3".insteadOf "https://github.com/JeremyEspresso/swift-h3.git"
 
 # Redirect the uber/h3 SUBMODULE to the local copy already inside swift-h3
-git config --global url."/Users/gavinxiang/Downloads/swift-h3/Sources/CH3/h3".insteadOf "https://github.com/uber/h3"
-git config --global --add url."/Users/gavinxiang/Downloads/swift-h3/Sources/CH3/h3".insteadOf "https://github.com/uber/h3.git"
+git config --global url."/Users/user/Downloads/swift-h3/Sources/CH3/h3".insteadOf "https://github.com/uber/h3"
+git config --global --add url."/Users/user/Downloads/swift-h3/Sources/CH3/h3".insteadOf "https://github.com/uber/h3.git"
 ```
 
 **Step 4: Verify all four entries are present:**
@@ -214,10 +214,10 @@ git config --global --list | grep insteadof
 
 Expected output (4 lines):
 ```text
-url./Users/gavinxiang/Downloads/swift-h3.insteadof=https://github.com/JeremyEspresso/swift-h3
-url./Users/gavinxiang/Downloads/swift-h3.insteadof=https://github.com/JeremyEspresso/swift-h3.git
-url./Users/gavinxiang/Downloads/swift-h3/Sources/CH3/h3.insteadof=https://github.com/uber/h3
-url./Users/gavinxiang/Downloads/swift-h3/Sources/CH3/h3.insteadof=https://github.com/uber/h3.git
+url./Users/user/Downloads/swift-h3.insteadof=https://github.com/JeremyEspresso/swift-h3
+url./Users/user/Downloads/swift-h3.insteadof=https://github.com/JeremyEspresso/swift-h3.git
+url./Users/user/Downloads/swift-h3/Sources/CH3/h3.insteadof=https://github.com/uber/h3
+url./Users/user/Downloads/swift-h3/Sources/CH3/h3.insteadof=https://github.com/uber/h3.git
 ```
 
 **Step 5: Resolve (no cache clearing needed):**
@@ -237,8 +237,8 @@ This should be nearly instant since both the main repo and its 62 MB submodule a
 **To undo all redirects:**
 
 ```bash
-git config --global --unset-all url."/Users/gavinxiang/Downloads/swift-h3".insteadOf
-git config --global --unset-all url."/Users/gavinxiang/Downloads/swift-h3/Sources/CH3/h3".insteadOf
+git config --global --unset-all url."/Users/user/Downloads/swift-h3".insteadOf
+git config --global --unset-all url."/Users/user/Downloads/swift-h3/Sources/CH3/h3".insteadOf
 # Optionally revert the file protocol allow (only if you no longer need any local redirects)
 git config --global --unset protocol.file.allow
 ```
@@ -250,7 +250,7 @@ Some SPM versions handle `file://` URLs better than bare paths, since SPM recogn
 ```bash
 swift package config set-mirror \
   --original "https://github.com/JeremyEspresso/swift-h3" \
-  --mirror "file:///Users/gavinxiang/Downloads/swift-h3"
+  --mirror "file:///Users/user/Downloads/swift-h3"
 ```
 
 This sometimes works where bare `/Users/...` paths don't. Not guaranteed across all SPM/Xcode versions.
@@ -355,6 +355,78 @@ For many dependencies, you can automate mirror setup:
 - Or run a **small Git mirror/cache** (e.g. on a server with good GitHub access) and point SPM to that via `set-mirror`.
 
 ---
+
+## 6. Fix spm security fingerprints not match issues.
+```
+Showing All Errors Only
+Revision d9fd8cc8706e698f7eee82cc1555a588f866841d for mirrorsdk remoteSourceControl https://github.com/xxx/xxx.git version 1.0.0 does not match previously recorded value f462bf9549ceb116ecac3baec008536bb1d56106
+```
+```
+Last login: Wed Sep  9 11:19:52 on ttys013
+➜  fingerprints pwd
+/Users/user/Library/org.swift.swiftpm/security/fingerprints
+
+➜  fingerprints cat braintree_ios_lib-3426729d.json  
+{
+  "version" : 2,
+  "versionFingerprints" : {
+    "6.32.0" : {
+      "sourceControl" : {
+        "sourceCode" : {
+          "contentType" : {
+            "sourceCode" : {
+
+            }
+          },
+          "fingerprint" : "be294f355718388b778c40eb74aae24d3a280dae",
+          "origin" : "https://github.com/xxx/braintree_ios_lib.git"
+        }
+      }
+    },
+    "6.34.0" : {
+      "sourceControl" : {
+        "sourceCode" : {
+          "contentType" : {
+            "sourceCode" : {
+
+            }
+          },
+          "fingerprint" : "63aab275af20d72049b3876dd5021dc2a049f2fc",
+          "origin" : "https://github.com/xxx/braintree_ios_lib.git"
+        }
+      }
+    },
+    "7.9.0" : {
+      "sourceControl" : {
+        "sourceCode" : {
+          "contentType" : {
+            "sourceCode" : {
+
+            }
+          },
+          "fingerprint" : "0cdd00642c1e177e43ba6a88df7c6581269953c8",
+          "origin" : "https://github.com/xxx/braintree_ios_lib.git"
+        }
+      }
+    },
+    "7.11.0" : {
+      "sourceControl" : {
+        "sourceCode" : {
+          "contentType" : {
+            "sourceCode" : {
+
+            }
+          },
+          "fingerprint" : "d9fd8cc8706e698f7eee82cc1555a588f866841d",
+          "origin" : "https://github.com/xxx/braintree_ios_lib.git"
+        }
+      }
+    }
+  }
+}
+➜  fingerprints 
+
+```
 
 ## Summary
 

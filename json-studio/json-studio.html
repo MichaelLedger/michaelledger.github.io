@@ -1958,8 +1958,10 @@
   const PARSE_WORKER_THRESHOLD = 64 * 1024; // offload parse to worker above 64 KB
   const SKIP_FORMAT_REWRITE_BYTES = 2 * 1024 * 1024; // skip pretty-print rewrite into editor for large docs
   const AUTO_EXPAND_MAX_CHILDREN = 1000; // auto-expand only when a collection has at most this many children
-  const MAX_STRING_DISPLAY = 500;
-  const MAX_LINKIFY_LENGTH = 20000; // maxTokenizationLineLength
+  // Skip link detection above this length. The string is still shown in full.
+  // Matches HUGE_LINE_CHARS in js/editor.js, and VS Code's default
+  // maxTokenizationLineLength: scanning a longer single line can stall the page.
+  const MAX_LINKIFY_LENGTH = 20000;
   const DOM_BATCH_SIZE = 250; // nodes per animation frame when expanding large lists
 
   const SAMPLE_JSON = `{
@@ -2513,20 +2515,17 @@
   function renderPrimitive(value, options) {
     const span = document.createElement('span');
     if (typeof value === 'string') {
-      const display = value.length > MAX_STRING_DISPLAY
-        ? value.slice(0, MAX_STRING_DISPLAY) + '…'
-        : value;
       if (options.withLinks && isUrl(value)) {
         const a = document.createElement('a');
         a.href = value;
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
         a.className = 'json-link json-string';
-        a.textContent = '"' + display + '"';
+        a.textContent = '"' + value + '"';
         return a;
       }
       span.className = 'json-string';
-      span.textContent = '"' + display + '"';
+      span.textContent = '"' + value + '"';
       return span;
     }
     if (typeof value === 'number') {

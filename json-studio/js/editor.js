@@ -41,7 +41,9 @@ import { lintKeymap } from '@codemirror/lint';
 
 /** Soft-wrap + match highlights off above this size (bytes, UTF-8 approx via Blob). */
 const LARGE_DOC_BYTES = 512 * 1024;
-/** Disable JSON syntax highlighting when any line exceeds this (chars). */
+/** Disable JSON syntax highlighting when any line exceeds this (chars).
+ *  Same cutoff as VS Code's default maxTokenizationLineLength: tokenizing
+ *  a longer line blocks the main thread. Link detection uses this length too. */
 const HUGE_LINE_CHARS = 20000;
 
 const themeCompartment = new Compartment();

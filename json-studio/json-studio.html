@@ -2515,17 +2515,20 @@
   function renderPrimitive(value, options) {
     const span = document.createElement('span');
     if (typeof value === 'string') {
+      // JSON.stringify keeps escapes (\n, \", \\). Showing the decoded
+      // characters drops those backslashes from the tree.
+      const display = JSON.stringify(value);
       if (options.withLinks && isUrl(value)) {
         const a = document.createElement('a');
         a.href = value;
         a.target = '_blank';
         a.rel = 'noopener noreferrer';
         a.className = 'json-link json-string';
-        a.textContent = '"' + value + '"';
+        a.textContent = display;
         return a;
       }
       span.className = 'json-string';
-      span.textContent = '"' + value + '"';
+      span.textContent = display;
       return span;
     }
     if (typeof value === 'number') {

@@ -45,10 +45,18 @@ Do **not** copy into `File Provider Storage` / Documents. That only appears in t
 
 ```bash
 UDID="87133C9B-8CB3-47F0-A9CA-74165E66D456"
-xcrun simctl addmedia "$UDID" /Users/user/Desktop/photos/*.jpg
+xcrun simctl addmedia "$UDID" /Users/user/Desktop/photos/*
 ```
 
-**Note:** zsh brace globs such as `*.{jpg,jpeg,png}` fail with `no matches found` if any extension is missing. Use only extensions that exist, or `setopt NULL_GLOB`.
+**Note:** `*` imports every file in the folder (`.jpg`, `.jpeg`, `.png`, `.gif`, `.heic`, and the rest). Keep the folder to photos only.
+
+To import only some formats:
+
+```bash
+xcrun simctl addmedia "$UDID" /Users/user/Desktop/photos/*.{jpg,jpeg,png,gif,heic}
+```
+
+zsh fails with `no matches found` if any listed extension is missing. Use only extensions that exist, or run `setopt NULL_GLOB` first.
 
 ### 3. Refresh Photos (usually not needed, system will auto refresh the photo library)
 
@@ -95,6 +103,7 @@ On-disk location:
 ## Repeat later
 
 ```bash
-xcrun simctl addmedia 87133C9B-8CB3-47F0-A9CA-74165E66D456 \
-  /Users/user/Desktop/photos/*.jpg
+setopt NULL_GLOB; for UDID in $(xcrun simctl list devices booted | grep -oE '[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}'); do xcrun simctl addmedia "$UDID" /Users/gavinxiang/Documents/Resources/Photos/*.{jpg,jpeg,png}; done
 ```
+
+`NULL_GLOB` skips any listed extension that is not in the folder, and the loop imports into every booted simulator.

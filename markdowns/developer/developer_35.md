@@ -15,6 +15,7 @@ Tested on Xcode 27, 9 Oct 2026. A Run pre-action cannot show the app on both an 
 2. Product -> Scheme -> Edit Scheme...
 
 3. In the left column, click the disclosure triangle beside **Run**, then select **Pre-actions**. The targets table on the Build page does not list it. Click **+** -> **New Run Script Action**, set **Provide build settings from** to your app target, and set the script to one path:
+
 ```
 # Xcode 27, which opens simulators in Device Hub
 /Users/gavinxiang/Downloads/Shell-Collection/xcode-run-multi-simulators/run_simulators.sh

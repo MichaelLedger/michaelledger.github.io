@@ -369,4 +369,13 @@
         </description>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_10.jpg</cover>
     </blog>
+    
+    <blog location="developer-single.html">
+        <id>43</id>
+        <date>Oct 27, 2026</date>
+        <title>Restore internet after closing Charles</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_11.jpg</cover>
+    </blog>
 </blogs>

@@ -385,4 +385,12 @@
         </description>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_16.jpg</cover>
     </blog>
+    <blog location="developer-single.html">
+        <id>45</id>
+        <date>Oct 29, 2026</date>
+        <title>iPhone &amp; iPad Zoom Mode: paths and option differences</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_8.jpg</cover>
+    </blog>
 </blogs>

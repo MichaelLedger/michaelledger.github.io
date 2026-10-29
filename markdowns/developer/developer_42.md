@@ -106,4 +106,8 @@ On-disk location:
 setopt NULL_GLOB; for UDID in $(xcrun simctl list devices booted | grep -oE '[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}'); do xcrun simctl addmedia "$UDID" /Users/gavinxiang/Documents/Resources/Photos/*.{jpg,jpeg,png}; done
 ```
 
+```bash
+setopt NULL_GLOB; for UDID in $(xcrun simctl list devices booted | grep -oE '[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}'); do xcrun simctl addmedia "$UDID" /Users/gavinxiang/Documents/BestPhoto/ABTestPhotos/testphotos/*.{jpg,jpeg,png}; done
+```
+
 `NULL_GLOB` skips any listed extension that is not in the folder, and the loop imports into every booted simulator.

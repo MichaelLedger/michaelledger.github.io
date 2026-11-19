@@ -401,4 +401,12 @@
         </description>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_2.jpg</cover>
     </blog>
+    <blog location="developer-single.html">
+        <id>47</id>
+        <date>Nov 19, 2026</date>
+        <title>Mac storage audit</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_5.jpg</cover>
+    </blog>
 </blogs>

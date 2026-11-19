@@ -409,4 +409,12 @@
         </description>
         <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_5.jpg</cover>
     </blog>
+    <blog location="developer-single.html">
+        <id>48</id>
+        <date>Nov 19, 2026</date>
+        <title>Force-quit Mac LaunchAgents apps with bundle id</title>
+        <description>
+        </description>
+        <cover>https://raw.githubusercontent.com/michaelledger/media/refs/heads/image/wallpaper/developer/coding_6.jpg</cover>
+    </blog>
 </blogs>
